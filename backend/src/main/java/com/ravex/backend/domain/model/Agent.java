@@ -18,7 +18,6 @@ import lombok.*;
 public class Agent {
     // =========== Initialisation des Attributs ===========
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "A_MATRICULE", nullable = false, length = 6)
     private String matricule;
 

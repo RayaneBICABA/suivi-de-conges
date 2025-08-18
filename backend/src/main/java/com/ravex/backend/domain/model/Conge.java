@@ -14,7 +14,6 @@ import lombok.*;
 @Builder
 public class Conge {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CO_REF", length = 15, nullable = false)
     private String reference;
 
