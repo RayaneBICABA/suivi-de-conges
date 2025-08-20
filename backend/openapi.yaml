@@ -1,0 +1,276 @@
+openapi: 3.0.3
+info:
+  title: Suivi de Congés SONABEL - Agents API
+  version: 1.0.0
+  description: |
+    Documentation des endpoints pour la gestion des agents et le suivi des congés.
+    Authentification requise (Basic Auth).
+servers:
+  - url: http://localhost:8080
+    description: Local server
+
+tags:
+  - name: Agents
+    description: Opérations sur les agents
+
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+  schemas:
+    Agent:
+      type: object
+      required:
+        - matricule
+        - nom
+        - prenom
+        - fonction
+      properties:
+        matricule:
+          type: string
+          minLength: 1
+          maxLength: 6
+          example: "A12345"
+          description: Matricule unique de l'agent
+        nom:
+          type: string
+          maxLength: 75
+          example: "Doe"
+          description: Nom de l'agent
+        prenom:
+          type: string
+          maxLength: 30
+          example: "John"
+          description: Prénom de l'agent
+        fonction:
+          type: string
+          maxLength: 50
+          example: "Développeur"
+          description: Fonction ou poste de l'agent
+        conges:
+          type: array
+          items:
+            $ref: '#/components/schemas/Conge'
+          description: Liste des congés de l'agent
+        suivisConges:
+          type: array
+          items:
+            $ref: '#/components/schemas/SuiviConge'
+          description: Liste des suivis de congés de l'agent
+    Conge:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        jours:
+          type: integer
+          description: Nombre de jours de congé
+        dateDebut:
+          type: string
+          format: date
+        dateFin:
+          type: string
+          format: date
+        type:
+          type: string
+          enum: [ANNUEL, MALADIE, EXCEPTIONNEL]
+    SuiviConge:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        nombreJours:
+          type: integer
+          description: Nombre de jours de congé utilisés
+        dateDebut:
+          type: string
+          format: date
+        dateFin:
+          type: string
+          format: date
+        motif:
+          type: string
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+
+security:
+  - basicAuth: []
+
+paths:
+  /agents:
+    get:
+      tags: [Agents]
+      summary: Liste tous les agents
+      operationId: getAllAgents
+      responses:
+        '200':
+          description: Liste des agents récupérée avec succès
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Agent'
+        '404':
+          description: Aucun agent trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags: [Agents]
+      summary: Crée un nouvel agent
+      operationId: createAgent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Agent'
+      responses:
+        '201':
+          description: Agent créé avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agent'
+        '400':
+          description: Données invalides
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Un agent avec ce matricule existe déjà
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /agents/{matricule}:
+    get:
+      tags: [Agents]
+      summary: Récupère un agent par matricule
+      operationId: getAgentByMatricule
+      parameters:
+        - name: matricule
+          in: path
+          required: true
+          description: Matricule de l'agent
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 6
+      responses:
+        '200':
+          description: Agent trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agent'
+        '404':
+          description: Agent non trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags: [Agents]
+      summary: Met à jour un agent existant
+      operationId: updateAgent
+      parameters:
+        - name: matricule
+          in: path
+          required: true
+          description: Matricule de l'agent à mettre à jour
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 6
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Agent'
+      responses:
+        '200':
+          description: Agent mis à jour avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agent'
+        '400':
+          description: Données invalides
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Agent non trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags: [Agents]
+      summary: Supprime un agent
+      operationId: deleteAgent
+      parameters:
+        - name: matricule
+          in: path
+          required: true
+          description: Matricule de l'agent à supprimer
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 6
+      responses:
+        '204':
+          description: Agent supprimé avec succès
+        '404':
+          description: Agent non trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /agents/{matricule}/resume-conge:
+    get:
+      tags: [Agents]
+      summary: Récupère le résumé des congés d'un agent
+      operationId: getAgentLeaveSummary
+      parameters:
+        - name: matricule
+          in: path
+          required: true
+          description: Matricule de l'agent
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 6
+      responses:
+        '200':
+          description: Résumé des congés récupéré avec succès
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Agent: John Doe - Total jours: 30 - Utilisés: 15 - Restants: 15"
+        '404':
+          description: Agent non trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
