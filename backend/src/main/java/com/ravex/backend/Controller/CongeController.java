@@ -29,4 +29,17 @@ public class CongeController {
             return ResponseEntity.status(404).body("La référence n’existe pas : " + reference);
         }
     }
+
+    // @GetMapping("/checkRef")
+    // public ResponseEntity<String> checkerSiRefExite(@RequestParam int refNumber){
+    //     // Construire la référence : int/DRH/année
+    //     String currentYear = "2017";
+    //     String reference = refNumber + "/DRH/" + currentYear;
+
+    //     if(congeService.voirSiRefCongeExiste(reference)){
+    //         return ResponseEntity.ok("La référence existe : " + reference);
+    //     } else {
+    //         return ResponseEntity.status(404).body("La référence n’existe pas : " + reference);
+    //     }
+    // }
 }
