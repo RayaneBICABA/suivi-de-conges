@@ -1,3 +1,5 @@
+// JavaScript mis à jour
+
 // --- Récupérer la ref passée en query param ---
 const params = new URLSearchParams(window.location.search);
 const refNumber = params.get("ref");
@@ -10,6 +12,7 @@ const matriculeEl = document.getElementById("matricule");
 const nomEl = document.getElementById("nom");
 const prenomEl = document.getElementById("prenom");
 const fonctionEl = document.getElementById("fonction");
+const joursEl = document.getElementById("jours"); // Nouvelle variable pour les jours
 
 const startDateEl = document.getElementById("startDate");
 const endDateEl = document.getElementById("endDate");
@@ -23,12 +26,16 @@ async function fetchAgent() {
     const response = await fetch(apiUrl);
     if (!response.ok) throw new Error("Agent non trouvé");
 
-    const agent = await response.json();
+    // L'API renvoie maintenant un objet avec 'agent' et 'jours'
+    const data = await response.json(); 
+    const agent = data.agent;
+    const jours = data.jours;
 
     matriculeEl.textContent = agent.matricule;
     nomEl.textContent = agent.nom;
     prenomEl.textContent = agent.prenom;
     fonctionEl.textContent = agent.fonction;
+    joursEl.textContent = jours; // Affichage des jours de congé
 
   } catch (error) {
     alert(error.message);
@@ -52,7 +59,7 @@ startDateEl.addEventListener("change", calculateDays);
 endDateEl.addEventListener("change", calculateDays);
 
 addCongeBtn.addEventListener("click", () => {
-  alert(`Ajouter congé pour ${matriculeEl.textContent}du ${startDateEl.value} au ${endDateEl.value} (${numDaysEl.textContent} jours)`);
+  alert(`Ajouter congé pour ${matriculeEl.textContent} du ${startDateEl.value} au ${endDateEl.value} (${numDaysEl.textContent} jours)`);
   // Ici tu peux faire un fetch POST vers ton backend
 });
 

@@ -16,6 +16,7 @@ public class Conge {
     @Column(name = "CO_REF", length = 50, nullable = false)
     private String reference;
 
+    // Nombre total de jours auxquels l'agent a droit suivant sa ref de conge
     @Column(name = "CO_JOUR", nullable = false)
     private Integer jours;
 

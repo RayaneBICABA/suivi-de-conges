@@ -3,6 +3,7 @@ package com.ravex.backend.service;
 import com.ravex.backend.domain.Repository.CongeRepository;
 import com.ravex.backend.domain.model.Agent;
 import com.ravex.backend.domain.model.Conge;
+import com.ravex.backend.dto.AgentCongeDTO; // Importer le nouveau DTO
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -15,9 +16,15 @@ public class AgentService {
         this.congeRepository = congeRepository;
     }
 
-    // Collecter infos agent à partir de la référence du congé
-    public Optional<Agent> getAgentByCongeReference(String refConge){
+    // Modifier pour retourner à la fois l'agent et le nombre de jours
+    public Optional<AgentCongeDTO> getAgentAndJoursByCongeReference(String refConge){
         Optional<Conge> conge = congeRepository.findByReference(refConge);
-        return conge.map(Conge::getAgent); // si trouvé, renvoie l’agent associé
+
+        // Si le congé est trouvé, on retourne l'agent et les jours
+        return conge.map(c -> {
+            Agent agent = c.getAgent();
+            Integer jours = c.getJours();
+            return new AgentCongeDTO(agent, jours);
+        });
     }
 }

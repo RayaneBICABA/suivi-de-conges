@@ -1,6 +1,7 @@
 package com.ravex.backend.Controller;
 
 import com.ravex.backend.domain.model.Agent;
+import com.ravex.backend.dto.AgentCongeDTO; // Importer le DTO
 import com.ravex.backend.service.AgentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,15 +19,17 @@ public class AgentController {
     }
 
     // Endpoint : GET /agent/byConge?ref=123/DRH/2025
+    // Modifiez la méthode pour qu'elle renvoie le DTO AgentCongeDTO
     @GetMapping("/byConge")
     public ResponseEntity<?> getAgentByConge(@RequestParam String ref){
-        Optional<Agent> agent = agentService.getAgentByCongeReference(ref);
+        Optional<AgentCongeDTO> agentCongeDTO = agentService.getAgentAndJoursByCongeReference(ref);
 
-        if(agent.isPresent()){
-            return ResponseEntity.ok(agent.get());
+        if(agentCongeDTO.isPresent()){
+            // Si le DTO est présent, renvoyez-le avec un statut OK
+            return ResponseEntity.ok(agentCongeDTO.get());
         } else {
+            // Sinon, renvoyez une réponse 404 (Not Found)
             return ResponseEntity.status(404).body("Aucun agent trouvé pour le congé : " + ref);
         }
     }
-
-}   
+}

@@ -1,72 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Infos Agent</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-  </head>
-  <body class="bg-gray-400 p-6">
-    <div class="max-w-2xl mx-auto bg-white p-6 rounded shadow">
-      <!-- Bouton revenir en arrière -->
-      <button
-        onclick="window.location.href='../../index.html'"
-        class="mb-4 text-blue-500 hover:text-blue-700 flex items-center"
-      >
-        ← Retour
-      </button>
 
-      <h1 class="text-2xl font-bold mb-4">Informations de l'Agent</h1>
+<head>
+  <meta charset="UTF-8" />
+  <title>Infos Agent</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-400 p-6">
+  <div class="max-w-2xl mx-auto bg-white p-6 rounded shadow">
+    <button onclick="window.location.href='../../index.html'"
+      class="mb-4 text-blue-500 hover:text-blue-700 flex items-center">
+      ← Retour
+    </button>
+
+    <h1 class="text-2xl font-bold mb-4">Informations de l'Agent</h1>
 
 
-      <!-- Infos agent -->
-      <div id="agent-info" class="mb-6">
-        <p class="flex">
-          <strong class="w-24">Matricule:</strong>
-          <span id="matricule">--</span>
-        </p>
-        <p class="flex">
-          <strong class="w-24">Nom:</strong>
-          <span id="nom">--</span>
-        </p>
-        <p class="flex">
-          <strong class="w-24">Prénom:</strong>
-          <span id="prenom">--</span>
-        </p>
-        <p class="flex">
-          <strong class="w-24">Fonction:</strong>
-          <span id="fonction">--</span>
-        </p>
-      </div>
-
-      <!-- Formulaire ajout congé -->
-      <div class="mb-6">
-        <h2 class="text-xl font-semibold mb-2">Ajouter un congé</h2>
-        <div class="grid grid-cols-2 gap-4 mb-2">
-          <div>
-            <label class="block mb-1">Date de début</label>
-            <input
-              type="date"
-              id="startDate"
-              class="border rounded p-2 w-full"
-            />
-          </div>
-          <div>
-            <label class="block mb-1">Date de fin</label>
-            <input type="date" id="endDate" class="border rounded p-2 w-full" />
-          </div>
-        </div>
-        <p class="mb-2">
-          <strong>Nombre de jours :</strong> <span id="numDays">0</span>
-        </p>
-        <button
-          id="addCongeBtn"
-          class="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded"
-        >
-          Ajouter un congé
-        </button>
-      </div>
+    <div id="agent-info" class="mb-6">
+      <p class="flex">
+        <strong class="w-[10vw]">Matricule:</strong>
+        <span id="matricule">--</span>
+      </p>
+      <p class="flex">
+        <strong class="w-[10vw]">Nom:</strong>
+        <span id="nom">--</span>
+      </p>
+      <p class="flex">
+        <strong class="w-[10vw]">Prénom:</strong>
+        <span id="prenom">--</span>
+      </p>
+      <p class="flex">
+        <strong class="w-[10vw]">Fonction:</strong>
+        <span id="fonction">--</span>
+      </p>
+      <p class="flex">
+        <strong class="w-[10vw]">Jours de congé:</strong>
+        <span id="jours">--</span>
+      </p>
     </div>
 
-    <script src="../js/priseconge.js"></script>
-  </body>
+    <div class="mb-6">
+      <h2 class="text-xl font-semibold mb-2">Ajouter un congé</h2>
+      <div class="grid grid-cols-2 gap-4 mb-2">
+        <div>
+          <label class="block mb-1">Date de début</label>
+          <input type="date" id="startDate" class="border rounded p-2 w-full" />
+        </div>
+        <div>
+          <label class="block mb-1">Date de fin</label>
+          <input type="date" id="endDate" class="border rounded p-2 w-full" />
+        </div>
+      </div>
+      <p class="mb-2">
+        <strong>Nombre de jours :</strong> <span id="numDays">0</span>
+      </p>
+      <button id="addCongeBtn" class="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded">
+        Ajouter un congé
+      </button>
+    </div>
+  </div>
+
+  <script src="../js/priseconge.js"></script>
+</body>
+
 </html>
