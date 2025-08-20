@@ -19,7 +19,7 @@ public class Conge {
     @Column(name = "CO_JOUR", nullable = false)
     private Integer jours;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "A_MATRICULE", nullable = false) // FK vers Agent
     @JsonBackReference
     private Agent agent; // <-- Agent unique

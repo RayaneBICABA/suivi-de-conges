@@ -7,7 +7,7 @@
 </head>
 <body class="bg-gray-300 flex items-center justify-center min-h-screen">
 
-  <div class="bg-white p-8 rounded-2xl shadow-xl w-96>
+  <div class="bg-white p-8 rounded-2xl shadow-xl w-96">
     <h1 class="text-xl font-bold mb-4 text-center text-gray-800">
       Vérifier une Référence Congé
     </h1>
@@ -15,6 +15,12 @@
     <input id="refNumber" 
            type="number" 
            placeholder="Ex: 2006" 
+           class="w-full border p-2 rounded mb-4 focus:ring focus:ring-blue-300 outline-none">
+
+    <input id="year" 
+           type="number" 
+           placeholder="Année (Ex: 2024)" 
+           value="2024" 
            class="w-full border p-2 rounded mb-4 focus:ring focus:ring-blue-300 outline-none">
 
     <button id="checkBtn" 

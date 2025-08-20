@@ -52,7 +52,7 @@ startDateEl.addEventListener("change", calculateDays);
 endDateEl.addEventListener("change", calculateDays);
 
 addCongeBtn.addEventListener("click", () => {
-  alert(`Ajouter congé pour ${matriculeEl.textContent} du ${startDateEl.value} au ${endDateEl.value} (${numDaysEl.textContent} jours)`);
+  alert(`Ajouter congé pour ${matriculeEl.textContent}du ${startDateEl.value} au ${endDateEl.value} (${numDaysEl.textContent} jours)`);
   // Ici tu peux faire un fetch POST vers ton backend
 });
 

@@ -1,14 +1,17 @@
 document.getElementById("checkBtn").addEventListener("click", async () => {
   const refNumber = document.getElementById("refNumber").value;
+  // Récupérer la valeur du champ 'year'
+  const year = document.getElementById("year").value; 
   const resultDiv = document.getElementById("result");
 
-  if (!refNumber) {
-    resultDiv.innerHTML = `<span class="text-red-600">Veuillez entrer un numéro</span>`;
+  if (!refNumber || !year) {
+    resultDiv.innerHTML = `<span class="text-red-600">Veuillez entrer le numéro et l'année.</span>`;
     return;
   }
 
   try {
-    const response = await fetch(`http://localhost:8080/conge/checkRef?refNumber=${refNumber}`);
+    // Modifier la requête pour inclure l'année
+    const response = await fetch(`http://localhost:8080/conge/checkRef?refNumber=${refNumber}&year=${year}`);
     const text = await response.text();
 
     if (response.ok) {

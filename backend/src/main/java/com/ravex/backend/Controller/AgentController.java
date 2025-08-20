@@ -28,4 +28,5 @@ public class AgentController {
             return ResponseEntity.status(404).body("Aucun agent trouvé pour le congé : " + ref);
         }
     }
-}
+
+}   
