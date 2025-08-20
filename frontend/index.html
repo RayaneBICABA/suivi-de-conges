@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Vérification de Référence Congé</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-300 flex items-center justify-center min-h-screen">
+
+  <div class="bg-white p-8 rounded-2xl shadow-xl w-96>
+    <h1 class="text-xl font-bold mb-4 text-center text-gray-800">
+      Vérifier une Référence Congé
+    </h1>
+
+    <input id="refNumber" 
+           type="number" 
+           placeholder="Ex: 2006" 
+           class="w-full border p-2 rounded mb-4 focus:ring focus:ring-blue-300 outline-none">
+
+    <button id="checkBtn" 
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded transition">
+      Vérifier
+    </button>
+
+    <div id="result" class="mt-4 text-center font-medium"></div>
+  </div>
+
+  <script src="src/js/index.js"></script>
+</body>
+</html>
