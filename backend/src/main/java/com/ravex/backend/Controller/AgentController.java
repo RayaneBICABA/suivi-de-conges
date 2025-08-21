@@ -2,6 +2,7 @@ package com.ravex.backend.Controller;
 
 import com.ravex.backend.domain.model.Agent;
 import com.ravex.backend.dto.AgentCongeDTO; // Importer le DTO
+import com.ravex.backend.dto.AgentNomPrenomDTO;
 import com.ravex.backend.service.AgentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,17 @@ public class AgentController {
         } else {
             // Sinon, renvoyez une réponse 404 (Not Found)
             return ResponseEntity.status(404).body("Aucun agent trouvé pour le congé : " + ref);
+        }
+    }
+
+    // Endpoint : GET /agent/nomPrenom?matricule=AGT123
+    @GetMapping("/nomPrenom")
+    public ResponseEntity<?> getNomPrenomAgent(@RequestParam String matricule) {
+        Optional <AgentNomPrenomDTO> agentNomPrenomDTO = agentService.getNomPrenomViaMatricule(matricule);
+        if(agentNomPrenomDTO.isPresent()){
+            return ResponseEntity.ok(agentNomPrenomDTO.get());
+        }else{
+            return ResponseEntity.status(404).body("Aucun agent trouvé avec le matricule: "+matricule);
         }
     }
 }

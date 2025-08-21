@@ -1,36 +1,92 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Vérification de Référence Congé</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <title>Vérification de Référence Congé</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-300 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-96">
+        <h1 class="text-xl font-bold mb-4 text-center text-gray-800">
+            Vérifier une Référence Congé
+        </h1>
+        <input id="refNumber"
+               type="number"
+               placeholder="Ex: 1906"
+               class="w-full border p-2 rounded mb-4 focus:ring focus:ring-blue-300 outline-none">
+        <input id="year"
+               type="number"
+               placeholder="Année (Ex: 2024)"
+               value="2024"
+               class="w-full border p-2 rounded mb-4 focus:ring focus:ring-blue-300 outline-none">
+        <button id="checkBtn"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded transition">
+            Vérifier
+        </button>
+        <div id="result" class="mt-4 text-center font-medium"></div>
+    </div>
 
-  <div class="bg-white p-8 rounded-2xl shadow-xl w-96">
-    <h1 class="text-xl font-bold mb-4 text-center text-gray-800">
-      Vérifier une Référence Congé
-    </h1>
+    <!-- Overlay pour le popup -->
+    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <!-- Popup de création de congé -->
+        <div class="bg-white p-6 rounded-lg shadow-xl w-96 max-w-md mx-4">
+            <!-- Header avec bouton X -->
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-bold text-gray-800">Numéro de décision de congé introuvable</h2>
+                <button id="closePopup" class="text-gray-500 hover:text-gray-700 text-2xl font-bold">×</button>
+            </div>
+            
+            <h3 class="text-md font-semibold mb-4 text-gray-700">Enregistrer une nouvelle prise de décision</h3>
+            
+            <!-- Numéro de décision (en lecture seule) -->
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Décision de congé No:</label>
+                <input id="decisionNumber" type="text" readonly 
+                       class="w-full border border-gray-300 p-2 rounded bg-gray-100 text-gray-600">
+            </div>
 
-    <input id="refNumber" 
-           type="number" 
-           placeholder="Ex: 2006" 
-           class="w-full border p-2 rounded mb-4 focus:ring focus:ring-blue-300 outline-none">
+            <!-- Nom -->
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Nom:</label>
+                <input id="nom" type="text" readonly
+                       class="w-full border border-gray-300 p-2 rounded bg-gray-100 text-gray-600">
+            </div>
 
-    <input id="year" 
-           type="number" 
-           placeholder="Année (Ex: 2024)" 
-           value="2024" 
-           class="w-full border p-2 rounded mb-4 focus:ring focus:ring-blue-300 outline-none">
+            <!-- Prénom -->
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Prénom:</label>
+                <input id="prenom" type="text" readonly
+                       class="w-full border border-gray-300 p-2 rounded bg-gray-100 text-gray-600">
+            </div>
 
-    <button id="checkBtn" 
-            class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded transition">
-      Vérifier
-    </button>
+            <!-- Matricule -->
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Veuillez entrez le Matricule de l'agent:</label>
+                <input id="matricule" type="text" placeholder="Matricule"
+                       class="w-full border border-gray-300 p-2 rounded focus:ring focus:ring-blue-300 outline-none">
+            </div>
 
-    <div id="result" class="mt-4 text-center font-medium"></div>
-  </div>
+            <!-- Nombre de jours -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Nombre de Jours de congés attribué</label>
+                <input id="joursConges" type="number" value="0"
+                       class="w-full border border-gray-300 p-2 rounded focus:ring focus:ring-blue-300 outline-none">
+            </div>
 
-  <script src="src/js/index.js"></script>
+            <!-- Boutons -->
+            <div class="flex space-x-4">
+                <button id="confirmerBtn" 
+                        class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded transition">
+                    Confirmer
+                </button>
+                <button id="annulerBtn" 
+                        class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded transition">
+                    Annuler
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="src/js/index.js"></script>
 </body>
 </html>
