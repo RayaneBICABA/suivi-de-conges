@@ -28,7 +28,9 @@ async function fetchAgent() {
 
     const data = await response.json();
     const agent = data.agent;
-    const jours = data.jours;
+    const jours = data.jours ?? (agent.conges && agent.conges.length > 0 ? agent.conges[0].jours : "--");
+    
+
 
     matriculeEl.textContent = agent.matricule;
     nomEl.textContent = agent.nom;
