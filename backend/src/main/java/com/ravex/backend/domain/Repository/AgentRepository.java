@@ -13,7 +13,11 @@ import java.util.Optional;
 public interface AgentRepository extends JpaRepository<Agent, String> {
 
     // Récupérer Nom et prénom d'un agent
+//    @Query("SELECT new com.ravex.backend.dto.AgentNomPrenomDTO(a.nom, a.prenom) " +
+//            "FROM Agent a WHERE a.matricule = :matricule")
+//    Optional<AgentNomPrenomDTO> obtenirNomEtPrenomAgentViaMatricule(@Param("matricule") String matricule);
+
     @Query("SELECT new com.ravex.backend.dto.AgentNomPrenomDTO(a.nom, a.prenom) " +
-            "FROM Agent a WHERE a.matricule = :matricule")
+            "FROM Agent a WHERE UPPER(TRIM(a.matricule)) = UPPER(TRIM(:matricule))")
     Optional<AgentNomPrenomDTO> obtenirNomEtPrenomAgentViaMatricule(@Param("matricule") String matricule);
 }
