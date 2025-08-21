@@ -123,7 +123,7 @@ confirmerBtn.addEventListener("click", async () => {
             resultDiv.innerHTML = `<span class="text-green-600">Congé créé avec succès ! Redirection...</span>`;
             setTimeout(() => {
                 window.location.href = `src/html/priseconge.html?congeRef=${encodeURIComponent(currentCongeRef)}`;
-            }, 1000);
+            }, 2000);
         } else {
             const message = data.message || "Erreur lors de la création du congé";
             alert(`❌ ${message}`);

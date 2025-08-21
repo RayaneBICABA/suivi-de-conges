@@ -60,6 +60,7 @@ startDateEl.addEventListener("change", calculateDays);
 endDateEl.addEventListener("change", calculateDays);
 
 // --- POST création d’un suivi de congé (step 2) ---
+// --- POST création d’un suivi de congé (step 2) ---
 addCongeBtn.addEventListener("click", async () => {
   const matricule = matriculeEl.textContent.trim();
   const dateDebut = startDateEl.value;
@@ -83,7 +84,6 @@ addCongeBtn.addEventListener("click", async () => {
     const data = await response.json();
 
     if (!response.ok) {
-      // Si backend envoie {status, error, message}
       if (data.message) {
         throw new Error(`❌ ${data.message}`);
       }
@@ -92,10 +92,16 @@ addCongeBtn.addEventListener("click", async () => {
 
     alert(`✅ Congé ajouté avec succès (ID: ${data.id})`);
 
+    // ✅ Vider les champs date début et date fin après ajout
+    startDateEl.value = "";
+    endDateEl.value = "";
+    numDaysEl.textContent = 0; // remettre le compteur à zéro
+
   } catch (error) {
     alert(error.message);
   }
 });
+
 
 
 fetchAgent();
