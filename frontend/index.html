@@ -2,87 +2,135 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vérification de Référence Congé</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-300 flex items-center justify-center min-h-screen">
-    <div class="bg-white p-8 rounded-2xl shadow-xl w-96">
-        <h1 class="text-xl font-bold mb-4 text-center text-gray-800">
-            Vérifier une Référence Congé
-        </h1>
-        <input id="refNumber"
-               type="number"
-               placeholder="Ex: 1906"
-               class="w-full border p-2 rounded mb-4 focus:ring focus:ring-blue-300 outline-none">
-        <input id="year"
-               type="number"
-               placeholder="Année (Ex: 2024)"
-               value="2024"
-               class="w-full border p-2 rounded mb-4 focus:ring focus:ring-blue-300 outline-none">
-        <button id="checkBtn"
-                class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded transition">
-            Vérifier
-        </button>
-        <div id="result" class="mt-4 text-center font-medium"></div>
+<body class="bg-gray-300 min-h-screen">
+    <div class="flex items-center justify-center min-h-screen px-4 py-6">
+        <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl w-full max-w-md mx-auto">
+            <h1 class="text-lg sm:text-xl font-bold mb-6 text-center text-gray-800 leading-tight">
+                Vérifier une Référence Congé
+            </h1>
+            
+            <!-- Reference Number Input -->
+            <div class="mb-4">
+                <label for="refNumber" class="block text-sm font-medium text-gray-700 mb-2">
+                    Numéro de référence
+                </label>
+                <input id="refNumber"
+                       type="number"
+                       placeholder="Ex: 1906"
+                       class="w-full border border-gray-300 p-3 sm:p-2 rounded-lg text-base sm:text-sm focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none transition-colors duration-200">
+            </div>
+            
+            <!-- Year Input -->
+            <div class="mb-6">
+                <label for="year" class="block text-sm font-medium text-gray-700 mb-2">
+                    Année
+                </label>
+                <input id="year"
+                       type="number"
+                       placeholder="Année (Ex: 2024)"
+                       value="2024"
+                       class="w-full border border-gray-300 p-3 sm:p-2 rounded-lg text-base sm:text-sm focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none transition-colors duration-200">
+            </div>
+            
+            <!-- Verify Button -->
+            <button id="checkBtn"
+                    class="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white py-3 sm:py-2 px-4 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-base sm:text-sm">
+                Vérifier
+            </button>
+            
+            <!-- Result Display -->
+            <div id="result" class="mt-6 text-center font-medium text-sm sm:text-base"></div>
+        </div>
     </div>
 
-    <!-- Overlay pour le popup -->
-    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <!-- Popup de création de congé -->
-        <div class="bg-white p-6 rounded-lg shadow-xl w-96 max-w-md mx-4">
-            <!-- Header avec bouton X -->
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-lg font-bold text-gray-800">Numéro de décision de congé introuvable</h2>
-                <button id="closePopup" class="text-gray-500 hover:text-gray-700 text-2xl font-bold">×</button>
+    <!-- Responsive Modal Overlay -->
+    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <!-- Modal Container -->
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg mx-auto max-h-[90vh] overflow-y-auto">
+            <!-- Modal Header -->
+            <div class="sticky top-0 bg-white border-b border-gray-200 px-4 sm:px-6 py-4 rounded-t-xl">
+                <div class="flex justify-between items-start gap-4">
+                    <div class="flex-1 min-w-0">
+                        <h2 class="text-base sm:text-lg font-bold text-gray-800 leading-tight">
+                            Numéro de décision de congé introuvable
+                        </h2>
+                        <h3 class="text-sm sm:text-md font-semibold text-gray-600 mt-2">
+                            Enregistrer une nouvelle prise de décision
+                        </h3>
+                    </div>
+                    <button id="closePopup" 
+                            class="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors duration-200 p-1 -mt-1">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
             
-            <h3 class="text-md font-semibold mb-4 text-gray-700">Enregistrer une nouvelle prise de décision</h3>
-            
-            <!-- Numéro de décision (en lecture seule) -->
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Décision de congé No:</label>
-                <input id="decisionNumber" type="text" readonly 
-                       class="w-full border border-gray-300 p-2 rounded bg-gray-100 text-gray-600">
+            <!-- Modal Body -->
+            <div class="px-4 sm:px-6 py-4 space-y-4">
+                <!-- Decision Number (readonly) -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Décision de congé No:
+                    </label>
+                    <input id="decisionNumber" type="text" readonly 
+                           class="w-full border border-gray-300 p-3 sm:p-2 rounded-lg bg-gray-50 text-gray-600 text-base sm:text-sm">
+                </div>
+
+                <!-- Name (readonly) -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Nom:
+                    </label>
+                    <input id="nom" type="text" readonly
+                           class="w-full border border-gray-300 p-3 sm:p-2 rounded-lg bg-gray-50 text-gray-600 text-base sm:text-sm">
+                </div>
+
+                <!-- First Name (readonly) -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Prénom:
+                    </label>
+                    <input id="prenom" type="text" readonly
+                           class="w-full border border-gray-300 p-3 sm:p-2 rounded-lg bg-gray-50 text-gray-600 text-base sm:text-sm">
+                </div>
+
+                <!-- Employee ID -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Matricule de l'agent<span class="text-red-500 ml-1">*</span>
+                    </label>
+                    <input id="matricule" type="text" placeholder="Saisir le matricule"
+                           class="w-full border border-gray-300 p-3 sm:p-2 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none transition-colors duration-200 text-base sm:text-sm">
+                </div>
+
+                <!-- Number of Days -->
+                <div class="pb-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Nombre de jours de congés attribués<span class="text-red-500 ml-1">*</span>
+                    </label>
+                    <input id="joursConges" type="number" value="0" min="0"
+                           class="w-full border border-gray-300 p-3 sm:p-2 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none transition-colors duration-200 text-base sm:text-sm">
+                </div>
             </div>
 
-            <!-- Nom -->
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Nom:</label>
-                <input id="nom" type="text" readonly
-                       class="w-full border border-gray-300 p-2 rounded bg-gray-100 text-gray-600">
-            </div>
-
-            <!-- Prénom -->
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Prénom:</label>
-                <input id="prenom" type="text" readonly
-                       class="w-full border border-gray-300 p-2 rounded bg-gray-100 text-gray-600">
-            </div>
-
-            <!-- Matricule -->
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Veuillez entrez le Matricule de l'agent:</label>
-                <input id="matricule" type="text" placeholder="Matricule"
-                       class="w-full border border-gray-300 p-2 rounded focus:ring focus:ring-blue-300 outline-none">
-            </div>
-
-            <!-- Nombre de jours -->
-            <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Nombre de Jours de congés attribué</label>
-                <input id="joursConges" type="number" value="0"
-                       class="w-full border border-gray-300 p-2 rounded focus:ring focus:ring-blue-300 outline-none">
-            </div>
-
-            <!-- Boutons -->
-            <div class="flex space-x-4">
-                <button id="confirmerBtn" 
-                        class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded transition">
-                    Confirmer
-                </button>
-                <button id="annulerBtn" 
-                        class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded transition">
-                    Annuler
-                </button>
+            <!-- Modal Footer -->
+            <div class="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-4 sm:px-6 py-4 rounded-b-xl">
+                <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                    <button id="confirmerBtn" 
+                            class="order-2 sm:order-1 flex-1 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white py-3 sm:py-2 px-4 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-base sm:text-sm">
+                        Confirmer
+                    </button>
+                    <button id="annulerBtn" 
+                            class="order-1 sm:order-2 flex-1 bg-gray-300 hover:bg-gray-400 active:bg-gray-500 text-gray-700 py-3 sm:py-2 px-4 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 text-base sm:text-sm">
+                        Annuler
+                    </button>
+                </div>
             </div>
         </div>
     </div>

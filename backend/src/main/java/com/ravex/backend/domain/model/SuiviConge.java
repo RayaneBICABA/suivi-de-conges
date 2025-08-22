@@ -37,6 +37,7 @@ public class SuiviConge {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "A_MATRICULE", nullable = false)
+    @JsonBackReference
     private Agent agent;
 
 }
