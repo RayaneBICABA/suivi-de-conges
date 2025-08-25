@@ -53,5 +53,25 @@ public class SuiviCongeService {
 
         return suiviCongeRepository.save(sc);
     }
+
+
+
+    // Calculer le nombre de jours restants pour un congé donné
+    public int calculerJoursRestants(String referenceConge) {
+        // 🔹 Vérifier que la référence existe
+        Integer joursAttribues = congeRepository.collecterJoursAttribuerAunAgentParReferenceDeConge(referenceConge);
+        if (joursAttribues == null) {
+            throw new IllegalArgumentException("Référence de congé introuvable : " + referenceConge);
+        }
+
+        // 🔹 Total jours déjà consommés
+        Integer joursEpuise = suiviCongeRepository.totaljoursEpuise(referenceConge);
+        if (joursEpuise == null) joursEpuise = 0;
+
+        int reste = joursAttribues - joursEpuise;
+        return Math.max(reste, 0); // jamais négatif
+    }
+        
+        
 }
 

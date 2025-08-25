@@ -28,4 +28,10 @@ public class Agent {
     @OneToMany(mappedBy = "agent", fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<Conge> conges;  // Un agent peut avoir plusieurs congés
+
+    // ============ Methode Utilitaire ============
+    // Nom et Prenom de l'agent
+    public String getFullName(){
+        return this.prenom+" "+this.nom;
+    }
 }

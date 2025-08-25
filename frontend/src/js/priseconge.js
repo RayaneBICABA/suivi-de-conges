@@ -14,11 +14,38 @@ const nomEl = document.getElementById("nom");
 const prenomEl = document.getElementById("prenom");
 const fonctionEl = document.getElementById("fonction");
 const joursEl = document.getElementById("jours");
+const joursRestantsEl = document.getElementById("joursRestants");
 
 const startDateEl = document.getElementById("startDate");
 const endDateEl = document.getElementById("endDate");
 const numDaysEl = document.getElementById("numDays");
 const addCongeBtn = document.getElementById("addCongeBtn");
+
+
+// --- Fetch jours restants ---
+async function fetchJoursRestants() { 
+
+  try {
+    const url = `http://localhost:8080/suivi-conge/jours-restants?reference=${encodeURIComponent(congeRef)}`;
+
+
+    const response = await fetch(url);
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || "Impossible de récupérer les jours restants");
+    }
+
+    joursRestantsEl.textContent = data.joursRestants ?? "--";
+
+  } catch (error) {
+    alert(error.message);
+    joursRestantsEl.textContent = "--";
+  }
+}
+
+
+
 
 // --- Fetch agent (attend { agent: {...}, jours: number }) ---
 async function fetchAgent() {
@@ -37,6 +64,9 @@ async function fetchAgent() {
     prenomEl.textContent = agent.prenom;
     fonctionEl.textContent = agent.fonction;
     joursEl.textContent = jours;
+
+    // --- Fetch jours restants après avoir obtenu l'agent ---
+    await fetchJoursRestants();
 
   } catch (error) {
     alert(error.message);
@@ -66,11 +96,17 @@ addCongeBtn.addEventListener("click", async () => {
   const dateDebut = startDateEl.value;
   const dateFin = endDateEl.value;
   const jours = parseInt(numDaysEl.textContent, 10);
+  const joursRestants = parseInt(joursRestantsEl.textContent, 10);
 
   if (!congeRef) return alert("⚠️ Référence de congé invalide.");
   if (!matricule || matricule === "--") return alert("⚠️ Matricule agent introuvable.");
   if (!dateDebut || !dateFin) return alert("⚠️ Veuillez choisir la période.");
   if (!jours || jours <= 0) return alert("⚠️ Nombre de jours invalide.");
+
+  // 🚨 Vérification du solde restant
+  if (jours > joursRestants) {
+    return alert(`⚠️ Vous demandez ${jours} jours alors qu'il ne reste que ${joursRestants} jours.`);
+  }
 
   const payload = { matricule, congeRef, dateDebut, dateFin, jours };
 
@@ -92,15 +128,19 @@ addCongeBtn.addEventListener("click", async () => {
 
     alert(`✅ Congé ajouté avec succès (ID: ${data.id})`);
 
-    // ✅ Vider les champs date début et date fin après ajout
+    // ✅ Réinitialiser les champs
     startDateEl.value = "";
     endDateEl.value = "";
-    numDaysEl.textContent = 0; // remettre le compteur à zéro
+    numDaysEl.textContent = 0;
+
+    // ✅ Rafraîchir le solde de jours restants
+    await fetchJoursRestants();
 
   } catch (error) {
     alert(error.message);
   }
 });
+
 
 
 
