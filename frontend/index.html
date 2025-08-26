@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Suivi de congés</title>
-    <link rel="icon" type="image/png" href="/favicoConge.png">
+    <link rel="icon" type="image/png" href="/favicoConge.png" />
     <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 
@@ -15,141 +15,159 @@
 <body>
     <div class="flex h-screen bg-gray-100">
         <!-- sidebar -->
-        <div class="hidden md:flex flex-col w-64 bg-gray-800">
+        <div class="hidden md:flex flex-col w-[15vw] bg-gray-800">
+            <!-- Header -->
             <div class="flex items-center justify-center h-16 bg-[#0423D0]">
-                <span class="text-white font-bold uppercase">Suivi De Conges</span>
+                <span class="text-white font-bold uppercase text-xl sm:text-2xl">
+                    Suivi De Conges
+                </span>
             </div>
+
+            <!-- Navigation -->
             <div class="flex flex-col flex-1 overflow-y-auto">
                 <nav class="flex-1 px-2 py-4 bg-[#2563eb]">
-                    <a href="#" class="flex items-center px-4 py-2 text-gray-100 hover:bg-[#0d1f7e]">
-                        <i class="fa-solid fa-gauge mr-2" style="color: #ffffff;"></i>
+                    <a href="#" class="flex items-center px-4 py-3 text-gray-100 text-lg sm:text-xl hover:bg-[#0d1f7e]">
+                        <i class="fa-solid fa-gauge mr-3 text-white"></i>
                         Tableau de bord
                     </a>
-                    <a href="#" class="flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-[#0d1f7e]">
-                        <i class="fa-solid fa-plus mr-2" style="color: #ffffff;"></i>
+                    <a href="#"
+                        class="flex items-center px-4 py-3 mt-2 text-gray-100 text-lg sm:text-xl hover:bg-[#0d1f7e]">
+                        <i class="fa-solid fa-plus mr-3 text-white"></i>
                         Ajouter un agent
                     </a>
-                    <a href="#" class="flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-[#0d1f7e]">
-                        <i class="fa-solid fa-people-roof mr-2" style="color: #ffffff;"></i>
+                    <a href="#"
+                        class="flex items-center px-4 py-3 mt-2 text-gray-100 text-lg sm:text-xl hover:bg-[#0d1f7e]">
+                        <i class="fa-solid fa-people-roof mr-3 text-white"></i>
                         Gérer les congés
                     </a>
                 </nav>
             </div>
         </div>
 
-
-
-
-
-
-
-
-
-
         <!-- ====================================== TABLEAU DE BORD ====================================== -->
         <!-- ********* Main content Dashboard ********* -->
         <div class="hidden flex flex-col flex-1 overflow-y-auto">
             <div class="flex items-center justify-between h-16 bg-white border-b border-gray-200">
                 <h1 class="text-2xl font-bold w-[45%] pl-[1vw]">Tableau de bord</h1>
-                <div class="flex items-center w-[55%] ">
+                <div class="flex items-center w-[55%]">
                     <input class="mx-4 w-full border rounded-full px-4 py-2" type="text"
                         placeholder="Rechercher un agent..." />
                 </div>
             </div>
             <div class="p-4">
                 <h1>Main content</h1>
-
             </div>
         </div>
 
         <!-- ====================================== GERER LES CONGES ====================================== -->
         <!-- ********* INDEX: Main content Manage Leaves [index.js]  *********-->
         <div class="hidden bg-[#e1e1e1] flex flex-col flex-1 overflow-y-auto">
-            <div class="p-4 ">
+            <div class="p-4">
                 <h1 class="text-2xl font-bold w-[45%] pl-[1vw]">Gestion de congés</h1>
-                <div class="flex items-center justify-center min-h-screen px-4 py-6">
-                    <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl w-full max-w-md mx-auto">
-                        <h1 class="text-lg sm:text-xl font-bold mb-6 text-center text-gray-800 leading-tight">
+                <div class="flex items-center justify-center min-h-screen px-2 py-2">
+                    <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl w-full max-w-lg mx-auto">
+                        <h1
+                            class="text-xl sm:text-2xl md:text-3xl font-bold mb-8 text-center text-gray-800 leading-tight whitespace-nowrap overflow-x-auto">
                             Vérifier une Référence Congé
                         </h1>
 
                         <!-- Reference Number Input -->
-                        <div class="mb-4">
-                            <label for="refNumber" class="block text-sm font-medium text-gray-700 mb-2">
+                        <div class="mb-6">
+                            <label for="refNumber" class="block text-base sm:text-lg font-medium text-gray-700 mb-2">
                                 Numéro de référence
                             </label>
                             <input id="refNumber" type="number" placeholder="Ex: 1906"
-                                class="w-full border border-gray-300 p-3 sm:p-2 rounded-lg text-base sm:text-sm focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none transition-colors duration-200">
+                                class="w-full border border-gray-300 p-4 sm:p-3 rounded-lg text-lg sm:text-xl focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none transition-colors duration-200" />
                         </div>
 
                         <!-- Year Input -->
-                        <div class="mb-6">
-                            <label for="year" class="block text-sm font-medium text-gray-700 mb-2">
+                        <div class="mb-8">
+                            <label for="year" class="block text-base sm:text-lg font-medium text-gray-700 mb-2">
                                 Année
                             </label>
                             <input id="year" type="number" placeholder="Année (Ex: 2024)" value="2024"
-                                class="w-full border border-gray-300 p-3 sm:p-2 rounded-lg text-base sm:text-sm focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none transition-colors duration-200">
+                                class="w-full border border-gray-300 p-4 sm:p-3 rounded-lg text-lg sm:text-xl focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none transition-colors duration-200" />
                         </div>
 
                         <!-- Verify Button -->
                         <button id="checkBtn"
-                            class="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white py-3 sm:py-2 px-4 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-base sm:text-sm">
+                            class="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white py-4 sm:py-3 px-6 rounded-lg font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-lg sm:text-xl">
                             Vérifier
                         </button>
 
                         <!-- Result Display -->
-                        <div id="result" class="mt-6 text-center font-medium text-sm sm:text-base"></div>
+                        <div id="result" class="mt-8 text-center font-medium text-base sm:text-lg"></div>
                     </div>
                 </div>
-
             </div>
         </div>
 
         <!-- Responsive Modal Overlay (unchanged structure) -->
-            <div id="overlay" class="hidden fixed inset-0 bg-black bg-opacity-50  items-center justify-center z-50 p-4">
-                <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg mx-auto max-h-[90vh] overflow-y-auto">
-                    <div class="sticky top-0 bg-white border-b border-gray-200 px-4 sm:px-6 py-4 rounded-t-xl">
-                        <div class="flex justify-between items-start gap-4">
-                            <div class="flex-1 min-w-0">
-                                <h2 class="text-base sm:text-lg font-bold text-gray-800 leading-tight">Numéro de décision de congé introuvable</h2>
-                                <h3 class="text-sm sm:text-md font-semibold text-gray-600 mt-2">Enregistrer une nouvelle prise de décision</h3>
-                            </div>
-                            <button id="closePopup" class="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors duration-200 p-1 -mt-1">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                            </button>
+        <div id="overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50 p-4">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg mx-auto max-h-[90vh] overflow-y-auto">
+                <div class="sticky top-0 bg-white border-b border-gray-200 px-4 sm:px-6 py-4 rounded-t-xl">
+                    <div class="flex justify-between items-start gap-4">
+                        <div class="flex-1 min-w-0">
+                            <h2 class="text-2xl sm:text-3xl font-bold text-[#ff0006] leading-tight">
+                                Numéro de décision de congé introuvable
+                            </h2>
+                            <h3 class="text-lg sm:text-xl font-semibold text-[#0ea10d] mt-2">
+                                Veuillez enregistrer une nouvelle prise de décision!
+                            </h3>
                         </div>
+                        <button id="closePopup"
+                            class="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors duration-200 p-1 -mt-1">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
                     </div>
-                    <div class="px-4 sm:px-6 py-4 space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Décision de congé No:</label>
-                            <input id="decisionNumber" type="text" readonly class="w-full border border-gray-300 p-3 sm:p-2 rounded-lg bg-gray-50 text-gray-600 text-base sm:text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Nom:</label>
-                            <input id="nom" type="text" readonly class="w-full border border-gray-300 p-3 sm:p-2 rounded-lg bg-gray-50 text-gray-600 text-base sm:text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Prénom:</label>
-                            <input id="prenom" type="text" readonly class="w-full border border-gray-300 p-3 sm:p-2 rounded-lg bg-gray-50 text-gray-600 text-base sm:text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Matricule de l'agent<span class="text-red-500 ml-1">*</span></label>
-                            <input id="matricule" type="text" placeholder="Saisir le matricule" class="w-full border border-gray-300 p-3 sm:p-2 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none transition-colors duration-200 text-base sm:text-sm">
-                        </div>
-                        <div class="pb-2">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Nombre de jours de congés attribués<span class="text-red-500 ml-1">*</span></label>
-                            <input id="joursConges" type="number" value="0" min="0" class="w-full border border-gray-300 p-3 sm:p-2 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none transition-colors duration-200 text-base sm:text-sm">
-                        </div>
+                </div>
+                <div class="px-4 sm:px-6 py-4 space-y-4">
+                    <div>
+                        <label class="block text-base sm:text-lg font-medium text-gray-700 mb-2">Décision de congé
+                            No:</label>
+                        <input id="decisionNumber" type="text" readonly
+                            class="w-full border border-gray-300 p-4 sm:p-3 rounded-lg bg-gray-50 text-gray-600 text-lg sm:text-xl" />
                     </div>
-                    <div class="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-4 sm:px-6 py-4 rounded-b-xl">
-                        <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                            <button id="confirmerBtn" class="order-2 sm:order-1 flex-1 bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 text-white py-3 sm:py-2 px-4 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Confirmer</button>
-                            <button id="annulerBtn" class="order-1 sm:order-2 flex-1 bg-gray-300 hover:bg-gray-400 active:bg-gray-500 text-gray-700 py-3 sm:py-2 px-4 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2">Annuler</button>
-                        </div>
+                    <div>
+                        <label class="block text-base sm:text-lg font-medium text-gray-700 mb-2">Nom:</label>
+                        <input id="nom" type="text" readonly
+                            class="w-full border border-gray-300 p-4 sm:p-3 rounded-lg bg-gray-50 text-gray-600 text-lg sm:text-xl" />
+                    </div>
+                    <div>
+                        <label class="block text-base sm:text-lg font-medium text-gray-700 mb-2">Prénom:</label>
+                        <input id="prenom" type="text" readonly
+                            class="w-full border border-gray-300 p-4 sm:p-3 rounded-lg bg-gray-50 text-gray-600 text-lg sm:text-xl" />
+                    </div>
+                    <div>
+                        <label class="block text-base sm:text-lg font-medium text-gray-700 mb-2">Matricule de
+                            l'agent<span class="text-red-500 ml-1">*</span></label>
+                        <input id="matricule" type="text" placeholder="Saisir le matricule"
+                            class="w-full border border-gray-300 p-4 sm:p-3 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none transition-colors duration-200 text-lg sm:text-xl" />
+                    </div>
+                    <div class="pb-2">
+                        <label class="block text-base sm:text-lg font-medium text-gray-700 mb-2">Nombre de jours de
+                            congés attribués<span class="text-red-500 ml-1">*</span></label>
+                        <input id="joursConges" type="number" value="0" min="0"
+                            class="w-full border border-gray-300 p-4 sm:p-3 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none transition-colors duration-200 text-lg sm:text-xl" />
+                    </div>
+                </div>
+                <div class="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-4 sm:px-6 py-4 rounded-b-xl">
+                    <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                        <button id="confirmerBtn"
+                            class="order-2 sm:order-1 flex-1 bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 text-white py-4 sm:py-3 px-6 rounded-lg font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-lg sm:text-xl">
+                            Confirmer
+                        </button>
+                        <button id="annulerBtn"
+                            class="order-1 sm:order-2 flex-1 bg-gray-300 hover:bg-gray-400 active:bg-gray-500 text-gray-700 py-4 sm:py-3 px-6 rounded-lg font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 text-lg sm:text-xl">
+                            Annuler
+                        </button>
                     </div>
                 </div>
             </div>
-
+        </div>
 
         <!-- ********* PRISECONGE: Main content Manage Leaves [PriseConge.js] ********* -->
         <div class="hidden flex flex-col flex-1 overflow-y-auto bg-[#e1e1e1]">
@@ -166,7 +184,9 @@
                             </svg>
                             Retour
                         </button>
-                        <h1 class="text-xl sm:text-2xl font-bold text-gray-800">Informations de l'Agent</h1>
+                        <h1 class="text-xl sm:text-2xl font-bold text-gray-800">
+                            Informations de l'Agent
+                        </h1>
                     </div>
 
                     <!-- Content -->
@@ -187,7 +207,7 @@
                                 <div
                                     class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 py-2 border-b border-gray-100">
                                     <strong
-                                        class="text-gray-700 text-sm sm:text-base font-medium min-w-0 sm:min-w-[120px]">Matricule:</strong>
+                                        class="text-gray-700 sm:text-lg sm:text-base font-medium min-w-0 sm:min-w-[120px]">Matricule:</strong>
                                     <span id="matricule"
                                         class="text-gray-900 font-medium text-base sm:text-lg">--</span>
                                 </div>
@@ -195,34 +215,34 @@
                                 <div
                                     class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 py-2 border-b border-gray-100">
                                     <strong
-                                        class="text-gray-700 text-sm sm:text-base font-medium min-w-0 sm:min-w-[120px]">Nom:</strong>
+                                        class="text-gray-700 sm:text-lg sm:text-base font-medium min-w-0 sm:min-w-[120px]">Nom:</strong>
                                     <span id="nom" class="text-gray-900 font-medium text-base sm:text-lg">--</span>
                                 </div>
 
                                 <div
                                     class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 py-2 border-b border-gray-100">
                                     <strong
-                                        class="text-gray-700 text-sm sm:text-base font-medium min-w-0 sm:min-w-[120px]">Prénom:</strong>
+                                        class="text-gray-700 sm:text-lg sm:text-base font-medium min-w-0 sm:min-w-[120px]">Prénom:</strong>
                                     <span id="prenom" class="text-gray-900 font-medium text-base sm:text-lg">--</span>
                                 </div>
 
                                 <div
                                     class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 py-2 border-b border-gray-100">
                                     <strong
-                                        class="text-gray-700 text-sm sm:text-base font-medium min-w-0 sm:min-w-[120px]">Fonction:</strong>
+                                        class="text-gray-700 sm:text-lg sm:text-base font-medium min-w-0 sm:min-w-[120px]">Fonction:</strong>
                                     <span id="fonction" class="text-gray-900 font-medium text-base sm:text-lg">--</span>
                                 </div>
 
                                 <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 py-2">
                                     <strong
-                                        class="text-gray-700 text-sm sm:text-base font-medium min-w-0 sm:min-w-[120px]">Jours
+                                        class="text-gray-700 sm:text-lg sm:text-base font-medium min-w-0 sm:min-w-[120px]">Jours
                                         attribués:</strong>
                                     <span id="jours" class="text-gray-900 font-bold text-lg sm:text-xl">--</span>
                                 </div>
 
                                 <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 py-2">
                                     <strong
-                                        class="text-gray-700 text-sm sm:text-base font-medium min-w-0 sm:min-w-[120px]">Reste
+                                        class="text-gray-700 sm:text-lg sm:text-base font-medium min-w-0 sm:min-w-[120px]">Reste
                                         à valoir:</strong>
                                     <span id="joursRestants"
                                         class="text-gray-900 font-bold text-lg sm:text-xl">--</span>
@@ -232,26 +252,28 @@
 
                         <!-- Add Leave Section -->
                         <div class="border-t border-gray-200 pt-6">
-                            <h2 class="text-lg sm:text-xl font-semibold text-gray-800 mb-4">Ajouter un congé</h2>
+                            <h2 class="sm:text-lg font-semibold text-gray-800 mb-4">
+                                Ajouter un congé
+                            </h2>
 
                             <!-- Date Inputs -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                                 <div class="space-y-2">
-                                    <label class="block text-sm font-medium text-gray-700">Date de début</label>
+                                    <label class="block sm:text-lg font-medium text-gray-700">Date de début</label>
                                     <input type="date" id="startDate"
-                                        class="w-full border border-gray-300 rounded-lg p-2 sm:p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-sm sm:text-base" />
+                                        class="w-full border border-gray-300 rounded-lg p-2 sm:p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 sm:text-lg sm:text-base" />
                                 </div>
                                 <div class="space-y-2">
-                                    <label class="block text-sm font-medium text-gray-700">Date de fin</label>
+                                    <label class="block sm:text-lg font-medium text-gray-700">Date de fin</label>
                                     <input type="date" id="endDate"
-                                        class="w-full border border-gray-300 rounded-lg p-2 sm:p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-sm sm:text-base" />
+                                        class="w-full border border-gray-300 rounded-lg p-2 sm:p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 sm:text-lg sm:text-base" />
                                 </div>
                             </div>
 
                             <!-- Days Counter -->
                             <div class="mb-4 sm:mb-6">
                                 <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-                                    <strong class="text-gray-700 text-sm sm:text-base font-medium">Nombre de jours
+                                    <strong class="text-gray-700 sm:text-lg sm:text-base font-medium">Nombre de jours
                                         :</strong>
                                     <span id="numDays" class="text-xl sm:text-2xl font-bold text-blue-600">0</span>
                                 </div>
@@ -259,78 +281,68 @@
 
                             <!-- Add Button -->
                             <button id="addCongeBtn"
-                                class="w-full sm:w-auto bg-blue-500 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-medium transition-colors duration-200 text-sm sm:text-base">
+                                class="w-full sm:w-auto bg-blue-500 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-medium transition-colors duration-200 sm:text-lg">
                                 Ajouter un congé
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
 
         <!-- ====================================== AJOUTER AGENT ====================================== -->
-        <div class="hidden flex flex-col flex-1 overflow-y-auto bg-[#e1e1e1]">
+        <div class=" flex flex-col flex-1 overflow-y-auto bg-[#e1e1e1]">
             <div class="p-4">
                 <h1 class="text-2xl font-bold w-[45%] pl-[1vw]">Ajouter un Agent</h1>
                 <div class="flex items-center justify-center min-h-screen px-4 py-6">
                     <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl w-full max-w-md mx-auto">
-                        <h1 class="text-lg sm:text-xl font-bold mb-6 text-center text-gray-800 leading-tight">
+                        <h1 class="text-2xl sm:text-2xl font-bold mb-6 text-center text-gray-800 leading-tight">
                             Formulaire d'ajout d'agent
                         </h1>
 
                         <!-- Nom -->
                         <div class="mb-4">
-                            <label for="nom" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="nom" class="block text-base sm:text-lg font-medium text-gray-700 mb-2">
                                 Nom
                             </label>
                             <input id="nom" type="text" placeholder="Ex: Ouédraogo"
-                                class="w-full border border-gray-300 p-3 sm:p-2 rounded-lg text-base sm:text-sm 
-                                       focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none transition-colors duration-200">
+                                class="w-full border border-gray-300 p-3 sm:p-3 rounded-lg text-lg sm:text-xl focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none transition-colors duration-200" />
                         </div>
 
                         <!-- Prénom -->
                         <div class="mb-4">
-                            <label for="prenom" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="prenom" class="block text-base sm:text-lg font-medium text-gray-700 mb-2">
                                 Prénom
                             </label>
                             <input id="prenom" type="text" placeholder="Ex: Salif"
-                                class="w-full border border-gray-300 p-3 sm:p-2 rounded-lg text-base sm:text-sm 
-                                       focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none transition-colors duration-200">
+                                class="w-full border border-gray-300 p-3 sm:p-3 rounded-lg text-lg sm:text-xl focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none transition-colors duration-200" />
                         </div>
 
                         <!-- Fonction -->
                         <div class="mb-6">
-                            <label for="fonction" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="fonction" class="block text-base sm:text-lg font-medium text-gray-700 mb-2">
                                 Fonction
                             </label>
                             <input id="fonction" type="text" placeholder="Ex: Enseignant"
-                                class="w-full border border-gray-300 p-3 sm:p-2 rounded-lg text-base sm:text-sm 
-                                       focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none transition-colors duration-200">
+                                class="w-full border border-gray-300 p-3 sm:p-3 rounded-lg text-lg sm:text-xl focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none transition-colors duration-200" />
                         </div>
 
                         <!-- Boutons -->
                         <div class="flex justify-between space-x-4">
                             <button id="addAgentBtn"
-                                class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium 
-                                       transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 sm:py-3 px-4 sm:px-6 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-base sm:text-lg">
                                 Ajouter
                             </button>
                             <button id="cancelBtn"
-                                class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 rounded-lg font-medium 
-                                       transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400">
+                                class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 sm:py-3 px-4 sm:px-6 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400 text-base sm:text-lg">
                                 Annuler
                             </button>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
-
-
-
-
-
     </div>
 
     <script src="/src/js/index.js"></script>

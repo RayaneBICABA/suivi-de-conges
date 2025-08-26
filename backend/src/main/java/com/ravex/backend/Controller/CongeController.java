@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
-@RestControllerd
+@RestController
 @RequestMapping("/conge")
 public class CongeController {
 

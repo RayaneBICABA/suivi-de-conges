@@ -1,5 +1,8 @@
 {
     "java.configuration.updateBuildConfiguration": "interactive",
     "java.compile.nullAnalysis.mode": "automatic",
-    "liveServer.settings.port": 5501
+    "liveServer.settings.port": 5501,
+    "files.associations": {
+    "*.css": "tailwindcss"
+  }
 }

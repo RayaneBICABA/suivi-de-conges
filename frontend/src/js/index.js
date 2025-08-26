@@ -18,6 +18,88 @@ let currentRefNumber = "";
 let currentYear = "";
 let currentCongeRef = "";
 
+// --- Section navigation ---
+const btnDashboard = document.getElementById("btnDashboard");
+const btnManage = document.getElementById("btnManage");
+const btnAddAgent = document.getElementById("btnAddAgent");
+
+const dashboardSection = document.getElementById("dashboardSection");
+const manageSection = document.getElementById("manageSection");
+const addAgentSection = document.getElementById("addAgentSection");
+
+const sections = [dashboardSection, manageSection, addAgentSection].filter(Boolean);
+
+function animateShow(sectionEl) {
+    if (!sectionEl) return;
+    sectionEl.classList.remove("hidden");
+    sectionEl.classList.add("opacity-0", "translate-y-2");
+    // Ensure transition classes are present
+    sectionEl.classList.add("transition-all", "duration-300");
+    requestAnimationFrame(() => {
+        sectionEl.classList.remove("opacity-0", "translate-y-2");
+        sectionEl.classList.add("opacity-100", "translate-y-0");
+    });
+}
+
+function animateHide(sectionEl, onHidden) {
+    if (!sectionEl) {
+        if (typeof onHidden === "function") onHidden();
+        return;
+    }
+    // Ensure transition classes are present
+    sectionEl.classList.add("transition-all", "duration-300");
+    sectionEl.classList.remove("opacity-100", "translate-y-0");
+    sectionEl.classList.add("opacity-0", "translate-y-2");
+
+    const handleEnd = (e) => {
+        if (e.target !== sectionEl) return; // ignore bubbled events from children
+        sectionEl.removeEventListener("transitionend", handleEnd);
+        sectionEl.classList.add("hidden");
+        if (typeof onHidden === "function") onHidden();
+    };
+    sectionEl.addEventListener("transitionend", handleEnd);
+}
+
+function getVisibleSection() {
+    return sections.find((s) => s && !s.classList.contains("hidden"));
+}
+
+function switchSection(targetSection) {
+    const currentlyVisible = getVisibleSection();
+    if (currentlyVisible === targetSection) return;
+
+    if (currentlyVisible) {
+        animateHide(currentlyVisible, () => animateShow(targetSection));
+    } else {
+        animateShow(targetSection);
+    }
+}
+
+btnDashboard?.addEventListener("click", (e) => {
+    e.preventDefault();
+    switchSection(dashboardSection);
+});
+
+btnManage?.addEventListener("click", (e) => {
+    e.preventDefault();
+    switchSection(manageSection);
+});
+
+btnAddAgent?.addEventListener("click", (e) => {
+    e.preventDefault();
+    switchSection(addAgentSection);
+});
+
+// Default: show dashboard on first load
+if (dashboardSection) {
+    // Hide all others hard to avoid flash
+    sections.forEach((s) => {
+        if (s !== dashboardSection) s.classList.add("hidden");
+        s.classList.add("opacity-100", "translate-y-0");
+    });
+    animateShow(dashboardSection);
+}
+
 // --- Popup ---
 function showPopup() {
     overlay.classList.remove("hidden");
