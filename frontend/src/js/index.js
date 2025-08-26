@@ -1,225 +1,260 @@
+// ==========================
 // Éléments du DOM
+// ==========================
 const refNumberInput = document.getElementById("refNumber");
 const yearInput = document.getElementById("year");
 const checkBtn = document.getElementById("checkBtn");
 const resultDiv = document.getElementById("result");
-const overlay = document.getElementById("overlay");
-const closePopupBtn = document.getElementById("closePopup");
-const decisionNumberInput = document.getElementById("decisionNumber");
-const nomInput = document.getElementById("nom");
-const prenomInput = document.getElementById("prenom");
-const matriculeInput = document.getElementById("matricule");
-const joursCongesInput = document.getElementById("joursConges");
-const confirmerBtn = document.getElementById("confirmerBtn");
-const annulerBtn = document.getElementById("annulerBtn");
+const retourBtn = document.getElementById("retourBtn");
 
-// Variables globales pour stocker les données
+// Popup elements
+const popupOverlay = document.getElementById("popupCongeOverlay");
+const popupCloseBtn = document.getElementById("popupCloseBtn");
+const popupDecisionNumberInput = document.getElementById("popupDecisionNumber");
+const popupNomInput = document.getElementById("popupNom");
+const popupPrenomInput = document.getElementById("popupPrenom");
+const popupMatriculeInput = document.getElementById("popupMatricule");
+const popupJoursCongesInput = document.getElementById("popupJoursConges");
+const popupConfirmerBtn = document.getElementById("popupConfirmerBtn");
+const popupAnnulerBtn = document.getElementById("popupAnnulerBtn");
+
+// Sections
+const manageLeaves = document.getElementById("manageLeaves");
+const priseCongeSection = document.getElementById("priseCongeSection");
+
+// ==========================
+// Variables globales
+// ==========================
 let currentRefNumber = "";
 let currentYear = "";
 let currentCongeRef = "";
 
-// --- Section navigation ---
-const btnDashboard = document.getElementById("btnDashboard");
-const btnManage = document.getElementById("btnManage");
-const btnAddAgent = document.getElementById("btnAddAgent");
-
-const dashboardSection = document.getElementById("dashboardSection");
-const manageSection = document.getElementById("manageSection");
-const addAgentSection = document.getElementById("addAgentSection");
-
-const sections = [dashboardSection, manageSection, addAgentSection].filter(Boolean);
-
-function animateShow(sectionEl) {
-    if (!sectionEl) return;
-    sectionEl.classList.remove("hidden");
-    sectionEl.classList.add("opacity-0", "translate-y-2");
-    // Ensure transition classes are present
-    sectionEl.classList.add("transition-all", "duration-300");
-    requestAnimationFrame(() => {
-        sectionEl.classList.remove("opacity-0", "translate-y-2");
-        sectionEl.classList.add("opacity-100", "translate-y-0");
-    });
-}
-
-function animateHide(sectionEl, onHidden) {
-    if (!sectionEl) {
-        if (typeof onHidden === "function") onHidden();
-        return;
-    }
-    // Ensure transition classes are present
-    sectionEl.classList.add("transition-all", "duration-300");
-    sectionEl.classList.remove("opacity-100", "translate-y-0");
-    sectionEl.classList.add("opacity-0", "translate-y-2");
-
-    const handleEnd = (e) => {
-        if (e.target !== sectionEl) return; // ignore bubbled events from children
-        sectionEl.removeEventListener("transitionend", handleEnd);
-        sectionEl.classList.add("hidden");
-        if (typeof onHidden === "function") onHidden();
-    };
-    sectionEl.addEventListener("transitionend", handleEnd);
-}
-
-function getVisibleSection() {
-    return sections.find((s) => s && !s.classList.contains("hidden"));
-}
-
-function switchSection(targetSection) {
-    const currentlyVisible = getVisibleSection();
-    if (currentlyVisible === targetSection) return;
-
-    if (currentlyVisible) {
-        animateHide(currentlyVisible, () => animateShow(targetSection));
-    } else {
-        animateShow(targetSection);
-    }
-}
-
-btnDashboard?.addEventListener("click", (e) => {
-    e.preventDefault();
-    switchSection(dashboardSection);
-});
-
-btnManage?.addEventListener("click", (e) => {
-    e.preventDefault();
-    switchSection(manageSection);
-});
-
-btnAddAgent?.addEventListener("click", (e) => {
-    e.preventDefault();
-    switchSection(addAgentSection);
-});
-
-// Default: show dashboard on first load
-if (dashboardSection) {
-    // Hide all others hard to avoid flash
-    sections.forEach((s) => {
-        if (s !== dashboardSection) s.classList.add("hidden");
-        s.classList.add("opacity-100", "translate-y-0");
-    });
-    animateShow(dashboardSection);
-}
-
-// --- Popup ---
+// ==========================
+// Fonctions Popup
+// ==========================
 function showPopup() {
-    overlay.classList.remove("hidden");
-    overlay.classList.add("flex");
-    currentCongeRef = `${currentRefNumber}/DRH/${currentYear}`;
-    decisionNumberInput.value = currentCongeRef;
+  popupOverlay.classList.remove("hidden");
+  popupOverlay.classList.add("flex");
+  currentCongeRef = `${currentRefNumber}/DRH/${currentYear}`;
+  popupDecisionNumberInput.value = currentCongeRef;
 }
 
 function hidePopup() {
-    overlay.classList.add("hidden");
-    overlay.classList.remove("flex");
+  popupOverlay.classList.add("hidden");
+  popupOverlay.classList.remove("flex");
 }
 
 function clearPopupFields() {
-    matriculeInput.value = "";
-    joursCongesInput.value = "0";
-    nomInput.value = "";
-    prenomInput.value = "";
+  popupMatriculeInput.value = "";
+  popupJoursCongesInput.value = "0";
+  popupNomInput.value = "";
+  popupPrenomInput.value = "";
 }
 
-// --- Récupérer agent par matricule ---
+// ==========================
+// Navigation functions
+// ==========================
+function showManageLeaves() {
+  // Masquer toutes les sections
+  document.querySelectorAll("#dashboard, #addAgent, #priseCongeSection").forEach(sec => sec.classList.add("hidden"));
+  // Afficher la section gestion des congés
+  manageLeaves.classList.remove("hidden");
+  // Réinitialiser les champs
+  refNumberInput.value = "";
+  yearInput.value = "2024";
+  resultDiv.innerHTML = "";
+  retourBtn.classList.add("hidden");
+}
+
+function showPriseConge(congeRef) {
+  // Masquer toutes les sections
+  document.querySelectorAll("#dashboard, #manageLeaves, #addAgent").forEach(sec => sec.classList.add("hidden"));
+  // Afficher la section prise de congé
+  priseCongeSection.classList.remove("hidden");
+  // Charger les données
+  afficherInfosConge(congeRef);
+}
+
+// ==========================
+// Récupérer agent par matricule
+// ==========================
 async function fetchAgentByMatricule(matricule) {
-    if (!matricule.trim()) {
-        nomInput.value = "";
-        prenomInput.value = "";
-        return;
+  if (!matricule.trim()) {
+    popupNomInput.value = "";
+    popupPrenomInput.value = "";
+    return;
+  }
+  try {
+    const response = await fetch(`http://localhost:8080/agent/nomPrenom?matricule=${encodeURIComponent(matricule)}`);
+    if (response.ok) {
+      const agentData = await response.json();
+      popupNomInput.value = agentData.nom || "";
+      popupPrenomInput.value = agentData.prenom || "";
+    } else {
+      popupNomInput.value = "";
+      popupPrenomInput.value = "";
     }
-    try {
-        const response = await fetch(`http://localhost:8080/agent/nomPrenom?matricule=${encodeURIComponent(matricule)}`);
-        if (response.ok) {
-            const agentData = await response.json();
-            nomInput.value = agentData.nom || "";
-            prenomInput.value = agentData.prenom || "";
-        } else {
-            nomInput.value = "";
-            prenomInput.value = "";
-        }
-    } catch (error) {
-        nomInput.value = "";
-        prenomInput.value = "";
-        console.error(error);
-    }
+  } catch (error) {
+    popupNomInput.value = "";
+    popupPrenomInput.value = "";
+    console.error(error);
+  }
 }
 
-// --- Vérifier référence ---
+// ==========================
+// Injecter les infos dans priseCongeSection
+// ==========================
+async function afficherInfosConge(congeRef) {
+  try {
+    // Récupérer l'agent et les jours attribués
+    const agentResponse = await fetch(`http://localhost:8080/agent/byConge?ref=${encodeURIComponent(congeRef)}`);
+    if (!agentResponse.ok) throw new Error("Agent non trouvé");
+
+    const agentData = await agentResponse.json();
+    const agent = agentData.agent;
+    const joursAttribues = agentData.jours ?? 0;
+
+    // Récupérer les jours restants
+    const joursRestantsResponse = await fetch(`http://localhost:8080/suivi-conge/jours-restants?reference=${encodeURIComponent(congeRef)}`);
+    const joursRestantsData = await joursRestantsResponse.json();
+    const joursRestants = joursRestantsData.joursRestants ?? 0;
+
+    // Injecter les données dans le DOM
+    document.getElementById("pcRefConge").textContent = congeRef;
+    document.getElementById("pcMatricule").textContent = agent.matricule ?? "-";
+    document.getElementById("pcNom").textContent = agent.nom ?? "-";
+    document.getElementById("pcPrenom").textContent = agent.prenom ?? "-";
+    document.getElementById("pcFonction").textContent = agent.fonction ?? "-";
+    document.getElementById("pcJoursAttribues").textContent = joursAttribues;
+    document.getElementById("pcJoursRestants").textContent = joursRestants;
+
+    // Définir la référence courante pour priseconge.js
+    if (typeof setPriseCongeRef === 'function') {
+      setPriseCongeRef(congeRef);
+    }
+
+  } catch (err) {
+    console.error("Erreur récupération infos congé:", err);
+    document.getElementById("pcRefConge").textContent = congeRef;
+    document.getElementById("pcMatricule").textContent = "-";
+    document.getElementById("pcNom").textContent = "-";
+    document.getElementById("pcPrenom").textContent = "-";
+    document.getElementById("pcFonction").textContent = "-";
+    document.getElementById("pcJoursAttribues").textContent = "0";
+    document.getElementById("pcJoursRestants").textContent = "0";
+    
+    // Définir la référence même en cas d'erreur
+    if (typeof setPriseCongeRef === 'function') {
+      setPriseCongeRef(congeRef);
+    }
+  }
+}
+
+// ==========================
+// Vérifier référence et afficher infos
+// ==========================
 checkBtn.addEventListener("click", async () => {
-    const refNumber = refNumberInput.value;
-    const year = yearInput.value;
-    if (!refNumber || !year) {
-        resultDiv.innerHTML = `<span class="text-red-600">Veuillez entrer le numéro et l'année.</span>`;
-        return;
+  const refNumber = refNumberInput.value.trim();
+  const year = yearInput.value.trim();
+  
+  if (!refNumber || !year) {
+    resultDiv.innerHTML = `<span class="text-red-600">Veuillez entrer le numéro et l'année.</span>`;
+    return;
+  }
+
+  currentRefNumber = refNumber;
+  currentYear = year;
+  const congeRef = `${refNumber}/DRH/${year}`;
+
+  try {
+    const response = await fetch(`http://localhost:8080/conge/checkRef?refNumber=${refNumber}&year=${year}`);
+    const text = await response.text();
+
+    if (response.ok) {
+      resultDiv.innerHTML = `<span class="text-green-600">Référence trouvée : <b>${congeRef}</b></span>`;
+      // Redirige vers PriseConge après un délai
+      setTimeout(() => showPriseConge(congeRef), 500);
+    } else {
+      resultDiv.innerHTML = `<span class="text-red-600">${text}</span>`;
+      // Afficher le popup pour créer le congé
+      setTimeout(showPopup, 300);
     }
-    currentRefNumber = refNumber;
-    currentYear = year;
-    try {
-        const response = await fetch(`http://localhost:8080/conge/checkRef?refNumber=${refNumber}&year=${year}`);
-        const text = await response.text();
-        const congeRef = `${refNumber}/DRH/${year}`;
-        if (response.ok) {
-            resultDiv.innerHTML = `<span class="text-green-600">Référence trouvée : <b>${congeRef}</b></span>`;
-            setTimeout(() => {
-                window.location.href = `src/html/priseconge.html?congeRef=${encodeURIComponent(congeRef)}`;
-            }, 1000);
-        } else {
-            resultDiv.innerHTML = `<span class="text-red-600">${text}</span>`;
-            setTimeout(showPopup, 500);
-        }
-    } catch (error) {
-        resultDiv.innerHTML = `<span class="text-red-600">Erreur: ${error.message}</span>`;
-    }
+  } catch (error) {
+    resultDiv.innerHTML = `<span class="text-red-600">Erreur: ${error.message}</span>`;
+  }
 });
 
-// --- Fermeture popup ---
-closePopupBtn.addEventListener("click", hidePopup);
-overlay.addEventListener("click", (e) => { if (e.target === overlay) hidePopup(); });
-annulerBtn.addEventListener("click", () => { clearPopupFields(); hidePopup(); });
+// ==========================
+// Gestion du bouton retour
+// ==========================
+retourBtn.addEventListener("click", showManageLeaves);
 
-// --- Confirmer création de congé ---
-confirmerBtn.addEventListener("click", async () => {
-    const matricule = matriculeInput.value.trim();
-    const jours = parseInt(joursCongesInput.value) || 0;
+// Bouton retour dans priseCongeSection
+document.getElementById("retourPriseCongeBtn").addEventListener("click", showManageLeaves);
 
-    if (!matricule) return alert("Veuillez saisir un matricule.");
-    if (jours <= 0) return alert("Nombre de jours invalide.");
+// ==========================
+// Gestion de la popup
+// ==========================
+popupCloseBtn.addEventListener("click", hidePopup);
+popupOverlay.addEventListener("click", (e) => {
+  if (e.target === popupOverlay) hidePopup();
+});
 
-    const congeData = {
-        reference: currentCongeRef,
-        matriculeAgent: matricule,
-        jours: jours
-    };
+popupAnnulerBtn.addEventListener("click", () => {
+  clearPopupFields();
+  hidePopup();
+});
 
-    try {
-        const response = await fetch("http://localhost:8080/conge", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(congeData)
-        });
+// ==========================
+// Confirmer création de congé
+// ==========================
+popupConfirmerBtn.addEventListener("click", async () => {
+  const matricule = popupMatriculeInput.value.trim();
+  const jours = parseInt(popupJoursCongesInput.value) || 0;
 
-        const data = await response.json();
+  if (!matricule) return alert("Veuillez saisir un matricule.");
+  if (jours <= 0) return alert("Nombre de jours invalide.");
 
-        if (response.ok) {
-            hidePopup();
-            resultDiv.innerHTML = `<span class="text-green-600">Congé créé avec succès ! Redirection...</span>`;
-            setTimeout(() => {
-                window.location.href = `src/html/priseconge.html?congeRef=${encodeURIComponent(currentCongeRef)}`;
-            }, 2000);
-        } else {
-            const message = data.message || "Erreur lors de la création du congé";
-            alert(`❌ ${message}`);
-        }
-    } catch (error) {
-        alert(`Erreur de connexion : ${error.message}`);
+  const congeData = {
+    reference: currentCongeRef,
+    matriculeAgent: matricule,
+    jours: jours,
+  };
+
+  try {
+    const response = await fetch("http://localhost:8080/conge", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(congeData),
+    });
+
+    const data = await response.json();
+    
+    if (response.ok) {
+      hidePopup();
+      clearPopupFields();
+      resultDiv.innerHTML = `<span class="text-green-600">Congé créé avec succès !</span>`;
+      // Redirection automatique vers prise de congé
+      setTimeout(() => showPriseConge(currentCongeRef), 500);
+    } else {
+      const message = data.message || "Erreur lors de la création du congé";
+      alert(`❌ ${message}`);
     }
+  } catch (error) {
+    alert(`Erreur de connexion : ${error.message}`);
+  }
 });
 
-// --- Debouncing pour matricule ---
-matriculeInput.addEventListener("input", (e) => {
-    clearTimeout(matriculeInput.searchTimeout);
-    matriculeInput.searchTimeout = setTimeout(() => {
-        fetchAgentByMatricule(e.target.value.trim());
-    }, 500);
+// ==========================
+// Debouncing pour matricule dans popup
+// ==========================
+popupMatriculeInput.addEventListener("input", (e) => {
+  clearTimeout(popupMatriculeInput.searchTimeout);
+  popupMatriculeInput.searchTimeout = setTimeout(() => {
+    fetchAgentByMatricule(e.target.value.trim());
+  }, 500);
 });
-matriculeInput.addEventListener("blur", () => fetchAgentByMatricule(matriculeInput.value.trim()));
+
+popupMatriculeInput.addEventListener("blur", () =>
+  fetchAgentByMatricule(popupMatriculeInput.value.trim())
+);
