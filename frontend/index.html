@@ -1,141 +1,295 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vérification de Référence Congé</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Suivi de congés</title>
     <link rel="icon" type="image/png" href="/favicoConge.png">
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-300 min-h-screen">
-    <div class="flex items-center justify-center min-h-screen px-4 py-6">
-        <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl w-full max-w-md mx-auto">
-            <h1 class="text-lg sm:text-xl font-bold mb-6 text-center text-gray-800 leading-tight">
-                Vérifier une Référence Congé
-            </h1>
-            
-            <!-- Reference Number Input -->
-            <div class="mb-4">
-                <label for="refNumber" class="block text-sm font-medium text-gray-700 mb-2">
-                    Numéro de référence
-                </label>
-                <input id="refNumber"
-                       type="number"
-                       placeholder="Ex: 1906"
-                       class="w-full border border-gray-300 p-3 sm:p-2 rounded-lg text-base sm:text-sm focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none transition-colors duration-200">
-            </div>
-            
-            <!-- Year Input -->
-            <div class="mb-6">
-                <label for="year" class="block text-sm font-medium text-gray-700 mb-2">
-                    Année
-                </label>
-                <input id="year"
-                       type="number"
-                       placeholder="Année (Ex: 2024)"
-                       value="2024"
-                       class="w-full border border-gray-300 p-3 sm:p-2 rounded-lg text-base sm:text-sm focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none transition-colors duration-200">
-            </div>
-            
-            <!-- Verify Button -->
-            <button id="checkBtn"
-                    class="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white py-3 sm:py-2 px-4 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-base sm:text-sm">
-                Vérifier
-            </button>
-            
-            <!-- Result Display -->
-            <div id="result" class="mt-6 text-center font-medium text-sm sm:text-base"></div>
-        </div>
-    </div>
 
-    <!-- Responsive Modal Overlay -->
-    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
-        <!-- Modal Container -->
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg mx-auto max-h-[90vh] overflow-y-auto">
-            <!-- Modal Header -->
-            <div class="sticky top-0 bg-white border-b border-gray-200 px-4 sm:px-6 py-4 rounded-t-xl">
-                <div class="flex justify-between items-start gap-4">
-                    <div class="flex-1 min-w-0">
-                        <h2 class="text-base sm:text-lg font-bold text-gray-800 leading-tight">
-                            Numéro de décision de congé introuvable
-                        </h2>
-                        <h3 class="text-sm sm:text-md font-semibold text-gray-600 mt-2">
-                            Enregistrer une nouvelle prise de décision
-                        </h3>
+<body>
+    <div class="flex h-screen bg-gray-100">
+        <!-- sidebar -->
+        <div class="hidden md:flex flex-col w-64 bg-gray-800">
+            <div class="flex items-center justify-center h-16 bg-[#0423D0]">
+                <span class="text-white font-bold uppercase">Suivi De Conges</span>
+            </div>
+            <div class="flex flex-col flex-1 overflow-y-auto">
+                <nav class="flex-1 px-2 py-4 bg-[#2563eb]">
+                    <a href="#" class="flex items-center px-4 py-2 text-gray-100 hover:bg-[#0d1f7e]">
+                        <i class="fa-solid fa-gauge mr-2" style="color: #ffffff;"></i>
+                        Tableau de bord
+                    </a>
+                    <a href="#" class="flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-[#0d1f7e]">
+                        <i class="fa-solid fa-plus mr-2" style="color: #ffffff;"></i>
+                        Ajouter un agent
+                    </a>
+                    <a href="#" class="flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-[#0d1f7e]">
+                        <i class="fa-solid fa-people-roof mr-2" style="color: #ffffff;"></i>
+                        Gérer les congés
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+        <!-- ====================================== TABLEAU DE BORD ====================================== -->
+        <!-- ********* Main content Dashboard ********* -->
+        <div class="hidden flex flex-col flex-1 overflow-y-auto">
+            <div class="flex items-center justify-between h-16 bg-white border-b border-gray-200">
+                <h1 class="text-2xl font-bold w-[45%] pl-[1vw]">Tableau de bord</h1>
+                <div class="flex items-center w-[55%] ">
+                    <input class="mx-4 w-full border rounded-full px-4 py-2" type="text"
+                        placeholder="Rechercher un agent..." />
+                </div>
+            </div>
+            <div class="p-4">
+                <h1>Main content</h1>
+
+            </div>
+        </div>
+
+        <!-- ====================================== GERER LES CONGES ====================================== -->
+        <!-- ********* INDEX: Main content Manage Leaves [index.js]  *********-->
+        <div class="hidden bg-[#e1e1e1] flex flex-col flex-1 overflow-y-auto">
+            <div class="p-4 ">
+                <h1 class="text-2xl font-bold w-[45%] pl-[1vw]">Gestion de congés</h1>
+                <div class="flex items-center justify-center min-h-screen px-4 py-6">
+                    <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl w-full max-w-md mx-auto">
+                        <h1 class="text-lg sm:text-xl font-bold mb-6 text-center text-gray-800 leading-tight">
+                            Vérifier une Référence Congé
+                        </h1>
+
+                        <!-- Reference Number Input -->
+                        <div class="mb-4">
+                            <label for="refNumber" class="block text-sm font-medium text-gray-700 mb-2">
+                                Numéro de référence
+                            </label>
+                            <input id="refNumber" type="number" placeholder="Ex: 1906"
+                                class="w-full border border-gray-300 p-3 sm:p-2 rounded-lg text-base sm:text-sm focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none transition-colors duration-200">
+                        </div>
+
+                        <!-- Year Input -->
+                        <div class="mb-6">
+                            <label for="year" class="block text-sm font-medium text-gray-700 mb-2">
+                                Année
+                            </label>
+                            <input id="year" type="number" placeholder="Année (Ex: 2024)" value="2024"
+                                class="w-full border border-gray-300 p-3 sm:p-2 rounded-lg text-base sm:text-sm focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none transition-colors duration-200">
+                        </div>
+
+                        <!-- Verify Button -->
+                        <button id="checkBtn"
+                            class="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white py-3 sm:py-2 px-4 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-base sm:text-sm">
+                            Vérifier
+                        </button>
+
+                        <!-- Result Display -->
+                        <div id="result" class="mt-6 text-center font-medium text-sm sm:text-base"></div>
                     </div>
-                    <button id="closePopup" 
-                            class="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors duration-200 p-1 -mt-1">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                        </svg>
-                    </button>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ********* PRISECONGE: Main content Manage Leaves [PriseConge.js] ********* -->
+        <div class="hidden flex flex-col flex-1 overflow-y-auto bg-[#e1e1e1]">
+            <h1 class="text-2xl font-bold w-[45%] pl-[1vw]">Gestion de congés</h1>
+            <div class="container mx-auto px-4 sm:px-6 py-4 sm:py-6 max-w-4xl">
+                <div class="bg-white rounded-xl shadow-xl overflow-hidden">
+                    <!-- Header -->
+                    <div class="bg-white border-b border-gray-200 p-4 sm:p-6">
+                        <button onclick="window.location.href='../../index.html'"
+                            class="mb-4 text-blue-500 hover:text-blue-700 flex items-center transition-colors duration-200 text-sm sm:text-base">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 19l-7-7 7-7" />
+                            </svg>
+                            Retour
+                        </button>
+                        <h1 class="text-xl sm:text-2xl font-bold text-gray-800">Informations de l'Agent</h1>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="p-4 sm:p-6">
+                        <!-- Reference Section -->
+                        <div class="mb-6">
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                                <strong
+                                    class="text-gray-700 text-sm sm:text-base font-medium min-w-0 sm:min-w-[120px]">Réf.
+                                    congé:</strong>
+                                <span id="refConge" class="text-gray-900 font-medium text-base sm:text-lg">--</span>
+                            </div>
+                        </div>
+
+                        <!-- Agent Information -->
+                        <div id="agent-info" class="mb-8">
+                            <div class="space-y-3">
+                                <div
+                                    class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 py-2 border-b border-gray-100">
+                                    <strong
+                                        class="text-gray-700 text-sm sm:text-base font-medium min-w-0 sm:min-w-[120px]">Matricule:</strong>
+                                    <span id="matricule"
+                                        class="text-gray-900 font-medium text-base sm:text-lg">--</span>
+                                </div>
+
+                                <div
+                                    class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 py-2 border-b border-gray-100">
+                                    <strong
+                                        class="text-gray-700 text-sm sm:text-base font-medium min-w-0 sm:min-w-[120px]">Nom:</strong>
+                                    <span id="nom" class="text-gray-900 font-medium text-base sm:text-lg">--</span>
+                                </div>
+
+                                <div
+                                    class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 py-2 border-b border-gray-100">
+                                    <strong
+                                        class="text-gray-700 text-sm sm:text-base font-medium min-w-0 sm:min-w-[120px]">Prénom:</strong>
+                                    <span id="prenom" class="text-gray-900 font-medium text-base sm:text-lg">--</span>
+                                </div>
+
+                                <div
+                                    class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 py-2 border-b border-gray-100">
+                                    <strong
+                                        class="text-gray-700 text-sm sm:text-base font-medium min-w-0 sm:min-w-[120px]">Fonction:</strong>
+                                    <span id="fonction" class="text-gray-900 font-medium text-base sm:text-lg">--</span>
+                                </div>
+
+                                <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 py-2">
+                                    <strong
+                                        class="text-gray-700 text-sm sm:text-base font-medium min-w-0 sm:min-w-[120px]">Jours
+                                        attribués:</strong>
+                                    <span id="jours" class="text-gray-900 font-bold text-lg sm:text-xl">--</span>
+                                </div>
+
+                                <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 py-2">
+                                    <strong
+                                        class="text-gray-700 text-sm sm:text-base font-medium min-w-0 sm:min-w-[120px]">Reste
+                                        à valoir:</strong>
+                                    <span id="joursRestants"
+                                        class="text-gray-900 font-bold text-lg sm:text-xl">--</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Add Leave Section -->
+                        <div class="border-t border-gray-200 pt-6">
+                            <h2 class="text-lg sm:text-xl font-semibold text-gray-800 mb-4">Ajouter un congé</h2>
+
+                            <!-- Date Inputs -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-medium text-gray-700">Date de début</label>
+                                    <input type="date" id="startDate"
+                                        class="w-full border border-gray-300 rounded-lg p-2 sm:p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-sm sm:text-base" />
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-medium text-gray-700">Date de fin</label>
+                                    <input type="date" id="endDate"
+                                        class="w-full border border-gray-300 rounded-lg p-2 sm:p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-sm sm:text-base" />
+                                </div>
+                            </div>
+
+                            <!-- Days Counter -->
+                            <div class="mb-4 sm:mb-6">
+                                <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                                    <strong class="text-gray-700 text-sm sm:text-base font-medium">Nombre de jours
+                                        :</strong>
+                                    <span id="numDays" class="text-xl sm:text-2xl font-bold text-blue-600">0</span>
+                                </div>
+                            </div>
+
+                            <!-- Add Button -->
+                            <button id="addCongeBtn"
+                                class="w-full sm:w-auto bg-blue-500 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-medium transition-colors duration-200 text-sm sm:text-base">
+                                Ajouter un congé
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
-            
-            <!-- Modal Body -->
-            <div class="px-4 sm:px-6 py-4 space-y-4">
-                <!-- Decision Number (readonly) -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Décision de congé No:
-                    </label>
-                    <input id="decisionNumber" type="text" readonly 
-                           class="w-full border border-gray-300 p-3 sm:p-2 rounded-lg bg-gray-50 text-gray-600 text-base sm:text-sm">
-                </div>
 
-                <!-- Name (readonly) -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Nom:
-                    </label>
-                    <input id="nom" type="text" readonly
-                           class="w-full border border-gray-300 p-3 sm:p-2 rounded-lg bg-gray-50 text-gray-600 text-base sm:text-sm">
-                </div>
+        </div>
 
-                <!-- First Name (readonly) -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Prénom:
-                    </label>
-                    <input id="prenom" type="text" readonly
-                           class="w-full border border-gray-300 p-3 sm:p-2 rounded-lg bg-gray-50 text-gray-600 text-base sm:text-sm">
-                </div>
+        <!-- ====================================== AJOUTER AGENT ====================================== -->
+        <div class="hidden flex flex-col flex-1 overflow-y-auto bg-[#e1e1e1]">
+            <div class="p-4">
+                <h1 class="text-2xl font-bold w-[45%] pl-[1vw]">Ajouter un Agent</h1>
+                <div class="flex items-center justify-center min-h-screen px-4 py-6">
+                    <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl w-full max-w-md mx-auto">
+                        <h1 class="text-lg sm:text-xl font-bold mb-6 text-center text-gray-800 leading-tight">
+                            Formulaire d'ajout d'agent
+                        </h1>
 
-                <!-- Employee ID -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Matricule de l'agent<span class="text-red-500 ml-1">*</span>
-                    </label>
-                    <input id="matricule" type="text" placeholder="Saisir le matricule"
-                           class="w-full border border-gray-300 p-3 sm:p-2 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none transition-colors duration-200 text-base sm:text-sm">
-                </div>
+                        <!-- Nom -->
+                        <div class="mb-4">
+                            <label for="nom" class="block text-sm font-medium text-gray-700 mb-2">
+                                Nom
+                            </label>
+                            <input id="nom" type="text" placeholder="Ex: Ouédraogo"
+                                class="w-full border border-gray-300 p-3 sm:p-2 rounded-lg text-base sm:text-sm 
+                                       focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none transition-colors duration-200">
+                        </div>
 
-                <!-- Number of Days -->
-                <div class="pb-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Nombre de jours de congés attribués<span class="text-red-500 ml-1">*</span>
-                    </label>
-                    <input id="joursConges" type="number" value="0" min="0"
-                           class="w-full border border-gray-300 p-3 sm:p-2 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none transition-colors duration-200 text-base sm:text-sm">
-                </div>
-            </div>
+                        <!-- Prénom -->
+                        <div class="mb-4">
+                            <label for="prenom" class="block text-sm font-medium text-gray-700 mb-2">
+                                Prénom
+                            </label>
+                            <input id="prenom" type="text" placeholder="Ex: Salif"
+                                class="w-full border border-gray-300 p-3 sm:p-2 rounded-lg text-base sm:text-sm 
+                                       focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none transition-colors duration-200">
+                        </div>
 
-            <!-- Modal Footer -->
-            <div class="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-4 sm:px-6 py-4 rounded-b-xl">
-                <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                    <button id="confirmerBtn" 
-                            class="order-2 sm:order-1 flex-1 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white py-3 sm:py-2 px-4 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-base sm:text-sm">
-                        Confirmer
-                    </button>
-                    <button id="annulerBtn" 
-                            class="order-1 sm:order-2 flex-1 bg-gray-300 hover:bg-gray-400 active:bg-gray-500 text-gray-700 py-3 sm:py-2 px-4 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 text-base sm:text-sm">
-                        Annuler
-                    </button>
+                        <!-- Fonction -->
+                        <div class="mb-6">
+                            <label for="fonction" class="block text-sm font-medium text-gray-700 mb-2">
+                                Fonction
+                            </label>
+                            <input id="fonction" type="text" placeholder="Ex: Enseignant"
+                                class="w-full border border-gray-300 p-3 sm:p-2 rounded-lg text-base sm:text-sm 
+                                       focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none transition-colors duration-200">
+                        </div>
+
+                        <!-- Boutons -->
+                        <div class="flex justify-between space-x-4">
+                            <button id="addAgentBtn"
+                                class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium 
+                                       transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                Ajouter
+                            </button>
+                            <button id="cancelBtn"
+                                class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 rounded-lg font-medium 
+                                       transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400">
+                                Annuler
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+
+
+
+
+
     </div>
 
-    <script type="module" src="src/js/index.js"></script>
+    <script src="/src/js/index.js"></script>
+    <script src="/src/js/priseconge.js"></script>
 </body>
+
 </html>
