@@ -37,4 +37,19 @@ public class AgentService {
         return agentRepository.obtenirNomEtPrenomAgentViaMatricule(matricule);
     }
 
+    public boolean checkerSiMatriculeExiste(String matricule) {
+        return agentRepository.findByMatriculeTrimmed(matricule).isPresent();
+    }
+
+    // ===== Nouveau : Ajouter un agent =====
+    public Agent addAgent(Agent agent) throws Exception {
+        // Vérifier si le matricule existe déjà
+        if (checkerSiMatriculeExiste(agent.getMatricule())) {
+            throw new Exception("Le matricule " + agent.getMatricule() + " appartient déjà à un agent");
+        }
+        return agentRepository.save(agent);
+    }
+
+
+
 }

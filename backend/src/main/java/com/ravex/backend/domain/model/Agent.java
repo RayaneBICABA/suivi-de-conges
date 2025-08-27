@@ -1,6 +1,6 @@
 package com.ravex.backend.domain.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,8 +25,10 @@ public class Agent {
     @Column(name = "A_FONCTION", length = 50)
     private String fonction;
 
+    // SOLUTION : Ignorer complètement la sérialisation des congés
+    // pour éviter les références circulaires
     @OneToMany(mappedBy = "agent", fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @JsonIgnore  // <-- Remplace @JsonManagedReference
     private List<Conge> conges;  // Un agent peut avoir plusieurs congés
 
     // ============ Methode Utilitaire ============
