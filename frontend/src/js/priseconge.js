@@ -47,7 +47,7 @@ if (pcStartDateEl && pcEndDateEl) {
 // ==========================
 async function fetchJoursRestants(congeRef) {
   try {
-    const url = `http://localhost:8080/suivi-conge/jours-restants?reference=${encodeURIComponent(congeRef)}`;
+    const url = `http://192.168.40.64:8080/suivi-conge/jours-restants?reference=${encodeURIComponent(congeRef)}`;
     const response = await fetch(url);
     const data = await response.json();
     
@@ -120,7 +120,7 @@ if (pcAddCongeBtn) {
     };
 
     try {
-      const response = await fetch(`http://localhost:8080/suivi-conge`, {
+      const response = await fetch(`http://192.168.40.64:8080/suivi-conge`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)

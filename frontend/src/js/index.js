@@ -86,7 +86,7 @@ async function fetchAgentByMatricule(matricule) {
     return;
   }
   try {
-    const response = await fetch(`http://localhost:8080/agent/nomPrenom?matricule=${encodeURIComponent(matricule)}`);
+    const response = await fetch(`http://192.168.40.64:8080/agent/nomPrenom?matricule=${encodeURIComponent(matricule)}`);
     if (response.ok) {
       const agentData = await response.json();
       popupNomInput.value = agentData.nom || "";
@@ -108,7 +108,7 @@ async function fetchAgentByMatricule(matricule) {
 async function afficherInfosConge(congeRef) {
   try {
     // Récupérer l'agent et les jours attribués
-    const agentResponse = await fetch(`http://localhost:8080/agent/byConge?ref=${encodeURIComponent(congeRef)}`);
+    const agentResponse = await fetch(`http://192.168.40.64:8080/agent/byConge?ref=${encodeURIComponent(congeRef)}`);
     if (!agentResponse.ok) throw new Error("Agent non trouvé");
 
     const agentData = await agentResponse.json();
@@ -116,7 +116,7 @@ async function afficherInfosConge(congeRef) {
     const joursAttribues = agentData.jours ?? 0;
 
     // Récupérer les jours restants
-    const joursRestantsResponse = await fetch(`http://localhost:8080/suivi-conge/jours-restants?reference=${encodeURIComponent(congeRef)}`);
+    const joursRestantsResponse = await fetch(`http://192.168.40.64:8080/suivi-conge/jours-restants?reference=${encodeURIComponent(congeRef)}`);
     const joursRestantsData = await joursRestantsResponse.json();
     const joursRestants = joursRestantsData.joursRestants ?? 0;
 
@@ -168,7 +168,7 @@ checkBtn.addEventListener("click", async () => {
   const congeRef = `${refNumber}/DRH/${year}`;
 
   try {
-    const response = await fetch(`http://localhost:8080/conge/checkRef?refNumber=${refNumber}&year=${year}`);
+    const response = await fetch(`http://192.168.40.64:8080/conge/checkRef?refNumber=${refNumber}&year=${year}`);
     const text = await response.text();
 
     if (response.ok) {
@@ -223,7 +223,7 @@ popupConfirmerBtn.addEventListener("click", async () => {
   };
 
   try {
-    const response = await fetch("http://localhost:8080/conge", {
+    const response = await fetch("http://192.168.40.64:8080/conge", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(congeData),
