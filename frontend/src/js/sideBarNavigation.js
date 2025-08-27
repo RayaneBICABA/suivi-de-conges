@@ -1,58 +1,76 @@
 document.addEventListener("DOMContentLoaded", () => {
   const links = document.querySelectorAll(".menu-link");
-  const sections = document.querySelectorAll("#dashboard, #manageLeaves, #addAgent, #priseCongeSection");
+  const sections = document.querySelectorAll(
+    "#dashboard, #manageLeaves, #addAgent, #priseCongeSection"
+  );
 
-  links.forEach(link => {
-    link.addEventListener("click", e => {
+  // Fonction pour réinitialiser une section
+  function resetSection(section) {
+    // Réinitialiser les inputs
+    const inputs = section.querySelectorAll("input");
+    inputs.forEach(input => {
+      if (input.type === "checkbox" || input.type === "radio") {
+        input.checked = false;
+      } else if (input.type === "number") {
+        input.value = "";
+      } else {
+        input.value = "";
+      }
+    });
+
+    // Réinitialiser les textarea
+    const textareas = section.querySelectorAll("textarea");
+    textareas.forEach(area => area.value = "");
+
+    // Réinitialiser les select
+    const selects = section.querySelectorAll("select");
+    selects.forEach(select => select.selectedIndex = 0);
+
+    // Réinitialiser les spans ou divs qui affichent des valeurs
+    const dynamicValues = section.querySelectorAll("span, div");
+    dynamicValues.forEach(el => {
+      // Certains éléments ont des IDs spécifiques pour compteurs
+      if (
+        el.id === "pcNumDays" ||
+        el.id === "pcJoursRestants" ||
+        el.id === "pcJoursAttribues"
+      ) {
+        el.textContent = "";
+      } else if (el.classList.contains("resetable")) {
+        el.textContent = "--";
+      }
+    });
+  }
+
+  links.forEach((link) => {
+    link.addEventListener("click", (e) => {
       e.preventDefault();
 
-      // Récupérer la cible
-      const targetId = link.getAttribute("data-target");
-
       // Masquer toutes les sections
-      sections.forEach(sec => sec.classList.add("hidden"));
+      sections.forEach((sec) => sec.classList.add("hidden"));
 
       // Afficher la section choisie
+      const targetId = link.getAttribute("data-target");
       const targetSection = document.getElementById(targetId);
       if (targetSection) {
         targetSection.classList.remove("hidden");
-        
-        // Si on navigue vers "manageLeaves", réinitialiser l'état
-        if (targetId === "manageLeaves") {
-          // Réinitialiser les champs de vérification
-          const refNumberInput = document.getElementById("refNumber");
-          const yearInput = document.getElementById("year");
-          const resultDiv = document.getElementById("result");
-          const retourBtn = document.getElementById("retourBtn");
-          
-          if (refNumberInput) refNumberInput.value = "";
-          if (yearInput) yearInput.value = "2024";
-          if (resultDiv) resultDiv.innerHTML = "";
-          if (retourBtn) retourBtn.classList.add("hidden");
-        }
-        
-        // Si on navigue vers "addAgent", réinitialiser le formulaire
-        if (targetId === "addAgent") {
-          const agentNomInput = document.getElementById("agentNom");
-          const agentPrenomInput = document.getElementById("agentPrenom");
-          const agentMatriculeInput = document.getElementById("agentMatricule");
-          const agentFonctionInput = document.getElementById("agentFonction");
-          
-          if (agentNomInput) agentNomInput.value = "";
-          if (agentPrenomInput) agentPrenomInput.value = "";
-          if (agentMatriculeInput) agentMatriculeInput.value = "";
-          if (agentFonctionInput) agentFonctionInput.value = "";
-        }
+        resetSection(targetSection); // Réinitialiser la section affichée
       }
+
+      // Supprimer l'état actif de tous les liens
+      links.forEach((l) => l.classList.remove("bg-[#0423d0]", "rounded-2xl"));
+
+      // Ajouter l'état actif au lien cliqué
+      link.classList.add("bg-[#0423d0]", "rounded-2xl");
     });
   });
 
-  // Afficher par défaut "Tableau de bord"
+  // Afficher par défaut "Tableau de bord" et bouton actif
   const dashboard = document.getElementById("dashboard");
-  if (dashboard) {
-    dashboard.classList.remove("hidden");
-  }
+  if (dashboard) dashboard.classList.remove("hidden");
 
-  // SUPPRIMÉ : Toute la logique d'ajout d'agent a été retirée
-  // Elle est maintenant gérée uniquement par ajouterAgent.js
+  const dashboardLink = document.querySelector(
+    '.menu-link[data-target="dashboard"]'
+  );
+  if (dashboardLink) dashboardLink.classList.add("bg-[#0423d0]", "rounded-2xl");
 });

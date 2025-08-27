@@ -1,3 +1,4 @@
+
 // ==========================
 // Éléments du DOM
 // ==========================
@@ -61,7 +62,7 @@ function showManageLeaves() {
   manageLeaves.classList.remove("hidden");
   // Réinitialiser les champs
   refNumberInput.value = "";
-  yearInput.value = "2024";
+  yearInput.value = "2025";
   resultDiv.innerHTML = "";
   retourBtn.classList.add("hidden");
 }
