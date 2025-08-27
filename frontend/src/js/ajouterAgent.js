@@ -108,7 +108,7 @@ async function ajouterAgent() {
     addAgentBtn.disabled = true;
     addAgentBtn.textContent = "Ajout en cours...";
 
-    const response = await fetch("http://192.168.40.64:8080/agent", {
+    const response = await fetch(`${apiUrl}/agent`, {
       method: "POST",
       headers: {
         "Accept": "application/json",
