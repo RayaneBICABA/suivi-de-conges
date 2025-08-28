@@ -1,4 +1,27 @@
-const apiUrl = "http://192.168.40.64:8080";
+import {apiUrl} from "./config.js";
+import { setPriseCongeRef } from "./priseconge.js";
+
+
+// Gestion des messages d'erreur et de success et infos
+function showMessage(message, type = "info") {
+  const colors = {
+    success: "bg-green-500",
+    error: "bg-red-500",
+    info: "bg-blue-500",
+  };
+
+  const container = document.createElement("div");
+  container.className = `${colors[type]} text-white px-4 py-2 rounded-lg shadow-lg fixed top-4 right-4 z-50 animate-bounce`;
+  container.textContent = message;
+
+  document.body.appendChild(container);
+
+  // Disparaît après 4s
+  setTimeout(() => {
+    container.remove();
+  }, 4000);
+}
+
 
 
 // ==========================
@@ -215,8 +238,8 @@ popupConfirmerBtn.addEventListener("click", async () => {
   const matricule = popupMatriculeInput.value.trim();
   const jours = parseInt(popupJoursCongesInput.value) || 0;
 
-  if (!matricule) return alert("Veuillez saisir un matricule.");
-  if (jours <= 0) return alert("Nombre de jours invalide.");
+  if (!matricule) return showMessage("Veuillez saisir un matricule.","info");
+  if (jours <= 0) return showMessage("Nombre de jours invalide.","info");
 
   const congeData = {
     reference: currentCongeRef,
@@ -225,7 +248,7 @@ popupConfirmerBtn.addEventListener("click", async () => {
   };
 
   try {
-    const response = await fetch("${apiUrl}/conge", {
+    const response = await fetch(`${apiUrl}/conge`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(congeData),
@@ -241,10 +264,10 @@ popupConfirmerBtn.addEventListener("click", async () => {
       setTimeout(() => showPriseConge(currentCongeRef), 500);
     } else {
       const message = data.message || "Erreur lors de la création du congé";
-      alert(`❌ ${message}`);
+      showMessage("❌ ${message}","error");
     }
   } catch (error) {
-    alert(`Erreur de connexion : ${error.message}`);
+     showMessage(`Erreur de connexion : ${error.message}`,"error");
   }
 });
 

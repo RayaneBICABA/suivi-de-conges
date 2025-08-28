@@ -12,7 +12,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/suivi-conge")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "*")
 public class SuiviCongeController {
     private final SuiviCongeService suiviCongeService;
 

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Créer un compte</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/favicoConge.png" />
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <!-- Registration Card -->
+    <div
+        class="bg-[#ffffff] p-8 md:p-10 rounded-xl shadow-2xl w-full max-w-lg transform transition-transform duration-300 hover:scale-105">
+        <h1 class="text-3xl md:text-4xl font-bold text-center text-[black] mb-6">Créer un compte</h1>
+        <p class="text-center text-[black] mb-8">Veuillez remplir les informations ci-dessous.</p>
+
+        <form>
+            <!-- Nom et Prénom -->
+            <div class="flex flex-col md:flex-row gap-4 mb-4">
+                <div class="w-full">
+                    <label for="nom" class="block text-gray-600 txt-sm font-medium mb-1">Nom</label>
+                    <input type="text" id="nom" name="nom" placeholder="Votre nom de famille"
+                        class="w-full px-4 py-2 bg-white  text-black rounded-md border border-slate-600 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all duration-200"
+                        required>
+                </div>
+                <div class="w-full">
+                    <label for="prenom" class="block text-gray-600 text-sm font-medium mb-1">Prénom</label>
+                    <input type="text" id="prenom" name="prenom" placeholder="Votre prénom"
+                        class="w-full px-4 py-2 bg-white  text-black rounded-md border border-slate-600 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all duration-200"
+                        required>
+                </div>
+            </div>
+
+            <!-- Nom d'utilisateur -->
+            <div class="mb-4">
+                <label for="username" class="block text-gray-600 text-sm font-medium mb-1">Nom d'utilisateur</label>
+                <input type="text" id="username" name="username" placeholder="Choisissez un nom d'utilisateur"
+                    class="w-full px-4 py-2 bg-white  text-black rounded-md border border-slate-600 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all duration-200"
+                    required>
+            </div>
+
+            <!-- Mot de passe -->
+            <div class="mb-4">
+                <label for="password" class="block text-gray-600 text-sm font-medium mb-1"> Mot de passe</label>
+                <div class="relative">
+                    <input type="password" id="password" name="password" placeholder="Entrez votre mot de passe"
+                        class="w-full px-4 py-2 bg-white  text-black rounded-md border border-slate-600 pr-10 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all duration-200"
+                        required>
+                    <button type="button" onclick="togglePasswordVisibility('password')"
+                        class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-black transition-colors duration-200">
+                        <!-- Eye icon (SVG) -->
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Confirmer le mot de passe -->
+            <div class="mb-6">
+                <label for="confirm-password" class="block text-gray-600 text-sm font-medium mb-1">Confirmer le mot de
+                    passe</label>
+                <div class="relative">
+                    <input type="password" id="confirm-password" name="confirm-password"
+                        placeholder="Confirmez votre mot de passe"
+                        class="w-full px-4 py-2 bg-white  text-black rounded-md border border-slate-600 pr-10 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all duration-200"
+                        required>
+                    <button type="button" onclick="togglePasswordVisibility('confirm-password')"
+                        class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-black transition-colors duration-200">
+
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bouton -->
+            <button type="submit"
+                class="w-full bg-indigo-600 text-white font-semibold py-3 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 transform hover:scale-105">
+                Créer un compte
+            </button>
+            <h2 class="text-center mt-8 text-blue-700">
+                Vous disposez déjà d'un compte ?
+                <a href="./login.html" class="font-bold cursor-pointer">Se connecter</a>
+            </h2>
+
+        </form>
+    </div>
+
+    <script>
+        /**
+         * Toggles the visibility of a password input field.
+         * @param {string} inputId The ID of the password input element.
+         */
+        function togglePasswordVisibility(inputId) {
+            const passwordInput = document.getElementById(inputId);
+            const toggleButton = passwordInput.nextElementSibling;
+
+            // Toggle the type attribute
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+
+            // Toggle the eye icon to represent visibility state
+            const iconSvg = toggleButton.querySelector('svg');
+            if (type === 'text') {
+                // Change icon to 'eye-slash' or a similar closed eye icon
+                iconSvg.innerHTML = `
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.25a10.05 10.05 0 01-3.613-1.677 10.05 10.05 0 01-3.613-1.677M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                `;
+            } else {
+                // Change icon back to 'eye' or open eye icon
+                iconSvg.innerHTML = `
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                `;
+            }
+        }
+    </script>
+</body>
+
+</html>

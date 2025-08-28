@@ -1,3 +1,25 @@
+import {apiUrl} from "./config.js";
+
+function showMessage(message, type = "info") {
+  const colors = {
+    success: "bg-green-500",
+    error: "bg-red-500",
+    info: "bg-blue-500",
+  };
+
+  const container = document.createElement("div");
+  container.className = `${colors[type]} text-white px-4 py-2 rounded-lg shadow-lg fixed top-4 right-4 z-50 animate-bounce`;
+  container.textContent = message;
+
+  document.body.appendChild(container);
+
+  // Disparaît après 4s
+  setTimeout(() => {
+    container.remove();
+  }, 4000);
+}
+
+
 // ==========================
 // Variables DOM pour ajout d'agent
 // ==========================
@@ -24,11 +46,11 @@ function clearAgentForm() {
 }
 
 function showError(message) {
-  alert(`⌫ ${message}`);
+  showMessage(`⌫ ${message}`,"error");
 }
 
 function showSuccess(message) {
-  alert(`✅ ${message}`);
+  showMessage(`✅ ${message}`,"error");
 }
 
 // ==========================
@@ -41,37 +63,15 @@ function validateForm() {
   const fonction = agentFonctionInput?.value.trim();
 
   if (!nom || !prenom || !matricule || !fonction) {
-    showError("Veuillez remplir tous les champs");
+    showMessage("Veuillez remplir tous les champs","info");
     return false;
   }
 
-  if (!nom) {
-    showError("Le nom est obligatoire");
-    agentNomInput?.focus();
-    return false;
-  }
-
-  if (!prenom) {
-    showError("Le prénom est obligatoire");
-    agentPrenomInput?.focus();
-    return false;
-  }
-
-  if (!matricule) {
-    showError("Le matricule est obligatoire");
-    agentMatriculeInput?.focus();
-    return false;
-  }
-
-  if (!fonction) {
-    showError("La fonction est obligatoire");
-    agentFonctionInput?.focus();
-    return false;
-  }
+  
 
   // Validation format matricule (optionnel)
   if (matricule.length < 3) {
-    showError("Le matricule doit contenir au moins 3 caractères");
+    showMessage("Le matricule doit contenir au moins 3 caractères","info");
     agentMatriculeInput?.focus();
     return false;
   }
@@ -143,7 +143,7 @@ async function ajouterAgent() {
     const data = await response.json();
 
     // Succès
-    showSuccess(`Agent enregistré avec succès !\nMatricule: ${data.matricule}\nNom complet: ${data.prenom} ${data.nom}`);
+    showMessage(`Agent enregistré avec succès !\nMatricule: ${data.matricule}\nNom complet: ${data.prenom} ${data.nom}`,"success");
     clearAgentForm();
 
   } catch (error) {
@@ -174,7 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
     cancelBtn.addEventListener("click", (e) => {
       e.preventDefault();
       clearAgentForm();
-      showSuccess("Formulaire réinitialisé");
+      showMessage("Formulaire réinitialisé","success");
     });
   }
 

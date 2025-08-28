@@ -1,3 +1,25 @@
+import {apiUrl} from "./config.js";
+
+
+function showMessage(message, type = "info") {
+  const colors = {
+    success: "bg-green-500",
+    error: "bg-red-500",
+    info: "bg-blue-500",
+  };
+
+  const container = document.createElement("div");
+  container.className = `${colors[type]} text-white px-4 py-2 rounded-lg shadow-lg fixed top-4 right-4 z-50 animate-bounce`;
+  container.textContent = message;
+
+  document.body.appendChild(container);
+
+  // Disparaît après 4s
+  setTimeout(() => {
+    container.remove();
+  }, 4000);
+}
+
 
 // ==========================
 // Variables DOM pour prise de congé
@@ -79,7 +101,7 @@ if (pcAddCongeBtn) {
     const joursRestantsEl = document.getElementById("pcJoursRestants");
     
     if (!matriculeEl || !joursRestantsEl) {
-      alert("❌ Éléments manquants dans le DOM");
+      showMessage("❌ Éléments manquants dans le DOM","error");
       return;
     }
 
@@ -90,25 +112,25 @@ if (pcAddCongeBtn) {
     const joursRestants = parseInt(joursRestantsEl.textContent, 10);
 
     if (!currentPriseCongeRef) {
-      alert("⚠️ Référence de congé invalide.");
+     showMessage("⚠️ Référence de congé invalide.","info");
       return;
     }
     if (!matricule || matricule === "--") {
-      alert("⚠️ Matricule agent introuvable.");
+      showMessage("⚠️ Matricule agent introuvable.","error");
       return;
     }
     if (!dateDebut || !dateFin) {
-      alert("⚠️ Veuillez choisir la période.");
+      showMessage("⚠️ Veuillez choisir la période.","error");
       return;
     }
     if (!jours || jours <= 0) {
-      alert("⚠️ Nombre de jours invalide.");
+      showMessage("⚠️ Nombre de jours invalide.","error");
       return;
     }
 
     // Vérification du solde restant
     if (jours > joursRestants) {
-      alert(`⚠️ Vous demandez ${jours} jours alors qu'il ne reste que ${joursRestants} jours.`);
+      showMessage(`⚠️ Vous demandez ${jours} jours alors qu'il ne reste que ${joursRestants} jours.`,"error");
       return;
     }
 
@@ -119,9 +141,9 @@ if (pcAddCongeBtn) {
       dateFin, 
       jours 
     };
-
+fetch
     try {
-      const response = await fetch(`${apiUrl}}/suivi-conge`, {
+      const response = await fetch(`${apiUrl}/suivi-conge`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
@@ -134,7 +156,7 @@ if (pcAddCongeBtn) {
         throw new Error(`❌ ${message}`);
       }
 
-      alert(`✅ Congé ajouté avec succès (ID: ${data.id})`);
+      showMessage(`✅ Congé ajouté avec succès (ID: ${data.id})`,"success");
 
       // Réinitialiser les champs
       pcStartDateEl.value = "";
@@ -145,7 +167,9 @@ if (pcAddCongeBtn) {
       await fetchJoursRestants(currentPriseCongeRef);
 
     } catch (error) {
-      alert(error.message);
+      showMessage("error.message"+error.message,"error");
     }
   });
 }
+
+export { setPriseCongeRef };
