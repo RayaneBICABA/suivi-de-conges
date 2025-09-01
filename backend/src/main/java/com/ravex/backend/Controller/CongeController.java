@@ -49,7 +49,7 @@ public class CongeController {
         // Vérifier si la référence existe déjà
 //        if (congeRepository.existsByReference(dto.getReference())) {
 //            return ResponseEntity.status(400).body("Un congé avec la référence " + dto.getReference() + " existe déjà");
-//        }
+//}
 
         // Créer et sauvegarder le congé
         Conge conge = Conge.builder()

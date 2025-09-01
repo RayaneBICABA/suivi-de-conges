@@ -22,5 +22,29 @@ public interface CongeRepository extends JpaRepository<Conge, String> {
     Integer collecterJoursAttribuerAunAgentParReferenceDeConge(@Param("reference") String reference);
 
 
+    // Fixed query for counting congés en cours
+    @Query("""
+        SELECT COUNT(DISTINCT c.reference) 
+        FROM Conge c 
+        WHERE c.jours > COALESCE(
+            (SELECT SUM(s.jours) 
+             FROM c.suiviConge s), 0
+        )
+    """)
+    long countCongesEnCours();
+
+    // Conges termines
+    @Query("""
+    SELECT COUNT(DISTINCT c.reference) 
+    FROM Conge c 
+    WHERE c.jours <= COALESCE(
+        (SELECT SUM(s.jours) 
+         FROM c.suiviConge s), 0
+    )
+""")
+    long countCongesTermines();
+
+
+
 
 }

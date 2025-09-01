@@ -4,6 +4,7 @@ package com.ravex.backend.Controller;
 import com.ravex.backend.domain.model.SuiviConge;
 import com.ravex.backend.dto.SuiviCongeCreateRequest;
 import com.ravex.backend.service.SuiviCongeService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,12 +13,10 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/suivi-conge")
+@RequiredArgsConstructor
 public class SuiviCongeController {
     private final SuiviCongeService suiviCongeService;
 
-    public SuiviCongeController(SuiviCongeService suiviCongeService) {
-        this.suiviCongeService = suiviCongeService;
-    }
 
     // Enregistrer un nouveau suivi de congé
     @PostMapping
