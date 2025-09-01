@@ -1,4 +1,4 @@
-package com.ravex.backend.domain.model;
+    package com.ravex.backend.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;

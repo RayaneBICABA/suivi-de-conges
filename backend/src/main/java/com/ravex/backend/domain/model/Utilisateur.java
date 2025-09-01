@@ -4,40 +4,47 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table (name = "UTILISATEUR")
+@Table(name = "UTILISATEUR")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Utilisateur {
-    // Clé primaire
+    
+    // Clé primaire - Changement principal ici
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_utilisateur")
+    @SequenceGenerator(
+        name = "seq_utilisateur", 
+        sequenceName = "SEQ_UTILISATEUR", 
+        allocationSize = 1
+    )
     @Column(name = "user_id")
     private Long userId;
-
+    
     // Nom d'utilisateur
-    @Column(name = "username", length =  50, nullable = false)
+    @Column(name = "username", length = 50, nullable = false)
     private String username;
-
+    
     // Nom
     @Column(name = "lastname", length = 100, nullable = false)
     private String lastname;
-
+    
     // Prenom
     @Column(name = "firstname", length = 100, nullable = false)
     private String firstname;
-
+    
     // Mot de passe
-    @Column(name = "password", nullable = false )
+    @Column(name = "password", nullable = false)
     private String password;
-
+    
     // Email
     @Column(name = "email", nullable = false, unique = true)
     private String email;
-
+    
     // Enable / Disable
     @Column(name = "enabled")
     private boolean enabled = true;
-
-    // Role will be implemented later
+    
+    @Column(name = "role", nullable = false)
+    private String role = "USER";
 }

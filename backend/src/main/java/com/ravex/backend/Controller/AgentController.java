@@ -15,7 +15,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/agent")
-@CrossOrigin(origins = "*") // Ajout pour éviter les problèmes CORS si nécessaire
 public class AgentController {
 
     private final AgentService agentService;

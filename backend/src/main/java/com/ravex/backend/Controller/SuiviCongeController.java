@@ -12,7 +12,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/suivi-conge")
-@CrossOrigin(origins = "*")
 public class SuiviCongeController {
     private final SuiviCongeService suiviCongeService;
 
