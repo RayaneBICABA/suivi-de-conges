@@ -113,6 +113,11 @@ async function voirDetails(matricule) {
         
         const agentDetails = await response.json();
         currentAgentDetails = agentDetails;
+        
+        // Mettre à jour le filtre d'année avec les années disponibles pour cet agent
+        updateYearFilter(agentDetails);
+        
+        // Afficher les détails de l'agent
         displayAgentDetails(agentDetails);
         
     } catch (error) {
@@ -122,13 +127,54 @@ async function voirDetails(matricule) {
     }
 }
 
+// ==================== MISE À JOUR DU FILTRE D'ANNÉE ====================
+function updateYearFilter(agent) {
+    const yearFilterElement = document.getElementById('yearFilter');
+    if (!yearFilterElement || !agent.conges) return;
+    
+    // Récupérer la valeur actuellement sélectionnée
+    const currentSelection = yearFilterElement.value;
+    
+    // Extraire toutes les années disponibles pour cet agent
+    const availableYears = [...new Set(agent.conges.map(conge => conge.annee))]
+        .sort((a, b) => {
+            // Tri décroissant (année la plus récente en premier)
+            // Gestion des années au format "22" vs "2022"
+            const yearA = a.length === 2 ? `20${a}` : a;
+            const yearB = b.length === 2 ? `20${b}` : b;
+            return parseInt(yearB) - parseInt(yearA);
+        });
+    
+    // Si aucune année disponible, afficher un message par défaut
+    if (availableYears.length === 0) {
+        yearFilterElement.innerHTML = `
+            <option value="">Aucune année disponible</option>
+        `;
+        return;
+    }
+    
+    // Construire les options du select
+    yearFilterElement.innerHTML = availableYears.map(year => {
+        // Normaliser l'affichage de l'année
+        const displayYear = year.length === 2 ? `20${year}` : year;
+        return `<option value="${year}" ${year === currentSelection ? 'selected' : ''}>${displayYear}</option>`;
+    }).join('');
+    
+    // Si l'année précédemment sélectionnée n'est plus disponible,
+    // sélectionner la première année disponible
+    if (!availableYears.includes(currentSelection)) {
+        yearFilterElement.value = availableYears[0];
+    }
+}
+
 // ==================== AFFICHAGE DES DÉTAILS DE L'AGENT ====================
 function displayAgentDetails(agent) {
     const agentDetailsElement = document.getElementById('agentDetails');
     if (!agentDetailsElement) return;
     
     // Récupérer l'année sélectionnée
-    const selectedYear = document.getElementById('yearFilter')?.value || new Date().getFullYear().toString();
+    const yearFilterElement = document.getElementById('yearFilter');
+    const selectedYear = yearFilterElement?.value || (agent.conges && agent.conges.length > 0 ? agent.conges[0].annee : new Date().getFullYear().toString());
     
     // Filtrer les congés par année
     const filteredConges = agent.conges ? agent.conges.filter(conge => conge.annee === selectedYear) : [];
@@ -137,6 +183,9 @@ function displayAgentDetails(agent) {
     const fullName = `${agent.prenom} ${agent.nom}`;
     const initials = getInitials(fullName);
     const avatarColor = getAvatarColor(agent.matricule);
+    
+    // Normaliser l'affichage de l'année sélectionnée
+    const displaySelectedYear = selectedYear.length === 2 ? `20${selectedYear}` : selectedYear;
     
     agentDetailsElement.innerHTML = `
         <div class="space-y-4">
@@ -152,11 +201,11 @@ function displayAgentDetails(agent) {
             
             <!-- Congés pour l'année sélectionnée -->
             <div class="space-y-4">
-                <h4 class="font-semibold text-gray-800">Congés ${selectedYear}</h4>
+                <h4 class="font-semibold text-gray-800">Congés ${displaySelectedYear}</h4>
                 ${filteredConges.length === 0 ? `
                     <div class="text-center py-6 text-gray-500">
                         <i class="fas fa-calendar-times text-3xl mb-2 opacity-50"></i>
-                        <p class="text-sm">Aucun congé pour l'année ${selectedYear}</p>
+                        <p class="text-sm">Aucun congé pour l'année ${displaySelectedYear}</p>
                     </div>
                 ` : filteredConges.map(conge => `
                     <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
@@ -164,7 +213,7 @@ function displayAgentDetails(agent) {
                             <div class="flex justify-between items-start">
                                 <span class="font-medium text-gray-800">Réf: ${conge.reference}</span>
                                 <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-                                    ${conge.annee}
+                                    ${conge.annee.length === 2 ? `20${conge.annee}` : conge.annee}
                                 </span>
                             </div>
                             
@@ -378,7 +427,7 @@ function refreshDashboard() {
     loadDashboardStats();
     loadAgentsList();
     
-    // Réinitialiser les détails de l'agent
+    // Réinitialiser les détails de l'agent et le filtre d'année
     const agentDetailsElement = document.getElementById('agentDetails');
     if (agentDetailsElement) {
         agentDetailsElement.innerHTML = `
@@ -386,6 +435,14 @@ function refreshDashboard() {
                 <i class="fas fa-user-circle text-4xl md:text-6xl mb-3 md:mb-4"></i>
                 <p class="text-sm md:text-base">Sélectionnez un agent pour voir ses détails</p>
             </div>
+        `;
+    }
+    
+    // Réinitialiser le filtre d'année
+    const yearFilterElement = document.getElementById('yearFilter');
+    if (yearFilterElement) {
+        yearFilterElement.innerHTML = `
+            <option value="">Sélectionnez un agent</option>
         `;
     }
     
