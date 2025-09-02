@@ -305,7 +305,7 @@ async function handleRegisterSubmit(event) {
             
             // Rediriger après 2 secondes
             setTimeout(() => {
-                window.location.href = './dashboard.html'; // Ou votre page d'accueil
+                window.location.href = './index.html'; // Ou votre page d'accueil
             }, 2000);
             
         } else {

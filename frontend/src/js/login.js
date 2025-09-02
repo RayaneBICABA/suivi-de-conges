@@ -265,7 +265,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Vérifier si l'utilisateur est déjà connecté
     if (AuthService.isLoggedIn()) {
         // Rediriger vers le dashboard si déjà connecté
-        window.location.href = './dashboard.html'; // Adaptez selon votre architecture
+        window.location.href = './index.html'; // Adaptez selon votre architecture
         return;
     }
 
@@ -344,7 +344,7 @@ async function handleLoginSubmit(event) {
             UIUtils.showSuccess(`Bienvenue, ${result.data.user.firstname} ! Redirection...`);
             
             // Redirection animée vers le dashboard
-            UIUtils.animateRedirect('./dashboard.html'); // Adaptez selon votre architecture
+            UIUtils.animateRedirect('./index.html'); // Adaptez selon votre architecture
             
         } else {
             UIUtils.showError(result.error);

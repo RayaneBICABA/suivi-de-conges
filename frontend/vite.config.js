@@ -6,7 +6,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: path.resolve(__dirname, 'index.html'),
-        // priseconge: path.resolve(__dirname, 'src/html/priseconge.html')
+        login: path.resolve(__dirname, 'src/html/login.html'),
+        register: path.resolve(__dirname, 'src/html/register.html')
       }
     }
   }
