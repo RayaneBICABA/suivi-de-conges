@@ -1,155 +1,217 @@
-# API de Suivi de Congés SONABEL
+# 📚 API REST Suivi de Congés SONABEL
 
-## 🔐 Identifiants de Connexion Spring Security
+Bienvenue dans la documentation de l’API backend pour le suivi des congés des agents SONABEL. Cette API, développée avec Spring Boot, permet la gestion des agents, des congés, du suivi des prises de congés, ainsi que l’authentification des utilisateurs.
 
-Votre application utilise Spring Security avec authentification basique. Voici les identifiants configurés :
+---
 
-### Comptes Utilisateurs Disponibles
+## 🚀 Démarrage rapide
 
-| Utilisateur | Mot de passe | Rôle | Description |
-|-------------|--------------|------|-------------|
-| `admin` | `admin123` | ADMIN | Administrateur système |
-| `user` | `user123` | USER | Utilisateur standard |
-| `sonabel` | `sonabel2024` | ADMIN | Compte spécifique SONABEL |
+### Prérequis
 
-### 🚀 Comment utiliser les identifiants
+- Java 17+
+- Maven
 
-#### 1. **Avec Postman**
-- Dans l'onglet **Authorization**
-- Sélectionnez **Basic Auth**
-- Username: `admin` (ou un autre compte)
-- Password: `admin123` (ou le mot de passe correspondant)
+### Installation & Lancement
 
-#### 2. **Avec curl**
 ```bash
-curl -u admin:admin123 http://localhost:8080/api/agents
+./mvnw spring-boot:run
 ```
 
-#### 3. **Avec un navigateur**
-- Accédez à: `http://localhost:8080/api/agents`
-- Une popup d'authentification apparaîtra
-- Entrez: `admin` / `admin123`
+L’application démarre sur [http://localhost:8080](http://localhost:8080).
 
-#### 4. **Swagger UI**
-- Accédez à: `http://localhost:8080/swagger-ui.html`
-- Cliquez sur **Authorize**
-- Entrez les identifiants dans Basic Auth
+---
 
-## 📋 Configuration Actuelle
+## 🛠️ Structure du projet
 
-### Sécurité
-- **Type**: Basic Authentication (HTTP Basic)
-- **Session**: Stateless (pas de session)
-- **CORS**: Activé pour tous les domaines
-- **CSRF**: Désactivé (pour les API REST)
+- `src/main/java/com/ravex/backend/Controller/` : Contrôleurs REST
+- `src/main/java/com/ravex/backend/service/` : Services métier
+- `src/main/java/com/ravex/backend/domain/model/` : Entités JPA
+- `src/main/java/com/ravex/backend/domain/Repository/` : Repositories Spring Data JPA
+- `src/main/java/com/ravex/backend/dto/` : DTOs pour les échanges API
+- `src/main/resources/application.properties` : Configuration de l’application
 
-### Endpoints Publics (sans authentification)
-- `/swagger-ui/**` - Documentation Swagger
-- `/v3/api-docs/**` - Spécification OpenAPI
-- `/api/**` - **TOUS les endpoints API sont actuellement publics pour le développement**
+---
 
-## 🛠️ Démarrage de l'Application
+## 🔐 Authentification & Sécurité
 
-1. **Démarrer l'application**
-   ```bash
-   cd backend
-   ./mvnw spring-boot:run
-   ```
+- Authentification par JWT (JSON Web Token)
+- Endpoints d’inscription, connexion, vérification de token
+- Exemple d’utilisation du token :  
+  Ajoute l’en-tête `Authorization: Bearer <token>` à tes requêtes.
 
-2. **Vérifier que l'application fonctionne**
-   ```bash
-   curl http://localhost:8080/api/agents
-   ```
+Endpoints principaux :
+- `POST /api/auth/register` : Inscription
+- `POST /api/auth/login` : Connexion
+- `POST /api/auth/verify-token` : Vérification du token
 
-3. **Accéder à la documentation**
-   - Swagger UI: http://localhost:8080/swagger-ui.html
-   - OpenAPI JSON: http://localhost:8080/v3/api-docs
+---
 
-## 🔧 Modification de la Configuration de Sécurité
+## 📦 Endpoints principaux
 
-### Pour désactiver complètement la sécurité (développement uniquement)
-Dans `SecurityConfig.java`, remplacez la configuration par :
-```java
-.authorizeHttpRequests(authz -> authz.anyRequest().permitAll())
+### Agents
+
+- `GET /agent/byConge?ref=...`  
+  Récupère l’agent et le nombre de jours attribués pour un congé donné.
+
+- `GET /agent/nomPrenom?matricule=...`  
+  Récupère le nom et le prénom d’un agent via son matricule.
+
+- `POST /agent`  
+  Ajoute un nouvel agent.
+
+### Congés
+
+- `GET /conge/checkRef?refNumber=...&year=...`  
+  Vérifie si une référence de congé existe.
+
+- `POST /conge`  
+  Ajoute un nouveau congé pour un agent.
+
+### Suivi des congés
+
+- `POST /suivi-conge`  
+  Enregistre une prise de congé (suivi).
+
+- `GET /suivi-conge/jours-restants?reference=...`  
+  Retourne le nombre de jours restants pour une référence de congé.
+
+### Dashboard
+
+- `GET /dashboard`  
+  Statistiques globales (total agents, congés en cours, terminés).
+
+- `GET /dashboard/agents`  
+  Liste des agents.
+
+- `GET /dashboard/agents/search?keyword=...`  
+  Recherche d’agents par nom ou prénom.
+
+- `GET /dashboard/{matricule}/details`  
+  Détails complets d’un agent (congés, suivis, jours restants).
+
+---
+
+## 📑 Modèles de données
+
+### Agent
+
+```json
+{
+  "matricule": "A12345",
+  "nom": "Doe",
+  "prenom": "John",
+  "fonction": "Développeur"
+}
 ```
 
-### Pour activer l'authentification sur tous les endpoints
-Dans `SecurityConfig.java`, remplacez par :
-```java
-.authorizeHttpRequests(authz -> authz
-    .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-    .anyRequest().authenticated()
-)
+### Congé
+
+```json
+{
+  "reference": "123/DRH/2025",
+  "jours": 30,
+  "matriculeAgent": "A12345"
+}
 ```
 
-### Pour ajouter de nouveaux utilisateurs
-Dans `SecurityConfig.java`, ajoutez dans la méthode `userDetailsService()` :
-```java
-UserDetails nouveauUser = User.builder()
-        .username("nouveau_user")
-        .password(passwordEncoder().encode("mot_de_passe"))
-        .roles("USER")
-        .build();
+### Suivi de Congé
+
+```json
+{
+  "matricule": "A12345",
+  "congeRef": "123/DRH/2025",
+  "dateDebut": "2025-07-01",
+  "dateFin": "2025-07-10"
+}
 ```
 
-## 📊 Base de Données
+---
 
-### Configuration Oracle
-- **URL**: `jdbc:oracle:thin:@192.168.40.210:1521:etude`
-- **Username**: `et`
-- **Password**: `et123`
-- **Driver**: Oracle JDBC Driver
+## 🧑‍💻 Exemples d’utilisation
 
-### Tables Créées Automatiquement
-- `AGENT` - Informations des agents
-- `CONGE` - Congés accordés
-- `SUIVI_CONGE` - Suivi des prises de congés
+### Inscription
 
-## 🧪 Tests avec Postman
+```http
+POST /api/auth/register
+Content-Type: application/json
 
-1. **Importer la collection**
-   - Importez le fichier `openapi.yaml` dans Postman
-   - Ou utilisez l'URL: `http://localhost:8080/v3/api-docs`
+{
+  "username": "jdoe",
+  "firstname": "John",
+  "lastname": "Doe",
+  "email": "john.doe@sonabel.bf",
+  "password": "monmotdepasse123"
+}
+```
 
-2. **Configurer l'authentification**
-   - Dans la collection, onglet **Authorization**
-   - Type: **Basic Auth**
-   - Username: `admin`
-   - Password: `admin123`
+### Connexion
 
-3. **Tester les endpoints**
-   - GET `/api/agents` - Liste des agents
-   - POST `/api/agents` - Créer un agent
-   - POST `/api/conges` - Créer un congé
-   - POST `/api/suivi-conges` - Enregistrer une prise de congé
+```http
+POST /api/auth/login
+Content-Type: application/json
 
-## 🔍 Logs et Débogage
+{
+  "email": "john.doe@sonabel.bf",
+  "password": "monmotdepasse123"
+}
+```
 
-Les logs sont configurés en mode DEBUG pour :
-- `com.ravex.backend` - Votre application
-- `org.springframework.security` - Spring Security
-- `org.springframework.web` - Requêtes web
+### Ajouter un agent
 
-Consultez la console pour voir les détails des authentifications et requêtes.
+```http
+POST /agent
+Content-Type: application/json
 
-## 📝 Notes Importantes
+{
+  "matricule": "A12345",
+  "nom": "Doe",
+  "prenom": "John",
+  "fonction": "Développeur"
+}
+```
 
-1. **Sécurité en Production**: Changez les mots de passe par défaut avant la mise en production
-2. **HTTPS**: Utilisez HTTPS en production pour sécuriser les identifiants
-3. **JWT**: Pour une API REST moderne, considérez l'implémentation de JWT au lieu de Basic Auth
-4. **Base de données**: Les utilisateurs sont actuellement en mémoire, considérez une base de données pour la production
+---
 
-## 🆘 Dépannage
+## 🛡️ Sécurité
 
-### Problème d'authentification
-- Vérifiez que vous utilisez les bons identifiants
-- Consultez les logs pour voir les tentatives d'authentification
-- Assurez-vous que l'en-tête Authorization est correctement formaté
+- CORS activé pour tous les domaines (modifiable dans [`CorsConfig`](src/main/java/com/ravex/backend/configuration/CorsConfig.java))
+- CSRF désactivé (API REST)
+- Les mots de passe sont hashés avec BCrypt
 
-### Erreur CORS
-- La configuration CORS est permissive pour le développement
-- En production, limitez les origines autorisées
+---
 
-### Problème de base de données
-- Vérifiez la connectivité à Oracle
-- Consultez les logs Hibernate pour les erreurs SQL
+## 🗄️ Base de données
+
+- Support Oracle et MySQL (voir [`application.properties`](src/main/resources/application.properties))
+- Tables principales : `AGENT`, `CONGE`, `SUIVI_CONGE`, `UTILISATEUR`
+
+---
+
+## 📖 Documentation OpenAPI / Swagger
+
+- Swagger UI disponible sur [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+- Spécification OpenAPI : [openapi.yaml](openapi.yaml)
+
+---
+
+## 🧪 Tests
+
+- Tests unitaires avec JUnit (voir [`BackendApplicationTests`](src/test/java/com/ravex/backend/BackendApplicationTests.java))
+
+---
+
+## 📝 Bonnes pratiques
+
+- Change les mots de passe par défaut avant la mise en production
+- Utilise HTTPS en production
+- Limite les origines CORS en production
+
+---
+
+## 📬 Support
+
+Pour toute question ou bug, contacte l’équipe technique SONABEL.
+
+---
+
+**Dernière mise à jour : Juin 2025**

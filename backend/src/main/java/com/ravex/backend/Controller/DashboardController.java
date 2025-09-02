@@ -1,22 +1,23 @@
 package com.ravex.backend.Controller;
 
+import com.ravex.backend.dto.AgentDetailsDTO;
 import com.ravex.backend.dto.dashboard.AgentSummaryDTO;
 import com.ravex.backend.dto.dashboard.DashboardDTO;
+import com.ravex.backend.service.AgentService;
 import com.ravex.backend.service.DashboardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/dashboard")
 public class DashboardController {
     private final DashboardService dashboardService;
+    private final AgentService agentService;
 
     // Total agents, Total Conges en cours, Total conges termines
     @GetMapping
@@ -47,7 +48,22 @@ public class DashboardController {
             List<AgentSummaryDTO> results = dashboardService.searchAgents(keyword);
             return ResponseEntity.ok(results);
         } catch (Exception e) {
-            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+
+    @GetMapping("/{matricule}/details")
+    public ResponseEntity<AgentDetailsDTO> getAgentDetails(@PathVariable String matricule) {
+        try {
+            Optional<AgentDetailsDTO> agentDetails = agentService.getAgentDetails(matricule);
+
+            if (agentDetails.isPresent()) {
+                return ResponseEntity.ok(agentDetails.get());
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
     }

@@ -44,7 +44,4 @@ public interface CongeRepository extends JpaRepository<Conge, String> {
 """)
     long countCongesTermines();
 
-
-
-
 }
