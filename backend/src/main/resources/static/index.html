@@ -32,8 +32,8 @@
             pointer-events: auto;
         }
     </style>
-  <script type="module" crossorigin src="/assets/main-DUZbu5j5.js"></script>
-  <link rel="modulepreload" crossorigin href="/assets/config-DuvyDCry.js">
+  <script type="module" crossorigin src="/assets/main-e653dB4a.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/config-CkEC2-gR.js">
 </head>
 
 <body>
@@ -120,6 +120,13 @@
                     <input id="searchInput"
                         class="w-full border rounded-full px-3 md:px-4 py-2 border-gray-400 text-sm md:text-base"
                         type="text" placeholder="Rechercher un agent..." />
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span data-user-display="firstname" class="text-sm font-medium text-gray-700"></span>
+                    <button onclick="AuthGuard.logout()"
+                        class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm transition-colors">
+                        Déconnexion
+                    </button>
                 </div>
             </div>
 
@@ -624,6 +631,7 @@
         });
     </script>
 
+    <meta name="auth-required" content="true">
 
 
 </body>

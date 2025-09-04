@@ -1,6 +1,5 @@
 import {apiUrl} from "./config.js";
 
-
 /**
  * Classe pour gérer l'authentification
  */
@@ -63,9 +62,9 @@ class AuthService {
         localStorage.setItem('authToken', authData.token);
         localStorage.setItem('userData', JSON.stringify(authData.user));
         
-        // Optionnel : définir une date d'expiration
+        // Définir une date d'expiration (24h par défaut)
         const expirationDate = new Date();
-        expirationDate.setHours(expirationDate.getHours() + 24); // 24h
+        expirationDate.setHours(expirationDate.getHours() + 24);
         localStorage.setItem('tokenExpiration', expirationDate.toISOString());
     }
 
@@ -93,7 +92,7 @@ class AuthService {
         
         if (!token) return false;
         
-        // Vérifier l'expiration
+        // Vérifier l'expiration locale
         if (expiration && new Date() > new Date(expiration)) {
             this.logout();
             return false;
@@ -123,23 +122,21 @@ class UIUtils {
         let errorContainer = document.getElementById(containerId);
         
         if (!errorContainer) {
-            // Créer le container s'il n'existe pas
             errorContainer = document.createElement('div');
             errorContainer.id = containerId;
             errorContainer.className = 'mb-4';
             
-            // L'insérer avant le formulaire
             const form = document.querySelector('form');
             form.parentNode.insertBefore(errorContainer, form);
         }
 
         errorContainer.innerHTML = `
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 relative">
                 <span class="block sm:inline">
                     <strong>Erreur:</strong> ${message}
                 </span>
-                <span class="absolute top-0 bottom-0 right-0 px-4 py-3" onclick="this.parentElement.parentElement.style.display='none'">
-                    <svg class="fill-current h-6 w-6 text-red-500 cursor-pointer" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                <span class="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer" onclick="this.parentElement.parentElement.style.display='none'">
+                    <svg class="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                         <title>Close</title>
                         <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/>
                     </svg>
@@ -211,14 +208,19 @@ class UIUtils {
     /**
      * Animer la redirection
      */
-    static animateRedirect(url, delay = 1500) {
+    static animateRedirect(delay = 1500) {
         const card = document.querySelector('.bg-\\[\\#ffffff\\]');
         if (card) {
-            card.classList.add('transform', 'scale-95', 'opacity-75');
+            card.classList.add('transform', 'scale-95', 'opacity-75', 'transition-all', 'duration-300');
         }
         
         setTimeout(() => {
-            window.location.href = url;
+            // Utiliser AuthGuard pour rediriger intelligemment
+            if (window.AuthGuard) {
+                window.AuthGuard.redirectAfterLogin();
+            } else {
+                window.location.href = './index.html';
+            }
         }, delay);
     }
 }
@@ -264,8 +266,21 @@ class FormValidator {
 document.addEventListener('DOMContentLoaded', function() {
     // Vérifier si l'utilisateur est déjà connecté
     if (AuthService.isLoggedIn()) {
-        // Rediriger vers le dashboard si déjà connecté
-        window.location.href = './index.html'; // Adaptez selon votre architecture
+        // Vérifier le token avec le serveur avant de rediriger
+        const token = AuthService.getToken();
+        AuthService.verifyToken(token).then(isValid => {
+            if (isValid) {
+                // Rediriger intelligemment
+                if (window.AuthGuard) {
+                    window.AuthGuard.redirectAfterLogin();
+                } else {
+                    window.location.href = './index.html';
+                }
+            } else {
+                // Token invalide, le supprimer
+                AuthService.logout();
+            }
+        });
         return;
     }
 
@@ -274,7 +289,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (form) {
         form.addEventListener('submit', handleLoginSubmit);
         
-        // Ajout de validation en temps réel
+        // Validation en temps réel
         const emailInput = document.getElementById('email');
         const passwordInput = document.getElementById('password');
         
@@ -286,21 +301,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     this.classList.remove('border-red-500');
                 }
             });
-        }
-
-        // Auto-focus sur le premier champ
-        if (emailInput) {
+            
+            // Auto-focus
             emailInput.focus();
         }
     }
 
-    // Gestion des raccourcis clavier
+    // Raccourcis clavier
     document.addEventListener('keydown', function(event) {
         if (event.key === 'Enter' && event.ctrlKey) {
-            // Ctrl + Enter pour soumettre rapidement
             const form = document.querySelector('form');
             if (form) {
-                form.dispatchEvent(new Event('submit'));
+                form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
             }
         }
     });
@@ -312,16 +324,13 @@ document.addEventListener('DOMContentLoaded', function() {
 async function handleLoginSubmit(event) {
     event.preventDefault();
     
-    // Masquer les messages précédents
     UIUtils.hideMessages();
     
-    // Récupérer les données du formulaire
     const formData = {
         email: document.getElementById('email').value.trim(),
         password: document.getElementById('password').value
     };
     
-    // Validation côté client
     const validation = FormValidator.validateLoginForm(formData);
     
     if (!validation.isValid) {
@@ -329,11 +338,9 @@ async function handleLoginSubmit(event) {
         return;
     }
     
-    // Désactiver le bouton pendant la requête
     UIUtils.toggleSubmitButton(true);
     
     try {
-        // Appel à l'API de connexion
         const result = await AuthService.login(formData);
         
         if (result.success) {
@@ -343,13 +350,13 @@ async function handleLoginSubmit(event) {
             // Afficher le succès
             UIUtils.showSuccess(`Bienvenue, ${result.data.user.firstname} ! Redirection...`);
             
-            // Redirection animée vers le dashboard
-            UIUtils.animateRedirect('./index.html'); // Adaptez selon votre architecture
+            // Redirection animée
+            UIUtils.animateRedirect();
             
         } else {
             UIUtils.showError(result.error);
             
-            // Focus sur le champ email en cas d'erreur d'authentification
+            // Focus sur le champ email en cas d'erreur
             const emailInput = document.getElementById('email');
             if (emailInput) {
                 emailInput.focus();
@@ -361,13 +368,12 @@ async function handleLoginSubmit(event) {
         UIUtils.showError('Une erreur de connexion s\'est produite. Vérifiez votre connexion internet.');
         console.error('Erreur de connexion:', error);
     } finally {
-        // Réactiver le bouton
         UIUtils.toggleSubmitButton(false);
     }
 }
 
 /**
- * Utilitaire pour la démo (optionnel)
+ * Fonction utilitaire pour remplir les champs (développement)
  */
 function fillDemoCredentials() {
     document.getElementById('email').value = 'demo@example.com';

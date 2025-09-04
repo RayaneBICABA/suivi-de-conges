@@ -1,5 +1,6 @@
 // dashboard.js - Gestion du tableau de bord
-const API_BASE_URL = 'http://192.168.40.64:8080';
+import {apiUrl} from "./config.js";
+const API_BASE_URL = apiUrl;
 
 // Variables globales pour stocker les données
 let allAgents = [];
