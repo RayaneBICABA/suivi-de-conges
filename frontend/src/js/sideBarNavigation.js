@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const links = document.querySelectorAll(".menu-link");
     const mobileLinks = document.querySelectorAll(".mobile-menu-link");
     const sections = document.querySelectorAll(
-        "#dashboard, #manageLeaves, #addAgent, #priseCongeSection"
+        "#dashboard, #manageLeaves, #addAgent, #priseCongeSection, #addProvider"
     );
 
     // Fonction pour réinitialiser une section

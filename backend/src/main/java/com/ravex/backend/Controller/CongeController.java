@@ -1,11 +1,13 @@
 package com.ravex.backend.Controller;
 
+import com.ravex.backend.configuration.NumeroCentre;
 import com.ravex.backend.domain.Repository.AgentRepository;
 import com.ravex.backend.domain.Repository.CongeRepository;
 import com.ravex.backend.domain.model.Agent;
 import com.ravex.backend.domain.model.Conge;
 import com.ravex.backend.dto.NouveauCongeDTO;
 import com.ravex.backend.service.CongeService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,17 +15,13 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/conge")
+@RequiredArgsConstructor
 public class CongeController {
 
     private final CongeService congeService;
     private final AgentRepository agentRepository;
-    private final CongeRepository congeRepository;
+    private final NumeroCentre numeroCentre;
 
-    public CongeController(CongeService congeService, AgentRepository agentRepository, CongeRepository congeRepository) {
-        this.congeService = congeService;
-        this.agentRepository = agentRepository;
-        this.congeRepository = congeRepository;
-    }
 
     // Vérifier si la référence existe
     @GetMapping("/checkRef")
@@ -41,7 +39,7 @@ public class CongeController {
     @PostMapping
     public ResponseEntity<?> ajouterConge(@RequestBody NouveauCongeDTO dto) {
         // Vérifier que l'agent existe
-        Optional<Agent> agentOpt = agentRepository.findByMatriculeTrimmed(dto.getMatriculeAgent());
+        Optional<Agent> agentOpt = agentRepository.findByMatriculeTrimmed(dto.getMatriculeAgent(),numeroCentre.getNumCentre());
         if (agentOpt.isEmpty()) {
             return ResponseEntity.status(404).body("Agent introuvable avec matricule : " + dto.getMatriculeAgent());
         }

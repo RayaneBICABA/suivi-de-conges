@@ -1,11 +1,13 @@
 package com.ravex.backend.service;
 
 // package com.ravex.backend.service;
+import com.ravex.backend.configuration.NumeroCentre;
 import com.ravex.backend.domain.Repository.CongeRepository;
 import com.ravex.backend.domain.Repository.SuiviCongeRepository;
 import com.ravex.backend.domain.model.Conge;
 import com.ravex.backend.domain.model.SuiviConge;
 import com.ravex.backend.dto.SuiviCongeCreateRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -13,14 +15,12 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.temporal.ChronoUnit;
 
 @Service
+@RequiredArgsConstructor
 public class SuiviCongeService {
     private final SuiviCongeRepository suiviCongeRepository;
     private final CongeRepository congeRepository;
+    private final NumeroCentre numeroCentre;
 
-    public SuiviCongeService(SuiviCongeRepository suiviCongeRepository, CongeRepository congeRepository) {
-        this.suiviCongeRepository = suiviCongeRepository;
-        this.congeRepository = congeRepository;
-    }
 
     public SuiviConge create(SuiviCongeCreateRequest req) {
         // 1) Récupérer le congé
@@ -59,7 +59,7 @@ public class SuiviCongeService {
     // Calculer le nombre de jours restants pour un congé donné
     public int calculerJoursRestants(String referenceConge) {
         // 🔹 Vérifier que la référence existe
-        Integer joursAttribues = congeRepository.collecterJoursAttribuerAunAgentParReferenceDeConge(referenceConge);
+        Integer joursAttribues = congeRepository.collecterJoursAttribuerAunAgentParReferenceDeConge(referenceConge,numeroCentre.getNumCentre());
         if (joursAttribues == null) {
             throw new IllegalArgumentException("Référence de congé introuvable : " + referenceConge);
         }

@@ -1,13 +1,18 @@
 package com.ravex.backend.service;
 
+import com.ravex.backend.configuration.NumeroCentre;
 import com.ravex.backend.domain.Repository.AgentRepository;
+import com.ravex.backend.domain.Repository.CentreRepository;
 import com.ravex.backend.domain.Repository.CongeRepository;
 import com.ravex.backend.domain.Repository.SuiviCongeRepository;
 import com.ravex.backend.domain.model.Agent;
+import com.ravex.backend.domain.model.Centre;
 import com.ravex.backend.domain.model.Conge;
 import com.ravex.backend.dto.AgentCongeDTO; // Importer le nouveau DTO
 import com.ravex.backend.dto.AgentDetailsDTO;
 import com.ravex.backend.dto.AgentNomPrenomDTO;
+import com.ravex.backend.dto.centre.SaveAgentDto;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,9 +28,10 @@ public class AgentService {
     private final CongeRepository congeRepository;
     private final AgentRepository agentRepository;
     private final SuiviCongeRepository suiviCongeRepository;
+    private final NumeroCentre numeroCentre;
+    private final CentreRepository centreRepository;
 
-
-
+    
     // Retourner à la fois l'agent et le nombre de jours
     public Optional<AgentCongeDTO> getAgentAndJoursByCongeReference(String refConge){
         Optional<Conge> conge = congeRepository.findByReference(refConge);
@@ -40,26 +46,33 @@ public class AgentService {
 
     // Obtenir le nom et le prénom de l'agent
     public Optional<AgentNomPrenomDTO> getNomPrenomViaMatricule(String matricule){
-        return agentRepository.obtenirNomEtPrenomAgentViaMatricule(matricule);
+        return agentRepository.obtenirNomEtPrenomAgentViaMatricule(matricule,numeroCentre.getNumCentre());
     }
 
     public boolean checkerSiMatriculeExiste(String matricule) {
-        return agentRepository.findByMatriculeTrimmed(matricule).isPresent();
+        return agentRepository.findByMatriculeTrimmed(matricule, numeroCentre.getNumCentre()).isPresent();
     }
 
     // ===== Nouveau : Ajouter un agent =====
-    public Agent addAgent(Agent agent) throws Exception {
-        // Vérifier si le matricule existe déjà
-        if (checkerSiMatriculeExiste(agent.getMatricule())) {
-            throw new Exception("Le matricule " + agent.getMatricule() + " appartient déjà à un agent");
-        }
-        return agentRepository.save(agent);
+    // Dans votre AgentService
+    public Agent addAgent(SaveAgentDto dto) {
+        Centre centre = centreRepository.findById(dto.code())
+                .orElseThrow(() -> new RuntimeException("Centre non trouvé"));
+
+        Agent agent = new Agent();
+        agent.setMatricule(dto.matricule());
+        agent.setNom(dto.nom());
+        agent.setPrenom(dto.prenom());
+        agent.setFonction(dto.fonction());
+        agent.setCentre(centre); // Associer le centre
+
+        return agentRepository.save(agent); // Méthode JPA standard
     }
 
 
     @Transactional(readOnly = true)
     public Optional<AgentDetailsDTO> getAgentDetails(String matricule) {
-        Optional<Agent> agentOpt = agentRepository.findByMatriculeTrimmed(matricule);
+        Optional<Agent> agentOpt = agentRepository.findByMatriculeTrimmed(matricule, numeroCentre.getNumCentre());
 
         if (agentOpt.isEmpty()) {
             return Optional.empty();

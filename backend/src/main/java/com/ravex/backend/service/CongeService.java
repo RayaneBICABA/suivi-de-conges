@@ -1,20 +1,21 @@
 package com.ravex.backend.service;
 
+import com.ravex.backend.configuration.NumeroCentre;
 import com.ravex.backend.domain.Repository.CongeRepository;
 import com.ravex.backend.domain.model.Conge;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class CongeService {
     private final CongeRepository congeRepository;
+    private final NumeroCentre numeroCentre;
 
-    public CongeService(CongeRepository congeRepository) {
-        this.congeRepository = congeRepository;
-    }
 
     // Vérifier si la référence de congé existe
     public boolean voirSiRefCongeExiste(String reference) {
-        return congeRepository.existsByReference(reference);
+        return congeRepository.existsByReference(reference, numeroCentre.getNumCentre());
     }
 
     // Enregistrer un nouveau congé

@@ -1,15 +1,14 @@
 package com.ravex.backend.Controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ravex.backend.domain.model.Agent;
 import com.ravex.backend.dto.AgentCongeDTO; // Importer le DTO
 import com.ravex.backend.dto.AgentNomPrenomDTO;
+import com.ravex.backend.dto.centre.SaveAgentDto;
 import com.ravex.backend.service.AgentService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -52,20 +51,10 @@ public class AgentController {
     // Endpoint : POST /agent
     // SOLUTION : Retirer complètement la contrainte consumes pour être plus permissif
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addAgent(@RequestBody Agent agent) {
+    public ResponseEntity<?> addAgent(@RequestBody SaveAgentDto centreDto) {
         try {
-            // Validation
-            if (agent.getMatricule() == null || agent.getMatricule().trim().isEmpty())
-                return ResponseEntity.badRequest().body(Map.of("message", "Le matricule est obligatoire"));
-            if (agent.getNom() == null || agent.getNom().trim().isEmpty())
-                return ResponseEntity.badRequest().body(Map.of("message", "Le nom est obligatoire"));
-            if (agent.getPrenom() == null || agent.getPrenom().trim().isEmpty())
-                return ResponseEntity.badRequest().body(Map.of("message", "Le prénom est obligatoire"));
-            if (agent.getFonction() == null || agent.getFonction().trim().isEmpty())
-                return ResponseEntity.badRequest().body(Map.of("message", "La fonction est obligatoire"));
-
             // Sauvegarde
-            Agent savedAgent = agentService.addAgent(agent);
+            Agent savedAgent = agentService.addAgent(centreDto);
 
             return ResponseEntity.ok(Map.of(
                     "message", "Agent enregistré avec succès",

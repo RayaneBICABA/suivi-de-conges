@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Demande de matériels</title>
+    <link rel="icon" type="image/png" href="/favicoConge.png" />
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for mobile sidebar */
+        .mobile-sidebar {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .mobile-sidebar.active {
+            transform: translateX(0);
+        }
+
+        /* Overlay for mobile menu */
+        .mobile-overlay {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .mobile-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="flex h-screen bg-gray-100 relative">
+        <!-- Mobile Overlay -->
+        <div id="mobileOverlay" class="mobile-overlay fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"></div>
+
+        <!-- Desktop Sidebar -->
+        <div class="hidden md:flex flex-col w-[15vw] bg-gray-800">
+            <!-- Header -->
+            <div class="flex items-center justify-center h-16 bg-[#0423D0]">
+                <span class="text-white font-bold uppercase text-xl sm:text-2xl">
+                    Demande de matériels
+                </span>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex flex-col flex-1 overflow-y-auto">
+                <nav class="flex-1 px-2 py-4 bg-[#2563eb]">
+                    <a href="#" data-target="dashboard"
+                        class="menu-link flex items-center px-4 py-3 text-gray-100 text-lg sm:text-xl hover:bg-[#0423d0] hover:rounded-2xl">
+                        <i class="fa-solid fa-gauge mr-3 text-white"></i>
+                        Tableau de bord
+                    </a>
+                    <a href="#" data-target="addProvider"
+                        class="menu-link flex items-center px-4 py-3 mt-2 text-gray-100 text-lg sm:text-xl hover:bg-[#0423d0] hover:rounded-2xl">
+                        <i class="fa-solid fa-plus mr-3 text-white"></i>
+                        Ajouter fournisseur
+                    </a>
+                     <a href="#" data-target="manageAsk"
+                        class="menu-link flex items-center px-4 py-3 mt-2 text-gray-100 text-lg sm:text-xl hover:bg-[#0423d0] hover:rounded-2xl">
+                        <i class="fa-solid fa-toolbox" style="color: #ffffff;"></i>
+                        Enregistrer demande
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Mobile Sidebar -->
+        <div id="mobileSidebar" class="mobile-sidebar md:hidden fixed inset-y-0 left-0 z-50 w-64 bg-gray-800">
+            <!-- Header -->
+            <div class="flex items-center justify-between h-16 bg-[#0423D0] px-4">
+                <span class="text-white font-bold uppercase text-lg">
+                    Demande de matériels
+                </span>
+                <button id="closeMobileMenu" class="text-white hover:text-gray-300">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex flex-col flex-1 overflow-y-auto">
+                <nav class="flex-1 px-2 py-4 bg-[#2563eb]">
+                   <a href="#" data-target="dashboard"
+                        class="menu-link flex items-center px-4 py-3 text-gray-100 text-lg sm:text-xl hover:bg-[#0423d0] hover:rounded-2xl">
+                        <i class="fa-solid fa-gauge mr-3 text-white"></i>
+                        Tableau de bord
+                    </a>
+                    <a href="#" data-target="addProvider"
+                        class="menu-link flex items-center px-4 py-3 mt-2 text-gray-100 text-lg sm:text-xl hover:bg-[#0423d0] hover:rounded-2xl">
+                        <i class="fa-solid fa-plus mr-3 text-white"></i>
+                        Ajouter fournisseur
+                    </a>
+                     <a href="#" data-target="manageAsk"
+                        class="menu-link flex items-center px-4 py-3 mt-2 text-gray-100 text-lg sm:text-xl hover:bg-[#0423d0] hover:rounded-2xl">
+                        <i class="fa-solid fa-toolbox" style="color: #ffffff;"></i>
+                        Enregistrer demande
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- ====================================== TABLEAU DE BORD ====================================== -->
+
+        <!-- ====================================== AJOUTER FOURNISSEUR ====================================== -->
+        <div id="addProvider" class="hidden flex flex-col flex-1 overflow-y-auto bg-gray-100">
+            <div class="p-4">
+                <div class="flex items-center justify-between mb-4">
+                    <button id="burgerMenuBtnProvider" class="md:hidden text-gray-600 hover:text-gray-900">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <h1 class="text-xl md:text-2xl font-bold">Ajouter un Fournisseur</h1>
+                    <div class="w-6"></div> <!-- Spacer for alignment -->
+                </div>
+
+                <div class="flex items-center justify-center min-h-[calc(100vh-120px)] px-4 py-6">
+                    <div class="bg-white p-4 sm:p-6 md:p-8 rounded-2xl shadow-xl w-full max-w-2xl mx-auto">
+                        <h1
+                            class="text-lg sm:text-xl md:text-2xl font-bold mb-6 md:mb-8 text-center text-blue-800 leading-tight">
+                            Formulaire d'enregistrement d'un fournisseur
+                        </h1>
+
+                        <form id="providerForm" class="space-y-4 md:space-y-6">
+                            <!-- Code Fournisseur -->
+                            <div>
+                                <label for="providerCode"
+                                    class="block text-sm sm:text-base md:text-lg font-medium text-gray-700 mb-2">
+                                    Code Fournisseur
+                                </label>
+                                <input id="providerCode" type="text" placeholder="Ex: FOUR001"
+                                    class="w-full border border-gray-300 p-2 md:p-3 rounded-lg text-base sm:text-lg md:text-xl focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none transition-colors duration-200" />
+                            </div>
+
+                            <!-- Nom Fournisseur -->
+                            <div>
+                                <label for="providerName"
+                                    class="block text-sm sm:text-base md:text-lg font-medium text-gray-700 mb-2">
+                                    Nom Fournisseur
+                                </label>
+                                <input id="providerName" type="text" placeholder="Ex: SODIGAZ SA"
+                                    class="w-full border border-gray-300 p-2 md:p-3 rounded-lg text-base sm:text-lg md:text-xl focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none transition-colors duration-200" />
+                            </div>
+
+                            <!-- Téléphone Fournisseur -->
+                            <div>
+                                <label for="providerPhone"
+                                    class="block text-sm sm:text-base md:text-lg font-medium text-gray-700 mb-2">
+                                    Téléphone Fournisseur
+                                </label>
+                                <input id="providerPhone" type="tel" placeholder="Ex: +226 25 36 47 58"
+                                    class="w-full border border-gray-300 p-2 md:p-3 rounded-lg text-base sm:text-lg md:text-xl focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none transition-colors duration-200" />
+                            </div>
+
+                            <!-- Numéro IFU fournisseur -->
+                            <div>
+                                <label for="providerIfu"
+                                    class="block text-sm sm:text-base md:text-lg font-medium text-gray-700 mb-2">
+                                    Numéro IFU fournisseur
+                                </label>
+                                <input id="providerIfu" type="text" placeholder="Ex: 00123456789"
+                                    class="w-full border border-gray-300 p-2 md:p-3 rounded-lg text-base sm:text-lg md:text-xl focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none transition-colors duration-200" />
+                            </div>
+
+                            <!-- Adresse Fournisseur -->
+                            <div>
+                                <label for="providerAddress"
+                                    class="block text-sm sm:text-base md:text-lg font-medium text-gray-700 mb-2">
+                                    Adresse Fournisseur
+                                </label>
+                                <textarea id="providerAddress" rows="3"
+                                    placeholder="Ex: Secteur 30, Avenue Charles de Gaulle, Ouagadougou"
+                                    class="w-full border border-gray-300 p-2 md:p-3 rounded-lg text-base sm:text-lg md:text-xl focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none transition-colors duration-200 resize-vertical"></textarea>
+                            </div>
+
+                            <!-- Profession Fournisseur -->
+                            <div>
+                                <label for="providerProfession"
+                                    class="block text-sm sm:text-base md:text-lg font-medium text-gray-700 mb-2">
+                                    Profession Fournisseur
+                                </label>
+                                <input id="providerProfession" type="text"
+                                    placeholder="Ex: Distribution de gaz industriel"
+                                    class="w-full border border-gray-300 p-2 md:p-3 rounded-lg text-base sm:text-lg md:text-xl focus:ring-2 focus:ring-blue-300 focus:border-blue-300 outline-none transition-colors duration-200" />
+                            </div>
+
+                            <!-- Boutons d'action -->
+                            <div
+                                class="flex flex-col sm:flex-row justify-between pt-4 space-y-4 sm:space-y-0 sm:space-x-4">
+                                <button type="submit" id="addProviderBtn"
+                                    class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2.5 md:py-3 px-4 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base md:text-lg">
+                                    Confirmer
+                                </button>
+                                <button type="button" id="cancelProviderBtn"
+                                    class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-2.5 md:py-3 px-4 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400 text-sm sm:text-base md:text-lg">
+                                    Annuler
+                                </button>
+
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====================================== ENREGISTRER DEMANDE ====================================== -->
+    </div>
+
+    <script>
+        // Mobile menu functionality
+        const burgerMenuBtn = document.getElementById('burgerMenuBtn');
+        const burgerMenuBtnManage = document.getElementById('burgerMenuBtnManage');
+        const burgerMenuBtnPrise = document.getElementById('burgerMenuBtnPrise');
+        const burgerMenuBtnAdd = document.getElementById('burgerMenuBtnAdd');
+        const mobileSidebar = document.getElementById('mobileSidebar');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+        const closeMobileMenu = document.getElementById('closeMobileMenu');
+
+        // Function to open mobile menu
+        function openMobileMenu() {
+            mobileSidebar.classList.add('active');
+            mobileOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Function to close mobile menu
+        function closeMobileMenuFunc() {
+            mobileSidebar.classList.remove('active');
+            mobileOverlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Event listeners for burger menu buttons
+        if (burgerMenuBtn) {
+            burgerMenuBtn.addEventListener('click', openMobileMenu);
+        }
+        if (burgerMenuBtnManage) {
+            burgerMenuBtnManage.addEventListener('click', openMobileMenu);
+        }
+        if (burgerMenuBtnPrise) {
+            burgerMenuBtnPrise.addEventListener('click', openMobileMenu);
+        }
+        if (burgerMenuBtnAdd) {
+            burgerMenuBtnAdd.addEventListener('click', openMobileMenu);
+        }
+
+        // Event listeners to close mobile menu
+        if (closeMobileMenu) {
+            closeMobileMenu.addEventListener('click', closeMobileMenuFunc);
+        }
+        if (mobileOverlay) {
+            mobileOverlay.addEventListener('click', closeMobileMenuFunc);
+        }
+
+        // Navigation functionality
+        function switchToSection(sectionId) {
+            // Hide all sections
+            const sections = ['dashboard', 'addAgent', 'manageLeaves', 'priseCongeSection'];
+            sections.forEach(section => {
+                const element = document.getElementById(section);
+                if (element) {
+                    element.classList.add('hidden');
+                }
+            });
+
+            // Show target section
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.classList.remove('hidden');
+            }
+
+            // Close mobile menu
+            closeMobileMenuFunc();
+        }
+
+        // Desktop menu links
+        const menuLinks = document.querySelectorAll('.menu-link');
+        menuLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = link.getAttribute('data-target');
+                if (target) {
+                    switchToSection(target);
+                }
+            });
+        });
+
+        // Mobile menu links
+        const mobileMenuLinks = document.querySelectorAll('.mobile-menu-link');
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = link.getAttribute('data-target');
+                if (target) {
+                    switchToSection(target);
+                }
+            });
+        });
+
+        // Placeholder functions for existing functionality
+        function voirDetails(matricule) {
+            console.log('Voir détails pour matricule:', matricule);
+        }
+
+        function enregistrerConge() {
+            console.log('Enregistrer congé');
+        }
+
+        // Close mobile menu when clicking outside or on escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeMobileMenuFunc();
+            }
+        });
+    </script>
+
+    <meta name="auth-required" content="true">
+
+</body>
+
+</html>
