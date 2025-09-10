@@ -46,14 +46,15 @@ function clearAgentForm() {
   if (agentPrenomInput) agentPrenomInput.value = "";
   if (agentMatriculeInput) agentMatriculeInput.value = "";
   if (agentFonctionInput) agentFonctionInput.value = "";
+  if (agentCentreSelect) agentCentreSelect.value = "";
 }
 
 function showError(message) {
-  showMessage(`⌫ ${message}`,"error");
+  showMessage(`${message}`,"error");
 }
 
 function showSuccess(message) {
-  showMessage(`✅ ${message}`,"error");
+  showMessage(`${message}`,"success");
 }
 
 // ==========================
@@ -64,13 +65,12 @@ function validateForm() {
   const prenom = agentPrenomInput?.value.trim();
   const matricule = agentMatriculeInput?.value.trim();
   const fonction = agentFonctionInput?.value.trim();
+  const centre = agentCentreSelect?.value.trim();
 
-  if (!nom || !prenom || !matricule || !fonction) {
-    showMessage("Veuillez remplir tous les champs","info");
+  if (!nom || !prenom || !matricule || !fonction || !centre) {
+    showMessage("Veuillez remplir tous les champs obligatoires","info");
     return false;
   }
-
-  
 
   // Validation format matricule (optionnel)
   if (matricule.length < 3) {
@@ -96,12 +96,14 @@ async function ajouterAgent() {
     return;
   }
 
-  const agentData = {
-    matricule: agentMatriculeInput.value.trim().toUpperCase(), // Convertir en majuscules
-    nom: agentNomInput.value.trim(),
-    prenom: agentPrenomInput.value.trim(),
-    fonction: agentFonctionInput.value.trim()
-  };
+ const agentData = {
+  matricule: agentMatriculeInput.value.trim().toUpperCase(),
+  nom: agentNomInput.value.trim(),
+  prenom: agentPrenomInput.value.trim(),
+  fonction: agentFonctionInput.value.trim(),
+  code:  parseInt(agentCentreSelect.value.trim(), 10) // ✅ bien adapté à l’API
+};
+
 
   try {
     // Marquer comme en cours de soumission
@@ -145,8 +147,12 @@ async function ajouterAgent() {
 
     const data = await response.json();
 
+    // Récupérer le libellé du centre sélectionné pour l'affichage
+    const selectedOption = agentCentreSelect.options[agentCentreSelect.selectedIndex];
+    const libelleCentre = selectedOption ? selectedOption.textContent : '';
+
     // Succès
-    showMessage(`Agent enregistré avec succès !\nMatricule: ${data.matricule}\nNom complet: ${data.prenom} ${data.nom}`,"success");
+    showSuccess(`Agent enregistré avec succès !\nMatricule: ${data.matricule}\nNom: ${data.prenom} ${data.nom}\nCentre: ${libelleCentre}`);
     clearAgentForm();
 
   } catch (error) {
@@ -163,11 +169,11 @@ async function ajouterAgent() {
 }
 
 
-// ==========================
 // Charger la liste des centres
-// ==========================
 async function chargerCentres() {
   try {
+    showMessage("Chargement des centres...", "info");
+    
     const response = await fetch(`${apiUrl}/centre`, {
       method: "GET",
       headers: {
@@ -181,22 +187,32 @@ async function chargerCentres() {
 
     const centres = await response.json();
 
-    // Vider la liste avant de recharger
-    agentCentreSelect.innerHTML = '<option value="">Sélectionnez un centre</option>';
+    if (!Array.isArray(centres)) {
+      throw new Error("Format de réponse invalide pour les centres");
+    }
 
-    centres.forEach(c => {
-      const option = document.createElement("option");
-      option.value = c.codeCentre;   // ⚡ code en value
-      option.textContent = c.libelleCentre; // libellé affiché
-      agentCentreSelect.appendChild(option);
-    });
+    if (agentCentreSelect) {
+      agentCentreSelect.innerHTML = '<option value="">Sélectionnez un centre</option>';
+
+      centres.forEach(centre => {
+        const option = document.createElement("option");
+        option.value = centre.code; // ✅ correspond à l’API
+        option.textContent = centre.libelleCentre; // ✅ correspond à l’API
+        agentCentreSelect.appendChild(option);
+      });
+
+      showMessage(`${centres.length} centre(s) chargé(s)`, "success");
+    }
 
   } catch (error) {
     console.error("Erreur chargement centres:", error);
     showError("Impossible de charger la liste des centres");
+
+    if (agentCentreSelect) {
+      agentCentreSelect.innerHTML = '<option value="">Erreur de chargement des centres</option>';
+    }
   }
 }
-
 
 
 
@@ -204,6 +220,9 @@ async function chargerCentres() {
 // Event listeners - Attendre que le DOM soit chargé
 // ==========================
 document.addEventListener("DOMContentLoaded", () => {
+  // Charger la liste des centres au démarrage
+  chargerCentres();
+
   if (addAgentBtn) {
     addAgentBtn.addEventListener("click", (e) => {
       e.preventDefault(); // Empêcher tout comportement par défaut
@@ -215,7 +234,7 @@ document.addEventListener("DOMContentLoaded", () => {
     cancelBtn.addEventListener("click", (e) => {
       e.preventDefault();
       clearAgentForm();
-      showMessage("Formulaire réinitialisé","success");
+      showSuccess("Formulaire réinitialisé");
     });
   }
 
@@ -258,4 +277,14 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
   });
+
+  // Ajouter le select centre pour la soumission avec Enter
+  if (agentCentreSelect) {
+    agentCentreSelect.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        ajouterAgent();
+      }
+    });
+  }
 });

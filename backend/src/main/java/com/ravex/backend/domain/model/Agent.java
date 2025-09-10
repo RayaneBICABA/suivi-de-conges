@@ -35,7 +35,7 @@ public class Agent {
 
     @ManyToOne
     @JsonBackReference
-    @JoinColumn(name = "CENTRE", nullable = false)
+    @JoinColumn(name = "C_CODE", nullable = false, referencedColumnName = "C_CODE")
     private Centre centre;
 
     // ============ Methode Utilitaire ============

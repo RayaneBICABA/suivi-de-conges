@@ -16,7 +16,7 @@ import java.util.List;
 public class Centre {
     @Id
     @Column(name = "C_CODE", nullable = false, unique = true, length = 3)
-    private int codeCentre;
+    private Integer codeCentre;
 
     @Column(name = "C_LIBELLE", nullable = false, length = 50)
     private String libelleCentre;
