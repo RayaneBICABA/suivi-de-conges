@@ -51,5 +51,4 @@ public interface AgentRepository extends JpaRepository<Agent, String> {
     @Query("SELECT COUNT(a) FROM Agent a WHERE a.centre.codeCentre = :centre")
     long countByCentre(@Param("centre") int centre);
 
-
 }

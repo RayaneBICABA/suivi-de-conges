@@ -1,5 +1,6 @@
 import {apiUrl} from "./config.js";
 
+
 function showMessage(message, type = "info") {
   const colors = {
     success: "bg-green-500",
