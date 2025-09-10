@@ -52,6 +52,4 @@ public interface AgentRepository extends JpaRepository<Agent, String> {
     long countByCentre(@Param("centre") int centre);
 
 
-    // Creer un agent
-
 }

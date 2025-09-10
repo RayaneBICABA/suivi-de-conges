@@ -29,6 +29,8 @@ const agentMatriculeInput = document.getElementById("agentMatricule");
 const agentFonctionInput = document.getElementById("agentFonction");
 const addAgentBtn = document.getElementById("addAgentBtn");
 const cancelBtn = document.getElementById("cancelBtn");
+const agentCentreSelect = document.getElementById("agentCentre");
+
 
 // ==========================
 // Variables de contrôle
@@ -158,6 +160,44 @@ async function ajouterAgent() {
     addAgentBtn.textContent = "Ajouter";
   }
 }
+
+
+// ==========================
+// Charger la liste des centres
+// ==========================
+async function chargerCentres() {
+  try {
+    const response = await fetch(`${apiUrl}/centre`, {
+      method: "GET",
+      headers: {
+        "Accept": "application/json"
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Erreur lors du chargement des centres (${response.status})`);
+    }
+
+    const centres = await response.json();
+
+    // Vider la liste avant de recharger
+    agentCentreSelect.innerHTML = '<option value="">Sélectionnez un centre</option>';
+
+    centres.forEach(c => {
+      const option = document.createElement("option");
+      option.value = c.codeCentre;   // ⚡ code en value
+      option.textContent = c.libelleCentre; // libellé affiché
+      agentCentreSelect.appendChild(option);
+    });
+
+  } catch (error) {
+    console.error("Erreur chargement centres:", error);
+    showError("Impossible de charger la liste des centres");
+  }
+}
+
+
+
 
 // ==========================
 // Event listeners - Attendre que le DOM soit chargé
