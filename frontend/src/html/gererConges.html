@@ -7,9 +7,10 @@
     <title>Gestion des Congés</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="/favicoConge.png" />
 </head>
 
-<body bg-gray-100>
+<body>
     <div id="responsive-menu-container"></div>
 
     <!-- Responsive Menu -->
@@ -23,7 +24,7 @@
             onNavigate: function (item, index) {
                 switch (index) {
                     case 0:
-                        window.location.href = "../index.html";
+                        window.location.href = "../../index.html";
                         break;
                     case 1:
                         window.location.href = "./ajouterAgent.html";
@@ -41,7 +42,7 @@
         // Injecter le contenu
         menu.updateContent(`
       <!-- ================= GERER LES CONGES ================= -->
-      <div id="manageLeaves" class="bg-gray-100 flex flex-col flex-1 overflow-y-auto min-h-screen">
+      <div id="manageLeaves" class="bg-[#f3f4f6] flex flex-col flex-1 overflow-y-auto min-h-screen">
         <div class="p-4">
           
           <div class="flex items-center justify-center min-h-[calc(100vh-120px)] px-2 py-2">

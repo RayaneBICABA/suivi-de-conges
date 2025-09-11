@@ -17,7 +17,7 @@ class ResponsiveMenu {
 
     createHTML() {
         return `
-            <div class="mother-container bg-white min-h-screen w-full flex relative">
+            <div class="mother-container bg-[#f3f4f6] min-h-screen w-full flex relative">
                 <div class="md:hidden fixed top-0 left-0 right-0 h-16 flex items-center justify-between px-4 z-30" style="background-color: ${this.primaryColor};">
                     <h2 class="text-xl text-white font-bold">${this.title}</h2>
                     <button id="burger-btn" class="text-white text-xl">
