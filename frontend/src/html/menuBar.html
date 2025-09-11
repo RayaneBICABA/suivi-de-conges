@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Menu Bar - Tutorial</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <!-- Container Principal -->
+    <div class="mother-container bg-white min-h-screen w-full flex relative">
+        
+        <!-- 📱 ÉTAPE 1: Header Mobile avec Burger Menu -->
+        <!-- Visible seulement sur mobile (md:hidden) -->
+        <div class="md:hidden fixed top-0 left-0 right-0 bg-[#2563eb] h-16 flex items-center justify-between px-4 z-30">
+            <h2 class="text-xl text-white font-bold">SUIVI CONGES</h2>
+            
+            <!-- Bouton Burger -->
+            <button id="burger-btn" class="text-white text-xl">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+        
+        <!-- 🌑 ÉTAPE 2: Overlay pour Mobile -->
+        <!-- Arrière-plan sombre quand menu ouvert -->
+        <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-35 hidden"></div>
+        
+        <!-- 📋 ÉTAPE 3: Menu Sidebar Responsive -->
+        <div id="menu" class="menu bg-[#2563eb] h-screen
+                     fixed md:relative                    
+                     w-80 md:w-[13%]                     
+                     -translate-x-full md:translate-x-0   
+                     z-40                                 
+                     transition-transform duration-300    
+                     top-0 left-0">
+            
+            <!-- Header du menu -->
+            <div class="header bg-[#1e40af] h-16 md:h-[7%] flex justify-center items-center relative">
+                <h2 class="text-xl md:text-2xl text-white font-bold">SUIVI CONGES</h2>
+                
+                <!-- Bouton Fermer (mobile seulement) -->
+                <button id="close-btn" class="md:hidden absolute right-4 text-white text-xl">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            
+            <!-- Navigation -->
+            <nav class="flex flex-col gap-4 p-4 md:p-2">
+                <a href="#" class="nav-link text-white text-lg md:text-[1.2em] hover:bg-[#3b82f6] p-3 md:p-2 min-h-[3rem] md:h-[5vh] flex items-center rounded-2xl transition-colors">
+                    <i class="fa-solid fa-gauge mr-3 text-white text-lg p-2"></i>
+                    Tableau de bord
+                </a>
+                <a href="#" class="nav-link text-white text-lg md:text-[1.2em] hover:bg-[#3b82f6] p-3 md:p-2 min-h-[3rem] md:h-[5vh] flex items-center rounded-2xl transition-colors">
+                    <i class="fa-solid fa-plus mr-3 text-white text-lg p-2"></i>
+                    Ajouter un agent
+                </a>
+                <a href="#" class="nav-link text-white text-lg md:text-[1.2em] hover:bg-[#3b82f6] p-3 md:p-2 min-h-[3rem] md:h-[5vh] flex items-center rounded-2xl transition-colors">
+                    <i class="fa-solid fa-people-roof mr-3 text-white text-lg p-2"></i>
+                    Gérer les congés
+                </a>
+            </nav>
+        </div>
+        
+        <!-- 📄 ÉTAPE 4: Contenu Principal Responsive -->
+        <div class="main-content 
+                    w-full md:w-[87%]           
+                    pt-16 md:pt-0              
+                    min-h-screen flex-1">
+            
+            <div class="p-4 md:p-6">
+               
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 🎯 ÉTAPE 5: JavaScript pour l'Interactivité
+        
+        // 1️⃣ Récupérer les éléments
+        const burgerBtn = document.getElementById('burger-btn');
+        const closeBtn = document.getElementById('close-btn');
+        const menu = document.getElementById('menu');
+        const overlay = document.getElementById('overlay');
+        const navLinks = document.querySelectorAll('.nav-link');
+        
+        // 2️⃣ État du menu
+        let isMenuOpen = false;
+        
+        // 3️⃣ Fonction pour ouvrir le menu
+        function openMenu() {
+            console.log('🔓 Ouverture du menu');
+            isMenuOpen = true;
+            
+            // Montrer le menu (enlever la translation)
+            menu.classList.remove('-translate-x-full');
+            menu.classList.add('translate-x-0');
+            
+            // Montrer l'overlay
+            overlay.classList.remove('hidden');
+            
+            // Bloquer le scroll de la page
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // 4️⃣ Fonction pour fermer le menu
+        function closeMenu() {
+            console.log('🔒 Fermeture du menu');
+            isMenuOpen = false;
+            
+            // Cacher le menu (ajouter la translation)
+            menu.classList.add('-translate-x-full');
+            menu.classList.remove('translate-x-0');
+            
+            // Cacher l'overlay
+            overlay.classList.add('hidden');
+            
+            // Réactiver le scroll
+            document.body.style.overflow = 'auto';
+        }
+        
+        // 5️⃣ Fonction toggle (basculer)
+        function toggleMenu() {
+            console.log('🔄 Toggle menu, état actuel:', isMenuOpen);
+            isMenuOpen ? closeMenu() : openMenu();
+        }
+        
+        // 6️⃣ Event Listeners
+        
+        // Clic sur burger button
+        if (burgerBtn) {
+            burgerBtn.addEventListener('click', toggleMenu);
+        }
+        
+        // Clic sur bouton fermer
+        if (closeBtn) {
+            closeBtn.addEventListener('click', closeMenu);
+        }
+        
+        // Clic sur overlay pour fermer
+        if (overlay) {
+            overlay.addEventListener('click', closeMenu);
+        }
+        
+        // Fermer avec la touche Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && isMenuOpen) {
+                closeMenu();
+            }
+        });
+        
+        // 7️⃣ Gestion du redimensionnement
+        window.addEventListener('resize', () => {
+            console.log('📏 Redimensionnement, largeur:', window.innerWidth);
+            
+            if (window.innerWidth >= 768) {
+                // Mode desktop: s'assurer que le menu est dans le bon état
+                menu.classList.remove('-translate-x-full');
+                menu.classList.add('translate-x-0');
+                overlay.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+                isMenuOpen = false;
+            } else if (isMenuOpen) {
+                // Mode mobile: garder l'état actuel
+                // Ne rien faire si le menu est ouvert
+            } else {
+                // Mode mobile: menu fermé
+                closeMenu();
+            }
+        });
+        
+        // 8️⃣ Navigation active
+        navLinks.forEach((link, index) => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // Enlever la classe active de tous les liens
+                navLinks.forEach(l => l.classList.remove('bg-[#1e40af]'));
+                
+                // Ajouter la classe active au lien cliqué
+                link.classList.add('bg-[#1e40af]');
+                
+                // Fermer le menu sur mobile après clic
+                if (window.innerWidth < 768) {
+                    setTimeout(closeMenu, 150); // Petit délai pour l'UX
+                }
+                
+                console.log('🔗 Navigation:', link.textContent.trim());
+            });
+        });
+        
+        // 9️⃣ Initialisation
+        console.log('🚀 Menu responsive initialisé!');
+        
+        // Définir le premier lien comme actif
+        if (navLinks.length > 0) {
+            navLinks[0].classList.add('bg-[#1e40af]');
+        }
+        
+        // Vérifier l'état initial selon la taille d'écran
+        if (window.innerWidth < 768) {
+            closeMenu();
+        }
+    </script>
+</body>
+</html>

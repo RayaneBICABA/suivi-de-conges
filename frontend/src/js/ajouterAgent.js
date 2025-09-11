@@ -196,8 +196,8 @@ async function chargerCentres() {
 
       centres.forEach(centre => {
         const option = document.createElement("option");
-        option.value = centre.code; // ✅ correspond à l’API
-        option.textContent = centre.libelleCentre; // ✅ correspond à l’API
+        option.value = centre.code; 
+        option.textContent = centre.libelleCentre;
         agentCentreSelect.appendChild(option);
       });
 
