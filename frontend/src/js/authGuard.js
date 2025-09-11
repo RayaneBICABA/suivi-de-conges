@@ -197,7 +197,7 @@ class AuthGuard {
         this.setupAPIInterceptor();
         
         // Vérifier l'authentification pour les pages protégées
-        const protectedPages = ['index.html', 'dashboard.html'];
+        const protectedPages = ['index.html', 'ajouterAgent.html', 'gererConges.html'];
         const currentPage = window.location.pathname.split('/').pop();
         
         if (protectedPages.includes(currentPage) || currentPage === '') {
