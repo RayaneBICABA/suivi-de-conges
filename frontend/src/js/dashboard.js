@@ -124,7 +124,7 @@ async function voirDetails(matricule) {
     } catch (error) {
         console.error('Erreur lors du chargement des détails de l\'agent:', error);
         showAgentDetailsError(error.message);
-        showNotification(error.message, 'error');
+        // showNotification(error.message, 'error');
     }
 }
 
