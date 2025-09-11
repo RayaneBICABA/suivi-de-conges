@@ -101,7 +101,7 @@ async function ajouterAgent() {
   nom: agentNomInput.value.trim(),
   prenom: agentPrenomInput.value.trim(),
   fonction: agentFonctionInput.value.trim(),
-  code:  parseInt(agentCentreSelect.value.trim(), 10) // ✅ bien adapté à l’API
+  code:  parseInt(agentCentreSelect.value.trim(), 10)
 };
 
 
@@ -172,8 +172,6 @@ async function ajouterAgent() {
 // Charger la liste des centres
 async function chargerCentres() {
   try {
-    showMessage("Chargement des centres...", "info");
-    
     const response = await fetch(`${apiUrl}/centre`, {
       method: "GET",
       headers: {
