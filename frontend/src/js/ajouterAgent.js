@@ -199,7 +199,7 @@ async function chargerCentres() {
         agentCentreSelect.appendChild(option);
       });
 
-      showMessage(`${centres.length} centre(s) chargé(s)`, "success");
+      // showMessage(`${centres.length} centre(s) chargé(s)`, "success");
     }
 
   } catch (error) {
@@ -218,6 +218,20 @@ async function chargerCentres() {
 // Event listeners - Attendre que le DOM soit chargé
 // ==========================
 document.addEventListener("DOMContentLoaded", () => {
+if (!window.AuthGuard) {
+    console.error('AuthGuard non disponible');
+    // Détecter la page actuelle pour le bon chemin
+    const currentPath = window.location.pathname;
+    let loginPath = './login.html'; // Par défaut pour les pages dans src/html/
+    
+    if (currentPath === '/' || currentPath.endsWith('index.html')) {
+        loginPath = './src/html/login.html'; // Depuis la racine
+    }
+    
+    window.location.replace(loginPath);
+    return;
+}
+
   // Charger la liste des centres au démarrage
   chargerCentres();
 

@@ -101,7 +101,7 @@ if (pcAddCongeBtn) {
     const joursRestantsEl = document.getElementById("pcJoursRestants");
     
     if (!matriculeEl || !joursRestantsEl) {
-      showMessage("❌ Éléments manquants dans le DOM","error");
+      showMessage("Éléments manquants dans le DOM","error");
       return;
     }
 
@@ -112,25 +112,25 @@ if (pcAddCongeBtn) {
     const joursRestants = parseInt(joursRestantsEl.textContent, 10);
 
     if (!currentPriseCongeRef) {
-     showMessage("⚠️ Référence de congé invalide.","info");
+     showMessage("Référence de congé invalide.","info");
       return;
     }
     if (!matricule || matricule === "--") {
-      showMessage("⚠️ Matricule agent introuvable.","error");
+      showMessage("Matricule agent introuvable.","error");
       return;
     }
     if (!dateDebut || !dateFin) {
-      showMessage("⚠️ Veuillez choisir la période.","error");
+      showMessage("Veuillez choisir la période.","error");
       return;
     }
     if (!jours || jours <= 0) {
-      showMessage("⚠️ Nombre de jours invalide.","error");
+      showMessage("Nombre de jours invalide.","error");
       return;
     }
 
     // Vérification du solde restant
     if (jours > joursRestants) {
-      showMessage(`⚠️ Vous demandez ${jours} jours alors qu'il ne reste que ${joursRestants} jours.`,"error");
+      showMessage(`Vous demandez ${jours} jours alors qu'il ne reste que ${joursRestants} jours.`,"error");
       return;
     }
 
@@ -153,10 +153,10 @@ fetch
 
       if (!response.ok) {
         const message = data.message || "Erreur lors de l'ajout du congé";
-        throw new Error(`❌ ${message}`);
+        throw new Error(`${message}`);
       }
 
-      showMessage(`✅ Congé ajouté avec succès (ID: ${data.id})`,"success");
+      showMessage(`Congé ajouté avec succès (ID: ${data.id})`,"success");
 
       // Réinitialiser les champs
       pcStartDateEl.value = "";

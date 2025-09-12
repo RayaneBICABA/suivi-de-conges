@@ -11,16 +11,25 @@ class AuthGuard {
     static async checkAuth() {
         try {
             const token = this.getToken();
-            
+
             if (!token) {
+                this.redirectToLogin();
+                return false;
+            }
+
+            // Vérifier l'expiration locale d'abord
+            if (this.isTokenExpired()) {
+                console.log('Token expiré localement');
+                this.clearAuthData();
                 this.redirectToLogin();
                 return false;
             }
 
             // Vérifier la validité du token auprès du serveur
             const isValid = await this.verifyTokenWithServer(token);
-            
+
             if (!isValid) {
+                console.log('Token invalide côté serveur');
                 this.clearAuthData();
                 this.redirectToLogin();
                 return false;
@@ -76,8 +85,24 @@ class AuthGuard {
     static isTokenExpired() {
         const expiration = localStorage.getItem('tokenExpiration');
         if (!expiration) return true;
-        
+
         return new Date() > new Date(expiration);
+    }
+
+    /**
+     * Vérifier si l'utilisateur est connecté (méthode simple)
+     */
+    static isLoggedIn() {
+        const token = this.getToken();
+        if (!token) return false;
+        
+        // Vérifier l'expiration locale
+        if (this.isTokenExpired()) {
+            this.clearAuthData();
+            return false;
+        }
+        
+        return true;
     }
 
     /**
@@ -93,12 +118,27 @@ class AuthGuard {
      * Rediriger vers la page de connexion
      */
     static redirectToLogin() {
-        // Sauvegarder l'URL actuelle pour redirection après connexion
-        const currentPath = window.location.pathname + window.location.search;
+    // Sauvegarder l'URL actuelle pour redirection après connexion
+    const currentPath = window.location.pathname + window.location.search;
+    if (currentPath !== '/login.html' && !currentPath.includes('login.html')) {
         localStorage.setItem('redirectAfterLogin', currentPath);
-        
-        window.location.href = './login.html';
     }
+
+    // Déterminer le bon chemin vers login selon la page actuelle
+    const currentPage = window.location.pathname;
+    let loginPath;
+    
+    if (currentPage.includes('/src/html/') || currentPage.endsWith('ajouterAgent.html') || currentPath.endsWith('gererConges.html')) {
+        // Depuis les pages dans src/html/, remonter vers la racine
+        loginPath = './login.html';
+    } else {
+        // Depuis index.html (racine), aller vers src/html/
+        loginPath = './src/html/login.html';
+    }
+
+    // Redirection immédiate
+    window.location.replace(loginPath);
+}
 
     /**
      * Rediriger vers la page demandée après connexion
@@ -106,8 +146,8 @@ class AuthGuard {
     static redirectAfterLogin() {
         const redirectPath = localStorage.getItem('redirectAfterLogin');
         localStorage.removeItem('redirectAfterLogin');
-        
-        if (redirectPath && redirectPath !== '/login.html') {
+
+        if (redirectPath && redirectPath !== '/login.html' && !redirectPath.includes('login.html')) {
             window.location.href = redirectPath;
         } else {
             window.location.href = './index.html';
@@ -119,12 +159,12 @@ class AuthGuard {
      */
     static setupAPIInterceptor() {
         const originalFetch = window.fetch;
-        
-        window.fetch = async function(url, options = {}) {
+
+        window.fetch = async function (url, options = {}) {
             // Ajouter le token aux requêtes API
             if (url.includes(apiUrl)) {
                 const token = AuthGuard.getToken();
-                
+
                 if (token) {
                     options.headers = {
                         ...options.headers,
@@ -135,12 +175,14 @@ class AuthGuard {
 
             try {
                 const response = await originalFetch(url, options);
-                
+
                 // Gérer les erreurs 401 (Non autorisé)
                 if (response.status === 401 && url.includes(apiUrl)) {
+                    console.log('Réponse 401 détectée, redirection vers login');
                     AuthGuard.handleUnauthorized();
+                    throw new Error('Session expirée');
                 }
-                
+
                 return response;
             } catch (error) {
                 throw error;
@@ -154,10 +196,10 @@ class AuthGuard {
     static handleUnauthorized() {
         this.clearAuthData();
         this.showSessionExpiredMessage();
-        
+
         setTimeout(() => {
             this.redirectToLogin();
-        }, 3000);
+        }, 2000);
     }
 
     /**
@@ -179,13 +221,13 @@ class AuthGuard {
                 <p class="text-sm text-gray-500 mb-4">
                     Votre session a expiré. Vous allez être redirigé vers la page de connexion.
                 </p>
-                <button onclick="this.parentElement.parentElement.remove(); AuthGuard.redirectToLogin();" 
+                <button onclick="AuthGuard.redirectToLogin();" 
                         class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
                     Se reconnecter maintenant
                 </button>
             </div>
         `;
-        
+
         document.body.appendChild(overlay);
     }
 
@@ -195,22 +237,23 @@ class AuthGuard {
     static async init() {
         // Configurer l'intercepteur API
         this.setupAPIInterceptor();
-        
+
         // Vérifier l'authentification pour les pages protégées
-        const protectedPages = ['index.html', 'ajouterAgent.html', 'gererConges.html'];
-        const currentPage = window.location.pathname.split('/').pop();
-        
+        const protectedPages = ['index.html'];
+        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+
         if (protectedPages.includes(currentPage) || currentPage === '') {
             const isAuthenticated = await this.checkAuth();
-            
+
             if (isAuthenticated) {
-                // Optionnel: Afficher les infos utilisateur
                 this.displayUserInfo();
                 return true;
+            } else {
+                // Redirection déjà gérée dans checkAuth()
+                return false;
             }
-            return false;
         }
-        
+
         return true;
     }
 
@@ -246,17 +289,14 @@ class AuthGuard {
      * Gérer la déconnexion
      */
     static logout() {
+        // Nettoyer les données d'authentification
         this.clearAuthData();
-        
-        // Afficher un message de confirmation
-        const confirmLogout = confirm('Êtes-vous sûr de vouloir vous déconnecter ?');
-        
-        if (confirmLogout) {
-            // Optionnel: Notifier le serveur de la déconnexion
-            this.notifyServerLogout();
-            
-            this.redirectToLogin();
-        }
+
+        // Optionnel: Notifier le serveur de la déconnexion
+        this.notifyServerLogout();
+
+        // Redirection immédiate vers login
+        this.redirectToLogin();
     }
 
     /**
@@ -281,7 +321,7 @@ class AuthGuard {
 }
 
 // Configuration automatique au chargement de la page
-document.addEventListener('DOMContentLoaded', async function() {
+document.addEventListener('DOMContentLoaded', async function () {
     await AuthGuard.init();
 });
 

@@ -1,5 +1,5 @@
 // dashboard.js - Gestion du tableau de bord
-import {apiUrl} from "./config.js";
+import { apiUrl } from "./config.js";
 const API_BASE_URL = apiUrl;
 
 // Variables globales pour stocker les données
@@ -7,7 +7,7 @@ let allAgents = [];
 let currentAgentDetails = null;
 
 // Initialisation du dashboard
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     loadDashboardStats();
     loadAgentsList();
     setupSearchFunctionality();
@@ -19,14 +19,14 @@ async function loadDashboardStats() {
     try {
         const response = await fetch(`${API_BASE_URL}/dashboard`);
         if (!response.ok) throw new Error('Erreur lors du chargement des statistiques');
-        
+
         const stats = await response.json();
-        
+
         // Mise à jour des cartes de statistiques
         document.getElementById('totalAgents').textContent = stats.totalAgent || 0;
         document.getElementById('congesEnCours').textContent = stats.congeEnCours || 0;
         document.getElementById('congesTermines').textContent = stats.congeTermines || 0;
-        
+
     } catch (error) {
         console.error('Erreur lors du chargement des statistiques:', error);
         showNotification('Erreur lors du chargement des statistiques', 'error');
@@ -38,11 +38,11 @@ async function loadAgentsList() {
     try {
         const response = await fetch(`${API_BASE_URL}/dashboard/agents`);
         if (!response.ok) throw new Error('Erreur lors du chargement de la liste des agents');
-        
+
         const agents = await response.json();
         allAgents = agents;
         displayAgents(agents);
-        
+
     } catch (error) {
         console.error('Erreur lors du chargement de la liste des agents:', error);
         showNotification('Erreur lors du chargement de la liste des agents', 'error');
@@ -53,7 +53,7 @@ async function loadAgentsList() {
 function displayAgents(agents) {
     const agentsListElement = document.getElementById('agentsList');
     if (!agentsListElement) return;
-    
+
     if (agents.length === 0) {
         agentsListElement.innerHTML = `
             <tr>
@@ -65,12 +65,12 @@ function displayAgents(agents) {
         `;
         return;
     }
-    
+
     agentsListElement.innerHTML = agents.map(agent => {
         // Génération des initiales pour l'avatar
         const initials = getInitials(agent.fullname);
         const avatarColor = getAvatarColor(agent.matricule);
-        
+
         return `
             <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                 <td class="py-3 md:py-4 px-2 md:px-4 font-medium text-gray-900 text-sm md:text-base">
@@ -103,7 +103,7 @@ async function voirDetails(matricule) {
     try {
         // Afficher un loader
         showAgentDetailsLoader();
-        
+
         const response = await fetch(`${API_BASE_URL}/dashboard/${matricule}/details`);
         if (!response.ok) {
             if (response.status === 404) {
@@ -111,16 +111,16 @@ async function voirDetails(matricule) {
             }
             throw new Error('Erreur lors du chargement des détails de l\'agent');
         }
-        
+
         const agentDetails = await response.json();
         currentAgentDetails = agentDetails;
-        
+
         // Mettre à jour le filtre d'année avec les années disponibles pour cet agent
         updateYearFilter(agentDetails);
-        
+
         // Afficher les détails de l'agent
         displayAgentDetails(agentDetails);
-        
+
     } catch (error) {
         console.error('Erreur lors du chargement des détails de l\'agent:', error);
         showAgentDetailsError(error.message);
@@ -132,10 +132,10 @@ async function voirDetails(matricule) {
 function updateYearFilter(agent) {
     const yearFilterElement = document.getElementById('yearFilter');
     if (!yearFilterElement || !agent.conges) return;
-    
+
     // Récupérer la valeur actuellement sélectionnée
     const currentSelection = yearFilterElement.value;
-    
+
     // Extraire toutes les années disponibles pour cet agent
     const availableYears = [...new Set(agent.conges.map(conge => conge.annee))]
         .sort((a, b) => {
@@ -145,7 +145,7 @@ function updateYearFilter(agent) {
             const yearB = b.length === 2 ? `20${b}` : b;
             return parseInt(yearB) - parseInt(yearA);
         });
-    
+
     // Si aucune année disponible, afficher un message par défaut
     if (availableYears.length === 0) {
         yearFilterElement.innerHTML = `
@@ -153,14 +153,14 @@ function updateYearFilter(agent) {
         `;
         return;
     }
-    
+
     // Construire les options du select
     yearFilterElement.innerHTML = availableYears.map(year => {
         // Normaliser l'affichage de l'année
         const displayYear = year.length === 2 ? `20${year}` : year;
         return `<option value="${year}" ${year === currentSelection ? 'selected' : ''}>${displayYear}</option>`;
     }).join('');
-    
+
     // Si l'année précédemment sélectionnée n'est plus disponible,
     // sélectionner la première année disponible
     if (!availableYears.includes(currentSelection)) {
@@ -172,22 +172,22 @@ function updateYearFilter(agent) {
 function displayAgentDetails(agent) {
     const agentDetailsElement = document.getElementById('agentDetails');
     if (!agentDetailsElement) return;
-    
+
     // Récupérer l'année sélectionnée
     const yearFilterElement = document.getElementById('yearFilter');
     const selectedYear = yearFilterElement?.value || (agent.conges && agent.conges.length > 0 ? agent.conges[0].annee : new Date().getFullYear().toString());
-    
+
     // Filtrer les congés par année
     const filteredConges = agent.conges ? agent.conges.filter(conge => conge.annee === selectedYear) : [];
-    
+
     // Générer les initiales et la couleur de l'avatar
     const fullName = `${agent.prenom} ${agent.nom}`;
     const initials = getInitials(fullName);
     const avatarColor = getAvatarColor(agent.matricule);
-    
+
     // Normaliser l'affichage de l'année sélectionnée
     const displaySelectedYear = selectedYear.length === 2 ? `20${selectedYear}` : selectedYear;
-    
+
     agentDetailsElement.innerHTML = `
         <div class="space-y-4">
             <!-- Informations de l'agent -->
@@ -279,7 +279,7 @@ function getAvatarColor(matricule) {
         'bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-red-500',
         'bg-yellow-500', 'bg-indigo-500', 'bg-pink-500', 'bg-teal-500'
     ];
-    
+
     // Utiliser le matricule pour générer un index consistant
     const hash = matricule.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
     return colors[hash % colors.length];
@@ -298,7 +298,7 @@ function formatDate(dateString) {
 function showAgentDetailsLoader() {
     const agentDetailsElement = document.getElementById('agentDetails');
     if (!agentDetailsElement) return;
-    
+
     agentDetailsElement.innerHTML = `
         <div class="text-center py-8">
             <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
@@ -310,7 +310,7 @@ function showAgentDetailsLoader() {
 function showAgentDetailsError(errorMessage) {
     const agentDetailsElement = document.getElementById('agentDetails');
     if (!agentDetailsElement) return;
-    
+
     agentDetailsElement.innerHTML = `
         <div class="text-center py-8">
             <i class="fas fa-exclamation-triangle text-4xl text-red-500 mb-4"></i>
@@ -323,14 +323,14 @@ function showAgentDetailsError(errorMessage) {
 function setupSearchFunctionality() {
     const searchInput = document.getElementById('searchInput');
     if (!searchInput) return;
-    
+
     let searchTimeout;
-    
-    searchInput.addEventListener('input', function() {
+
+    searchInput.addEventListener('input', function () {
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(() => {
             const keyword = this.value.trim();
-            
+
             if (keyword === '') {
                 // Si la recherche est vide, afficher tous les agents
                 displayAgents(allAgents);
@@ -346,15 +346,15 @@ async function searchAgents(keyword) {
     try {
         const response = await fetch(`${API_BASE_URL}/dashboard/agents/search?keyword=${encodeURIComponent(keyword)}`);
         if (!response.ok) throw new Error('Erreur lors de la recherche');
-        
+
         const agents = await response.json();
         displayAgents(agents);
-        
+
     } catch (error) {
         console.error('Erreur lors de la recherche:', error);
         showNotification('Erreur lors de la recherche', 'error');
         // En cas d'erreur, filtrer localement
-        const filteredAgents = allAgents.filter(agent => 
+        const filteredAgents = allAgents.filter(agent =>
             agent.fullname.toLowerCase().includes(keyword.toLowerCase()) ||
             agent.matricule.toLowerCase().includes(keyword.toLowerCase()) ||
             (agent.fonction && agent.fonction.toLowerCase().includes(keyword.toLowerCase()))
@@ -367,8 +367,8 @@ async function searchAgents(keyword) {
 function setupYearFilter() {
     const yearFilter = document.getElementById('yearFilter');
     if (!yearFilter) return;
-    
-    yearFilter.addEventListener('change', function() {
+
+    yearFilter.addEventListener('change', function () {
         if (currentAgentDetails) {
             displayAgentDetails(currentAgentDetails);
         }
@@ -380,7 +380,7 @@ function showNotification(message, type = 'info') {
     // Créer l'élément de notification
     const notification = document.createElement('div');
     notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full`;
-    
+
     // Définir les couleurs selon le type
     const colors = {
         'success': 'bg-green-500 text-white',
@@ -388,9 +388,9 @@ function showNotification(message, type = 'info') {
         'warning': 'bg-yellow-500 text-black',
         'info': 'bg-blue-500 text-white'
     };
-    
+
     notification.className += ` ${colors[type] || colors.info}`;
-    
+
     // Ajouter l'icône selon le type
     const icons = {
         'success': 'fas fa-check-circle',
@@ -398,22 +398,22 @@ function showNotification(message, type = 'info') {
         'warning': 'fas fa-exclamation-triangle',
         'info': 'fas fa-info-circle'
     };
-    
+
     notification.innerHTML = `
         <div class="flex items-center space-x-2">
             <i class="${icons[type] || icons.info}"></i>
             <span>${message}</span>
         </div>
     `;
-    
+
     // Ajouter au DOM
     document.body.appendChild(notification);
-    
+
     // Animation d'entrée
     setTimeout(() => {
         notification.classList.remove('translate-x-full');
     }, 100);
-    
+
     // Suppression automatique après 5 secondes
     setTimeout(() => {
         notification.classList.add('translate-x-full');
@@ -421,13 +421,13 @@ function showNotification(message, type = 'info') {
             document.body.removeChild(notification);
         }, 300);
     }, 5000);
-}   
+}
 
 // ==================== RAFRAÎCHISSEMENT DES DONNÉES ====================
 function refreshDashboard() {
     loadDashboardStats();
     loadAgentsList();
-    
+
     // Réinitialiser les détails de l'agent et le filtre d'année
     const agentDetailsElement = document.getElementById('agentDetails');
     if (agentDetailsElement) {
@@ -438,7 +438,7 @@ function refreshDashboard() {
             </div>
         `;
     }
-    
+
     // Réinitialiser le filtre d'année
     const yearFilterElement = document.getElementById('yearFilter');
     if (yearFilterElement) {
@@ -446,11 +446,43 @@ function refreshDashboard() {
             <option value="">Sélectionnez un agent</option>
         `;
     }
-    
+
     currentAgentDetails = null;
 }
+
+
 
 // ==================== EXPORT DES FONCTIONS GLOBALES ====================
 // Rendre la fonction voirDetails disponible globalement pour les onclick HTML
 window.voirDetails = voirDetails;
 window.refreshDashboard = refreshDashboard;
+
+// ==================== GESTION DE LA DÉCONNEXION ====================
+function setupLogoutButton() {
+    // Utiliser un délai pour s'assurer que le DOM est prêt
+    setTimeout(() => {
+        const logoutBtn = document.getElementById('logoutBtn') || 
+                         document.querySelector('[onclick*="AuthGuard.logout"]');
+        
+        if (logoutBtn) {
+            // Supprimer l'ancien onclick s'il existe
+            logoutBtn.removeAttribute('onclick');
+            
+            // Ajouter le nouvel event listener
+            logoutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (window.AuthGuard) {
+                    window.AuthGuard.logout();
+                } else {
+                    console.error('AuthGuard non disponible');
+                    // Fallback : redirection manuelle
+                    localStorage.clear();
+                    window.location.href = './src/html/login.html';
+                }
+            });
+        }
+    }, 200);
+}
+
+// Appeler la fonction au chargement
+document.addEventListener('DOMContentLoaded', setupLogoutButton);

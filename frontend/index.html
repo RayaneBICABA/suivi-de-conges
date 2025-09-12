@@ -14,28 +14,45 @@
     <div id="responsive-menu-container"></div>
 
     <script src="./src/js/components/ResponsiveMenu.js"></script>
-    <script type="module" src="./src/js/dashboard.js"></script>
     <script type="module" src="./src/js/authGuard.js"></script>
+    <script type="module" src="./src/js/dashboard.js"></script>
 
     <script>
         const menu = new ResponsiveMenu({
-            onNavigate: function (item, index) {
-                switch (index) {
-                    case 0:
-                        window.location.href = "./index.html";
-                        break;
-                    case 1:
-                        window.location.href = "./src/html/ajouterAgent.html";
-                        break;
-                    case 2:
-                        window.location.href = "./src/html/gererConges.html";
-                        break;
-                }
-            }
-        });
+    onNavigate: function (item, index) {
+        // Obtenir l'URL de base (origine + chemin jusqu'à la racine du projet)
+        const baseUrl = window.location.origin + '/';
+        
+        switch (index) {
+            case 0:
+                window.location.href = baseUrl + "index.html";
+                break;
+            case 1:
+                window.location.href = baseUrl + "src/html/ajouterAgent.html";
+                break;
+            case 2:
+                window.location.href = baseUrl + "src/html/gererConges.html";
+                break;
+        }
+    }
+});
 
         // Active le lien "Gérer Congés"
         menu.setActiveLink(0);
+        // Configuration du bouton de déconnexion
+        document.addEventListener('DOMContentLoaded', function () {
+            // Attendre que le contenu soit injecté
+            setTimeout(() => {
+                const logoutBtn = document.getElementById('logoutBtn');
+                if (logoutBtn) {
+                    logoutBtn.addEventListener('click', function () {
+                        if (window.AuthGuard) {
+                            window.AuthGuard.logout();
+                        }
+                    });
+                }
+            }, 100);
+        });
 
         // Injecter le contenu
         menu.updateContent(`
@@ -50,10 +67,10 @@
             </div>
             <div class="flex items-center space-x-4">
                 <span data-user-display="firstname" class="text-sm font-medium text-gray-700"></span>
-                <button onclick="AuthGuard.logout()"
-                    class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm transition-colors">
-                    Déconnexion
-                </button>
+                <button id="logoutBtn"
+    class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm transition-colors">
+    Déconnexion
+</button>
             </div>
         </div>
 

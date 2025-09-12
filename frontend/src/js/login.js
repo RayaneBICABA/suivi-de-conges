@@ -108,7 +108,11 @@ class AuthService {
         localStorage.removeItem('authToken');
         localStorage.removeItem('userData');
         localStorage.removeItem('tokenExpiration');
+
+        // Redirection immédiate vers login.html
+        window.location.replace('./login.html');
     }
+
 }
 
 /**
@@ -120,12 +124,12 @@ class UIUtils {
      */
     static showError(message, containerId = 'error-container') {
         let errorContainer = document.getElementById(containerId);
-        
+
         if (!errorContainer) {
             errorContainer = document.createElement('div');
             errorContainer.id = containerId;
             errorContainer.className = 'mb-4';
-            
+
             const form = document.querySelector('form');
             form.parentNode.insertBefore(errorContainer, form);
         }
@@ -150,12 +154,12 @@ class UIUtils {
      */
     static showSuccess(message, containerId = 'success-container') {
         let successContainer = document.getElementById(containerId);
-        
+
         if (!successContainer) {
             successContainer = document.createElement('div');
             successContainer.id = containerId;
             successContainer.className = 'mb-4';
-            
+
             const form = document.querySelector('form');
             form.parentNode.insertBefore(successContainer, form);
         }
@@ -175,7 +179,7 @@ class UIUtils {
     static hideMessages() {
         const errorContainer = document.getElementById('error-container');
         const successContainer = document.getElementById('success-container');
-        
+
         if (errorContainer) errorContainer.innerHTML = '';
         if (successContainer) successContainer.innerHTML = '';
     }
@@ -185,10 +189,10 @@ class UIUtils {
      */
     static toggleSubmitButton(isLoading, buttonText = 'Se connecter', loadingText = 'Connexion en cours...') {
         const submitButton = document.querySelector('button[type="submit"]');
-        
+
         if (submitButton) {
             submitButton.disabled = isLoading;
-            
+
             if (isLoading) {
                 submitButton.innerHTML = `
                     <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -213,7 +217,7 @@ class UIUtils {
         if (card) {
             card.classList.add('transform', 'scale-95', 'opacity-75', 'transition-all', 'duration-300');
         }
-        
+
         setTimeout(() => {
             // Utiliser AuthGuard pour rediriger intelligemment
             if (window.AuthGuard) {
@@ -277,7 +281,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     window.location.href = './index.html';
                 }
             } else {
-                // Token invalide, le supprimer
+                // Token invalide, le supprimer et rester sur login
                 AuthService.logout();
             }
         });
@@ -323,39 +327,39 @@ document.addEventListener('DOMContentLoaded', function() {
  */
 async function handleLoginSubmit(event) {
     event.preventDefault();
-    
+
     UIUtils.hideMessages();
-    
+
     const formData = {
         email: document.getElementById('email').value.trim(),
         password: document.getElementById('password').value
     };
-    
+
     const validation = FormValidator.validateLoginForm(formData);
-    
+
     if (!validation.isValid) {
         UIUtils.showError(validation.errors.join('<br>'));
         return;
     }
-    
+
     UIUtils.toggleSubmitButton(true);
-    
+
     try {
         const result = await AuthService.login(formData);
-        
+
         if (result.success) {
             // Stocker les données d'authentification
             AuthService.storeAuthData(result.data);
-            
+
             // Afficher le succès
             UIUtils.showSuccess(`Bienvenue, ${result.data.user.firstname} ! Redirection...`);
-            
+
             // Redirection animée
             UIUtils.animateRedirect();
-            
+
         } else {
             UIUtils.showError(result.error);
-            
+
             // Focus sur le champ email en cas d'erreur
             const emailInput = document.getElementById('email');
             if (emailInput) {
@@ -363,7 +367,7 @@ async function handleLoginSubmit(event) {
                 emailInput.select();
             }
         }
-        
+
     } catch (error) {
         UIUtils.showError('Une erreur de connexion s\'est produite. Vérifiez votre connexion internet.');
         console.error('Erreur de connexion:', error);
