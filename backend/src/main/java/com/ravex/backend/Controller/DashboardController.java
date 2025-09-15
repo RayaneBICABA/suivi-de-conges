@@ -1,10 +1,12 @@
 package com.ravex.backend.Controller;
 
 import com.ravex.backend.dto.AgentDetailsDTO;
+import com.ravex.backend.dto.DirectionDto;
 import com.ravex.backend.dto.dashboard.AgentSummaryDTO;
 import com.ravex.backend.dto.dashboard.DashboardDTO;
 import com.ravex.backend.service.AgentService;
 import com.ravex.backend.service.DashboardService;
+import com.ravex.backend.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,43 +23,69 @@ public class DashboardController {
 
     // Total agents, Total Conges en cours, Total conges termines
     @GetMapping
-    public ResponseEntity<DashboardDTO> getDashBoardStat(){
+    public ResponseEntity<DashboardDTO> getDashBoardStat(@RequestHeader("Authorization") String authHeader){
         try{
-            DashboardDTO data = dashboardService.getDashboardStats();
+            String token = JwtUtil.extractTokenFromHeader(authHeader);
+            if (token == null) return ResponseEntity.status(401).build();
+            DirectionDto direction = JwtUtil.getDirectionFromToken(token);
+            Long directionNumero = direction.numero();
+
+
+            DashboardDTO data = dashboardService.getDashboardStats(directionNumero);
             return ResponseEntity.ok(data);
         }catch(Exception e){
             return ResponseEntity.internalServerError().build();
         }
     }
 
+
     // Liste des Agents
     @GetMapping("/agents")
-    public ResponseEntity<List<AgentSummaryDTO>> getListeAgents(){
+    public ResponseEntity<List<AgentSummaryDTO>> getListeAgents(@RequestHeader("Authorization") String authHeader){
         try{
-            List<AgentSummaryDTO> data = dashboardService.getListeAgents();
+            String token = JwtUtil.extractTokenFromHeader(authHeader);
+            if (token == null) return ResponseEntity.status(401).build();
+            DirectionDto direction = JwtUtil.getDirectionFromToken(token);
+            Long directionNumero = direction.numero();
+
+            List<AgentSummaryDTO> data = dashboardService.getListeAgents(directionNumero);
             return ResponseEntity.ok(data);
         }catch(Exception e){
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }
-
     // Rechercher des agents par nom ou prénom
     @GetMapping("/agents/search")
-    public ResponseEntity<List<AgentSummaryDTO>> searchAgents(@RequestParam("keyword") String keyword) {
+    public ResponseEntity<List<AgentSummaryDTO>> searchAgents(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestParam("keyword") String keyword) {
         try {
-            List<AgentSummaryDTO> results = dashboardService.searchAgents(keyword);
+            String token = JwtUtil.extractTokenFromHeader(authHeader);
+            if (token == null) return ResponseEntity.status(401).build();
+            DirectionDto direction = JwtUtil.getDirectionFromToken(token);
+            Long directionNumero = direction.numero();
+
+            List<AgentSummaryDTO> results = dashboardService.searchAgents(keyword, directionNumero);
             return ResponseEntity.ok(results);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }
 
-
     @GetMapping("/{matricule}/details")
-    public ResponseEntity<AgentDetailsDTO> getAgentDetails(@PathVariable String matricule) {
+    public ResponseEntity<AgentDetailsDTO> getAgentDetails(
+            @RequestHeader("Authorization") String authHeader,
+            @PathVariable String matricule) {
         try {
-            Optional<AgentDetailsDTO> agentDetails = agentService.getAgentDetails(matricule);
+            String token = JwtUtil.extractTokenFromHeader(authHeader);
+            if (token == null) return ResponseEntity.status(401).build();
+            DirectionDto direction = JwtUtil.getDirectionFromToken(token);
+            Long directionNumero = direction.numero();
+
+            // Optionnel : s'assurer que l'agent appartient à la même direction avant d'afficher
+            Optional<AgentDetailsDTO> agentDetails = agentService.getAgentDetails(matricule, directionNumero);
 
             if (agentDetails.isPresent()) {
                 return ResponseEntity.ok(agentDetails.get());
@@ -65,6 +93,7 @@ public class DashboardController {
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }
