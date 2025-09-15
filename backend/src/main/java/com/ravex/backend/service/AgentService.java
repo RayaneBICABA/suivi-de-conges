@@ -1,18 +1,18 @@
 package com.ravex.backend.service;
 
-import com.ravex.backend.configuration.NumeroCentre;
 import com.ravex.backend.domain.Repository.AgentRepository;
 import com.ravex.backend.domain.Repository.CentreRepository;
 import com.ravex.backend.domain.Repository.CongeRepository;
 import com.ravex.backend.domain.Repository.SuiviCongeRepository;
+import com.ravex.backend.domain.Repository.DirectionRepository;
 import com.ravex.backend.domain.model.Agent;
 import com.ravex.backend.domain.model.Centre;
 import com.ravex.backend.domain.model.Conge;
-import com.ravex.backend.dto.AgentCongeDTO; // Importer le nouveau DTO
+import com.ravex.backend.domain.model.Direction;
+import com.ravex.backend.dto.AgentCongeDTO;
 import com.ravex.backend.dto.AgentDetailsDTO;
 import com.ravex.backend.dto.AgentNomPrenomDTO;
 import com.ravex.backend.dto.centre.SaveAgentDto;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,20 +21,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
 @Service
 @RequiredArgsConstructor
 public class AgentService {
     private final CongeRepository congeRepository;
     private final AgentRepository agentRepository;
     private final SuiviCongeRepository suiviCongeRepository;
-    private final NumeroCentre numeroCentre;
     private final CentreRepository centreRepository;
+    private final DirectionRepository directionRepository;
 
-    
-    // Retourner à la fois l'agent et le nombre de jours
-    public Optional<AgentCongeDTO> getAgentAndJoursByCongeReference(String refConge){
-        Optional<Conge> conge = congeRepository.findByReference(refConge);
+    // Retourner à la fois l'agent et le nombre de jours - AVEC FILTRAGE DIRECTION
+    public Optional<AgentCongeDTO> getAgentAndJoursByCongeReference(String refConge, Long directionNumero) {
+        Optional<Conge> conge = congeRepository.findByReferenceAndDirection(refConge, directionNumero);
 
         // Si le congé est trouvé, on retourne l'agent et les jours
         return conge.map(c -> {
@@ -45,17 +43,17 @@ public class AgentService {
     }
 
     // Obtenir le nom et le prénom de l'agent
-    public Optional<AgentNomPrenomDTO> getNomPrenomViaMatricule(String matricule){
-        return agentRepository.obtenirNomEtPrenomAgentViaMatricule(matricule,numeroCentre.getNumCentre());
+    public Optional<AgentNomPrenomDTO> getNomPrenomViaMatricule(String matricule, Long directionNumero) {
+        return agentRepository.obtenirNomEtPrenomAgentViaMatricule(matricule, directionNumero);
     }
 
-    public boolean checkerSiMatriculeExiste(String matricule) {
-        return agentRepository.findByMatriculeTrimmed(matricule, numeroCentre.getNumCentre()).isPresent();
+    public boolean checkerSiMatriculeExiste(String matricule, Long directionNumero) {
+        return agentRepository.findByMatriculeTrimmed(matricule, directionNumero).isPresent();
     }
 
-    // ===== Nouveau : Ajouter un agent =====
-    // Dans votre AgentService
+    // Ajouter un agent - SEULEMENT LE CENTRE (la direction est héritée du centre)
     public Agent addAgent(SaveAgentDto dto) {
+        // Récupérer le centre (qui contient déjà sa direction)
         Centre centre = centreRepository.findById(dto.code())
                 .orElseThrow(() -> new RuntimeException("Centre non trouvé"));
 
@@ -64,22 +62,21 @@ public class AgentService {
         agent.setNom(dto.nom());
         agent.setPrenom(dto.prenom());
         agent.setFonction(dto.fonction());
-        agent.setCentre(centre); // Associer le centre
+        agent.setCentre(centre); // ✅ Le centre contient déjà sa direction
 
-        return agentRepository.save(agent); // Méthode JPA standard
+        return agentRepository.save(agent);
     }
 
-
+    // Méthode principale pour récupérer les détails d'un agent - AVEC DIRECTION
     @Transactional(readOnly = true)
-    public Optional<AgentDetailsDTO> getAgentDetails(String matricule) {
-        Optional<Agent> agentOpt = agentRepository.findByMatriculeTrimmed(matricule, numeroCentre.getNumCentre());
+    public Optional<AgentDetailsDTO> getAgentDetails(String matricule, Long directionNumero) {
+        Optional<Agent> agentOpt = agentRepository.findByMatriculeTrimmed(matricule, directionNumero);
 
         if (agentOpt.isEmpty()) {
             return Optional.empty();
         }
 
         Agent agent = agentOpt.get();
-
         List<AgentDetailsDTO.CongeDetailDTO> congeDetails = new ArrayList<>();
 
         // Récupérer tous les congés de l'agent
@@ -139,7 +136,4 @@ public class AgentService {
 
         return ""; // Si le format n'est pas respecté
     }
-
-
-
 }
