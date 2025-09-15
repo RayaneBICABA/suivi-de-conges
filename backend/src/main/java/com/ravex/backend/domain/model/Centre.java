@@ -1,5 +1,6 @@
 package com.ravex.backend.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -24,4 +25,10 @@ public class Centre {
     @OneToMany(mappedBy = "centre")
     @JsonIgnore
     private List<Agent> agents;
+
+    // ========= RELATION ENTRE DIRECTION ET CENTRE  =========
+    @ManyToOne
+    @JsonBackReference
+    @JoinColumn(name = "numero")
+    private Direction direction;
 }

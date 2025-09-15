@@ -1,5 +1,6 @@
 package com.ravex.backend.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -47,4 +48,12 @@ public class Utilisateur {
     
     @Column(name = "role", nullable = false)
     private String role = "USER";
+
+
+    // ========= RELATION ENTRE DIRECTION ET UTILISATEUR  =========
+    @ManyToOne
+    @JsonBackReference
+    @JoinColumn(name = "nombre")
+    private Direction direction;
+
 }
