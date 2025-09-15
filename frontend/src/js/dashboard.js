@@ -480,7 +480,7 @@ function setupLogoutButton() {
                     window.location.href = './src/html/login.html';
                 }
             });
-        }
+        }   
     }, 200);
 }
 
