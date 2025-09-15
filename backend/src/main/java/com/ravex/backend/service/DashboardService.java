@@ -16,26 +16,22 @@ import java.util.List;
 public class DashboardService {
     private final AgentRepository agentRepository;
     private final CongeRepository congeRepository;
-    private final NumeroCentre numeroCentre;
-
 
     // Total de tous les agents | Total des conges en cours | Total des conges termines
-    public DashboardDTO getDashboardStats(){
-        System.out.println("NumCentre Avant AgentRepo = " + numeroCentre.getNumCentre());
-        long totalAgents = agentRepository.countByCentre(numeroCentre.getNumCentre());
-        System.out.println("NumCentre apres AgentRepo--avant conge en cours = " + numeroCentre.getNumCentre());
-        long congesEnCours = congeRepository.countCongesEnCours(numeroCentre.getNumCentre());
-        long congesTermines = congeRepository.countCongesTermines(numeroCentre.getNumCentre());
+    public DashboardDTO getDashboardStats(Long directionNumero){
+        long totalAgents = agentRepository.countByDirection(directionNumero);
+        long congesEnCours = congeRepository.countCongesEnCours(directionNumero);
+        long congesTermines = congeRepository.countCongesTermines(directionNumero);
         return new DashboardDTO(totalAgents, congesEnCours, congesTermines);
     }
 
     // Liste des Agent
-    public List<AgentSummaryDTO> getListeAgents(){
-        return agentRepository.agentSummary(numeroCentre.getNumCentre());
+    public List<AgentSummaryDTO> getListeAgents(Long directionNumero){
+        return agentRepository.agentSummaryByDirection(directionNumero);
     }
 
     // Rechercher agents par nom ou prénom
-    public List<AgentSummaryDTO> searchAgents(String keyword) {
-        return agentRepository.searchAgentByNomOrPrenom(keyword, numeroCentre.getNumCentre());
+    public List<AgentSummaryDTO> searchAgents(String keyword, Long directionNumero) {
+        return agentRepository.searchAgentByNomOrPrenom(keyword, directionNumero);
     }
 }
