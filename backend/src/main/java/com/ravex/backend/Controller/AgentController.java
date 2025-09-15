@@ -1,10 +1,12 @@
 package com.ravex.backend.Controller;
 
 import com.ravex.backend.domain.model.Agent;
-import com.ravex.backend.dto.AgentCongeDTO; // Importer le DTO
+import com.ravex.backend.dto.AgentCongeDTO;
 import com.ravex.backend.dto.AgentNomPrenomDTO;
+import com.ravex.backend.dto.DirectionDto;
 import com.ravex.backend.dto.centre.SaveAgentDto;
 import com.ravex.backend.service.AgentService;
+import com.ravex.backend.util.JwtUtil;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,38 +24,61 @@ public class AgentController {
         this.agentService = agentService;
     }
 
-    // Endpoint : GET /agent/byConge?ref=123/DRH/2025
-    // Modifiez la méthode pour qu'elle renvoie le DTO AgentCongeDTO
+    // ✅ CORRECTION : Ajouter extraction de la direction depuis le token JWT
     @GetMapping("/byConge")
-    public ResponseEntity<?> getAgentByConge(@RequestParam String ref){
-        Optional<AgentCongeDTO> agentCongeDTO = agentService.getAgentAndJoursByCongeReference(ref);
+    public ResponseEntity<?> getAgentByConge(
+            @RequestParam String ref,
+            @RequestHeader("Authorization") String authHeader) {
+        try {
+            // Extraire le token et la direction
+            String token = JwtUtil.extractTokenFromHeader(authHeader);
+            if (token == null) return ResponseEntity.status(401).build();
+            DirectionDto direction = JwtUtil.getDirectionFromToken(token);
+            Long directionNumero = direction.numero();
 
-        if(agentCongeDTO.isPresent()){
-            // Si le DTO est présent, renvoyez-le avec un statut OK
-            return ResponseEntity.ok(agentCongeDTO.get());
-        } else {
-            // Sinon, renvoyez une réponse 404 (Not Found)
-            return ResponseEntity.status(404).body("Aucun agent trouvé pour le congé : " + ref);
+            // Appeler la méthode avec directionNumero
+            Optional<AgentCongeDTO> agentCongeDTO = agentService.getAgentAndJoursByCongeReference(ref, directionNumero);
+
+            if (agentCongeDTO.isPresent()) {
+                return ResponseEntity.ok(agentCongeDTO.get());
+            } else {
+                return ResponseEntity.status(404).body("Aucun agent trouvé pour le congé : " + ref);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
     }
 
-    // Endpoint : GET /agent/nomPrenom?matricule=AGT123
+    // ✅ CORRECTION : Ajouter extraction de la direction depuis le token JWT
     @GetMapping("/nomPrenom")
-    public ResponseEntity<?> getNomPrenomAgent(@RequestParam String matricule) {
-        Optional <AgentNomPrenomDTO> agentNomPrenomDTO = agentService.getNomPrenomViaMatricule(matricule);
-        if(agentNomPrenomDTO.isPresent()){
-            return ResponseEntity.ok(agentNomPrenomDTO.get());
-        }else{
-            return ResponseEntity.status(404).body("Aucun agent trouvé avec le matricule: "+matricule);
+    public ResponseEntity<?> getNomPrenomAgent(
+            @RequestParam String matricule,
+            @RequestHeader("Authorization") String authHeader) {
+        try {
+            // Extraire le token et la direction
+            String token = JwtUtil.extractTokenFromHeader(authHeader);
+            if (token == null) return ResponseEntity.status(401).build();
+            DirectionDto direction = JwtUtil.getDirectionFromToken(token);
+            Long directionNumero = direction.numero();
+
+            // Appeler la méthode avec directionNumero
+            Optional<AgentNomPrenomDTO> agentNomPrenomDTO = agentService.getNomPrenomViaMatricule(matricule, directionNumero);
+
+            if (agentNomPrenomDTO.isPresent()) {
+                return ResponseEntity.ok(agentNomPrenomDTO.get());
+            } else {
+                return ResponseEntity.status(404).body("Aucun agent trouvé avec le matricule: " + matricule);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
     }
 
-    // Endpoint : POST /agent
-    // SOLUTION : Retirer complètement la contrainte consumes pour être plus permissif
+    // ✅ PAS DE CHANGEMENT : addAgent n'a plus besoin de directionNumero (le centre suffit)
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addAgent(@RequestBody SaveAgentDto centreDto) {
         try {
-            // Sauvegarde
+            // Sauvegarde (pas besoin de directionNumero, le centre contient sa direction)
             Agent savedAgent = agentService.addAgent(centreDto);
 
             return ResponseEntity.ok(Map.of(
