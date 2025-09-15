@@ -11,15 +11,17 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AgentRepository extends JpaRepository<Agent, String> {
-    // Récupérer Nom et prénom d'un agent
+
+    // ✅ CORRECTION : Filtrage par centres de la direction
     @Query("SELECT new com.ravex.backend.dto.AgentNomPrenomDTO(a.nom, a.prenom) " +
-            "FROM Agent a WHERE UPPER(TRIM(a.matricule)) = UPPER(TRIM(:matricule)) AND a.centre.codeCentre = :centre")
-    Optional<AgentNomPrenomDTO> obtenirNomEtPrenomAgentViaMatricule(@Param("matricule") String matricule, @Param("centre") int centre);
+            "FROM Agent a WHERE UPPER(TRIM(a.matricule)) = UPPER(TRIM(:matricule)) AND a.centre.direction.numero = :direction")
+    Optional<AgentNomPrenomDTO> obtenirNomEtPrenomAgentViaMatricule(@Param("matricule") String matricule, @Param("direction") Long direction);
 
-    @Query("SELECT a FROM Agent a WHERE UPPER(TRIM(a.matricule)) = UPPER(TRIM(:matricule)) AND a.centre.codeCentre = :centre")
-    Optional<Agent> findByMatriculeTrimmed(@Param("matricule") String matricule, @Param("centre") int centre);
+    // ✅ CORRECTION : Filtrage par centres de la direction
+    @Query("SELECT a FROM Agent a WHERE UPPER(TRIM(a.matricule)) = UPPER(TRIM(:matricule)) AND a.centre.direction.numero = :direction")
+    Optional<Agent> findByMatriculeTrimmed(@Param("matricule") String matricule, @Param("direction") Long direction);
 
-    // Agent (Matricule, Fullname, Fonction)
+    // ✅ CORRECTION : Agent (Matricule, Fullname, Fonction) par centres de la direction
     @Query("""
     SELECT new com.ravex.backend.dto.dashboard.AgentSummaryDTO(
         a.matricule,
@@ -27,11 +29,11 @@ public interface AgentRepository extends JpaRepository<Agent, String> {
         a.fonction
     )
     FROM Agent a
-    WHERE a.centre.codeCentre = :centre
+    WHERE a.centre.direction.numero = :direction
     """)
-    List<AgentSummaryDTO> agentSummary(@Param("centre") int centre);
+    List<AgentSummaryDTO> agentSummaryByDirection(@Param("direction") Long direction);
 
-    // Rechercher Agent Par nom ou prenom et renvoyer AgentSummaryDTO
+    // ✅ CORRECTION : Rechercher Agent par centres de la direction
     @Query("""
     SELECT new com.ravex.backend.dto.dashboard.AgentSummaryDTO(
         a.matricule,
@@ -43,12 +45,11 @@ public interface AgentRepository extends JpaRepository<Agent, String> {
        OR UPPER(a.prenom) LIKE CONCAT('%', UPPER(:keyword), '%')
        OR UPPER(CONCAT(a.prenom, ' ', a.nom)) LIKE CONCAT('%', UPPER(:keyword), '%')
        OR UPPER(a.matricule) LIKE CONCAT('%', UPPER(:keyword), '%'))
-       AND a.centre.codeCentre = :centre
+       AND a.centre.direction.numero = :direction
 """)
-    List<AgentSummaryDTO> searchAgentByNomOrPrenom(@Param("keyword") String keyword, @Param("centre") int centre);
+    List<AgentSummaryDTO> searchAgentByNomOrPrenom(@Param("keyword") String keyword, @Param("direction") Long direction);
 
-    // Nombre total des agents
-    @Query("SELECT COUNT(a) FROM Agent a WHERE a.centre.codeCentre = :centre")
-    long countByCentre(@Param("centre") int centre);
-
+    // ✅ CORRECTION : Nombre total des agents par centres de la direction
+    @Query("SELECT COUNT(a) FROM Agent a WHERE a.centre.direction.numero = :direction")
+    long countByDirection(@Param("direction") Long direction);
 }
