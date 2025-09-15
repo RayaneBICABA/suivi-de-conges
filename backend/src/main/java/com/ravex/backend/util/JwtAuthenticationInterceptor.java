@@ -2,6 +2,7 @@ package com.ravex.backend.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ravex.backend.dto.ApiResponse;
+import com.ravex.backend.dto.DirectionDto;
 import com.ravex.backend.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -31,14 +32,20 @@ public class JwtAuthenticationInterceptor implements HandlerInterceptor {
         String token = authHeader.substring(7);
 
         try {
-            String email = JwtUtil.getEmailFromToken(token);
-            if (email == null || email.isEmpty()) {
+            // Récupérer toutes les informations utilisateur du token
+            JwtUtil.UserTokenInfo userInfo = JwtUtil.getUserInfoFromToken(token);
+
+            if (userInfo.getEmail() == null || userInfo.getEmail().isEmpty()) {
                 sendUnauthorizedResponse(response, "Token invalide");
                 return false;
             }
 
-            // Optionnel : ajouter l'email dans les attributs de la requête
-            request.setAttribute("userEmail", email);
+            // Ajouter les informations utilisateur dans les attributs de la requête
+            request.setAttribute("userEmail", userInfo.getEmail());
+            request.setAttribute("userDirection", userInfo.getDirection());
+            request.setAttribute("directionNumero", userInfo.getDirectionNumero());
+            request.setAttribute("directionNom", userInfo.getDirectionNom());
+
             return true;
 
         } catch (Exception e) {

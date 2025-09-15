@@ -353,7 +353,7 @@ async function handleLoginSubmit(event) {
 
             // Afficher le succès
             UIUtils.showSuccess(`Bienvenue, ${result.data.user.firstname} ! Redirection...`);
-
+           
             // Redirection animée
             UIUtils.animateRedirect();
 

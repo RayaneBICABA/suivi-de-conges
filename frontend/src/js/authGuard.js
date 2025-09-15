@@ -318,6 +318,64 @@ class AuthGuard {
             console.log('Impossible de notifier le serveur de la déconnexion:', error);
         }
     }
+
+    /**
+ * Récupérer les informations de direction de l'utilisateur connecté
+ */
+static getUserDirection() {
+    const userData = this.getUserData();
+    return userData?.direction || null;
+}
+
+/**
+ * Vérifier si l'utilisateur appartient à une direction spécifique
+ */
+static isUserFromDirection(directionNumero) {
+    const userDirection = this.getUserDirection();
+    return userDirection?.numero === directionNumero;
+}
+
+
+    static displayUserInfo() {
+    const userData = this.getUserData();
+    if (!userData) return;
+
+    // Rechercher un élément pour afficher le nom d'utilisateur
+    const userDisplayElements = document.querySelectorAll('[data-user-display]');
+    userDisplayElements.forEach(element => {
+        const displayType = element.getAttribute('data-user-display');
+        switch (displayType) {
+            case 'fullname':
+                element.textContent = `${userData.firstname} ${userData.lastname}`;
+                break;
+            case 'firstname':
+                element.textContent = userData.firstname;
+                break;
+            case 'username':
+                element.textContent = userData.username;
+                break;
+            case 'email':
+                element.textContent = userData.email;
+                break;
+            case 'direction':
+                if (userData.direction) {
+                    element.textContent = userData.direction.nom;
+                }
+                break;
+            case 'direction-numero':
+                if (userData.direction) {
+                    element.textContent = userData.direction.numero;
+                }
+                break;
+            case 'direction-full':
+                if (userData.direction) {
+                    element.textContent = `${userData.direction.nom} (#${userData.direction.numero})`;
+                }
+                break;
+        }
+    });
+
+}
 }
 
 // Configuration automatique au chargement de la page

@@ -53,7 +53,7 @@ public class Utilisateur {
     // ========= RELATION ENTRE DIRECTION ET UTILISATEUR  =========
     @ManyToOne
     @JsonBackReference
-    @JoinColumn(name = "nombre")
+    @JoinColumn(name = "NUM_DR")
     private Direction direction;
 
 }

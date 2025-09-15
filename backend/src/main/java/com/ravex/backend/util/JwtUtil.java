@@ -1,5 +1,6 @@
 package com.ravex.backend.util;
 
+import com.ravex.backend.dto.DirectionDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -13,17 +14,75 @@ public class JwtUtil {
     private static final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
     private static final long EXPIRATION = 1000 * 60 * 60 * 24; // 24h
 
+    // Méthode surchargée pour maintenir la compatibilité
     public static String generateToken(String email) {
-        return Jwts.builder()
+        return generateToken(email, null, null);
+    }
+
+    // Nouvelle méthode avec direction
+    public static String generateToken(String email, Long directionNumero, String directionNom) {
+        var builder = Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
-                .signWith(key)
-                .compact();
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION));
+
+        // Ajouter les informations de direction si disponibles
+        if (directionNumero != null) {
+            builder.claim("directionNumero", directionNumero);
+        }
+        if (directionNom != null && !directionNom.trim().isEmpty()) {
+            builder.claim("directionNom", directionNom);
+        }
+
+        return builder.signWith(key).compact();
     }
 
     public static String getEmailFromToken(String token) throws JwtException {
         return getClaims(token).getSubject();
+    }
+
+    public static DirectionDto getDirectionFromToken(String token) throws JwtException {
+        Claims claims = getClaims(token);
+        Long directionNumero = null;
+        String directionNom = null;
+
+        // Récupérer le numéro de direction
+        Object numeroObj = claims.get("directionNumero");
+        if (numeroObj != null) {
+            if (numeroObj instanceof Integer) {
+                directionNumero = ((Integer) numeroObj).longValue();
+            } else if (numeroObj instanceof Long) {
+                directionNumero = (Long) numeroObj;
+            }
+        }
+
+        // Récupérer le nom de direction
+        Object nomObj = claims.get("directionNom");
+        if (nomObj instanceof String) {
+            directionNom = (String) nomObj;
+        }
+
+        return new DirectionDto(directionNumero, directionNom);
+    }
+
+    public static Long getDirectionNumeroFromToken(String token) throws JwtException {
+        Claims claims = getClaims(token);
+        Object numeroObj = claims.get("directionNumero");
+
+        if (numeroObj != null) {
+            if (numeroObj instanceof Integer) {
+                return ((Integer) numeroObj).longValue();
+            } else if (numeroObj instanceof Long) {
+                return (Long) numeroObj;
+            }
+        }
+        return null;
+    }
+
+    public static String getDirectionNomFromToken(String token) throws JwtException {
+        Claims claims = getClaims(token);
+        Object nomObj = claims.get("directionNom");
+        return nomObj instanceof String ? (String) nomObj : null;
     }
 
     public static boolean isTokenValid(String token) {
@@ -52,5 +111,41 @@ public class JwtUtil {
             return authHeader.substring(7);
         }
         return null;
+    }
+
+    // Méthode utilitaire pour récupérer toutes les informations utilisateur du token
+    public static UserTokenInfo getUserInfoFromToken(String token) throws JwtException {
+        Claims claims = getClaims(token);
+        String email = claims.getSubject();
+        DirectionDto direction = getDirectionFromToken(token);
+
+        return new UserTokenInfo(email, direction);
+    }
+
+    // Classe interne pour encapsuler les informations utilisateur
+    public static class UserTokenInfo {
+        private final String email;
+        private final DirectionDto direction;
+
+        public UserTokenInfo(String email, DirectionDto direction) {
+            this.email = email;
+            this.direction = direction;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public DirectionDto getDirection() {
+            return direction;
+        }
+
+        public Long getDirectionNumero() {
+            return direction != null ? direction.numero() : null;
+        }
+
+        public String getDirectionNom() {
+            return direction != null ? direction.nom() : null;
+        }
     }
 }

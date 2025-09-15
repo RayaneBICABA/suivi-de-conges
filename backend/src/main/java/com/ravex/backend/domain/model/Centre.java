@@ -29,6 +29,6 @@ public class Centre {
     // ========= RELATION ENTRE DIRECTION ET CENTRE  =========
     @ManyToOne
     @JsonBackReference
-    @JoinColumn(name = "numero")
+    @JoinColumn(name = "NUM_DR")
     private Direction direction;
 }

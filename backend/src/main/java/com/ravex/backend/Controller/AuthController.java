@@ -1,6 +1,7 @@
 package com.ravex.backend.Controller;
 
 import com.ravex.backend.domain.Repository.UtilisateurRepository;
+import com.ravex.backend.domain.model.Direction;
 import com.ravex.backend.domain.model.Utilisateur;
 import com.ravex.backend.dto.*;
 import com.ravex.backend.service.UtilisateurService;
@@ -16,11 +17,15 @@ import java.util.Optional;
 public class AuthController {
 
     private final UtilisateurService utilisateurService;
-    private final UtilisateurRepository utilisateurRepository; 
+    private final UtilisateurRepository utilisateurRepository;
+    private DirectionDto convertToDirectionDto(Direction direction) {
+        if (direction == null) return null;
+        return new DirectionDto(direction.getNumero(), direction.getNom());
+    }
 
     public AuthController(UtilisateurService utilisateurService, UtilisateurRepository utilisateurRepository) {
         this.utilisateurService = utilisateurService;
-        this.utilisateurRepository = utilisateurRepository; 
+        this.utilisateurRepository = utilisateurRepository;
     }
 
     @PostMapping("/register")
@@ -48,16 +53,27 @@ public class AuthController {
             utilisateur.setLastname(request.getLastname());
             utilisateur.setEmail(request.getEmail());
             utilisateur.setPassword(request.getPassword());
+            Direction direction = new Direction();
+            direction.setNumero(request.getDirectionDto().numero());
+            direction.setNom(request.getDirectionDto().nom());
+            utilisateur.setDirection(direction);
 
             Utilisateur savedUser = utilisateurService.saveUser(utilisateur);
 
-            // Générer token JWT
-            String token = JwtUtil.generateToken(savedUser.getEmail());
+            // Générer token JWT avec les informations de direction
+            String token = JwtUtil.generateToken(
+                    savedUser.getEmail(),
+                    savedUser.getDirection().getNumero(),
+                    savedUser.getDirection().getNom()
+            );
+
+            DirectionDto directionDto = convertToDirectionDto(savedUser.getDirection());
 
             return ResponseEntity.ok(new AuthResponse(token,
                     new UtilisateurDTO(savedUser.getFirstname(),
                             savedUser.getLastname(),
-                            savedUser.getEmail())));
+                            savedUser.getEmail(),
+                            directionDto)));
 
         } catch (Exception e) {
             e.printStackTrace(); // Pour debug
@@ -76,43 +92,52 @@ public class AuthController {
                     .body(new ApiResponse(errorMsg.toString().trim()));
         }
 
-       try {
-    // Authentification
-    Optional<Utilisateur> utilisateurOpt = utilisateurService.authenticate(
-            request.getEmail(),
-            request.getPassword());
+        try {
+            // Authentification
+            Optional<Utilisateur> utilisateurOpt = utilisateurService.authenticate(
+                    request.getEmail(),
+                    request.getPassword());
 
-    if (utilisateurOpt.isEmpty()) {
-        return ResponseEntity.status(401)
-                .body(new ApiResponse("Email ou mot de passe incorrect"));
-    }
+            if (utilisateurOpt.isEmpty()) {
+                return ResponseEntity.status(401)
+                        .body(new ApiResponse("Email ou mot de passe incorrect"));
+            }
 
-    Utilisateur utilisateur = utilisateurOpt.get();
+            Utilisateur utilisateur = utilisateurOpt.get();
 
-    if (!utilisateur.isEnabled()) {
-        return ResponseEntity.status(403) // 403 Forbidden est plus approprié pour un compte désactivé
-                .body(new ApiResponse("Compte désactivé"));
-    }
+            if (!utilisateur.isEnabled()) {
+                return ResponseEntity.status(403) // 403 Forbidden est plus approprié pour un compte désactivé
+                        .body(new ApiResponse("Compte désactivé"));
+            }
 
-    // Générer token JWT
-    String token = JwtUtil.generateToken(utilisateur.getEmail());
+            // Générer token JWT avec les informations de direction
+            String token = JwtUtil.generateToken(
+                    utilisateur.getEmail(),
+                    utilisateur.getDirection().getNumero(),
+                    utilisateur.getDirection().getNom()
+            );
 
-    // Réponse avec token et infos utilisateur
-    return ResponseEntity.ok(new AuthResponse(
-            token,
-            new UtilisateurDTO(
-                    utilisateur.getFirstname(),
-                    utilisateur.getLastname(),
-                    utilisateur.getEmail()
-            )
-    ));
+            // Réponse avec token et infos utilisateur incluant la direction
+            DirectionDto directionDto = new DirectionDto(
+                    utilisateur.getDirection().getNumero(),
+                    utilisateur.getDirection().getNom()
+            );
 
-} catch (Exception e) {
-    e.printStackTrace(); // Pour debug
-    return ResponseEntity.status(500)
-            .body(new ApiResponse("Erreur serveur lors de la connexion"));
-}
+            return ResponseEntity.ok(new AuthResponse(
+                    token,
+                    new UtilisateurDTO(
+                            utilisateur.getFirstname(),
+                            utilisateur.getLastname(),
+                            utilisateur.getEmail(),
+                            directionDto // ✅ DirectionDto
+                    )
+            ));
 
+        } catch (Exception e) {
+            e.printStackTrace(); // Pour debug
+            return ResponseEntity.status(500)
+                    .body(new ApiResponse("Erreur serveur lors de la connexion"));
+        }
     }
 
     @PostMapping("/verify-token")
@@ -124,8 +149,46 @@ public class AuthController {
 
         try {
             String email = JwtUtil.getEmailFromToken(request.getToken());
+            DirectionDto direction = JwtUtil.getDirectionFromToken(request.getToken());
+
             // Token valide si aucune exception
-            return ResponseEntity.ok(new ApiResponse("Token valide"));
+            return ResponseEntity.ok(new TokenVerificationResponse(
+                    "Token valide",
+                    email,
+                    direction
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(401)
+                    .body(new ApiResponse("Token invalide ou expiré"));
+        }
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser(@RequestHeader("Authorization") String authHeader) {
+        try {
+            String token = JwtUtil.extractTokenFromHeader(authHeader);
+            if (token == null) {
+                return ResponseEntity.status(401)
+                        .body(new ApiResponse("Token d'authentification manquant"));
+            }
+
+            String email = JwtUtil.getEmailFromToken(token);
+            DirectionDto direction = JwtUtil.getDirectionFromToken(token);
+
+            Optional<Utilisateur> utilisateurOpt = utilisateurRepository.findByEmail(email);
+            if (utilisateurOpt.isEmpty()) {
+                return ResponseEntity.status(404)
+                        .body(new ApiResponse("Utilisateur non trouvé"));
+            }
+
+            Utilisateur utilisateur = utilisateurOpt.get();
+            return ResponseEntity.ok(new UtilisateurDTO(
+                    utilisateur.getFirstname(),
+                    utilisateur.getLastname(),
+                    utilisateur.getEmail(),
+                    direction
+            ));
+
         } catch (Exception e) {
             return ResponseEntity.status(401)
                     .body(new ApiResponse("Token invalide ou expiré"));

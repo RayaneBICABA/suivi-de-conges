@@ -1,5 +1,47 @@
 import {apiUrl} from "./config.js";
 
+// Variable pour stocker les directions
+let directionsData = [];
+
+/**
+ * Charge les directions dans le select
+ */
+function loadDirections() {
+    const directionSelect = document.getElementById('direction');
+    
+    if (!directionSelect) return;
+    
+    // Vider le select sauf la première option
+    directionSelect.innerHTML = '<option value="">-- Sélectionnez une direction --</option>';
+    
+    // Ajouter chaque direction comme option
+    directionsData.forEach(direction => {
+        const option = document.createElement('option');
+        option.value = direction.numero;
+        option.textContent = direction.nom;
+        directionSelect.appendChild(option);
+    });
+}
+
+async function fetchDirections() {
+    try {
+        // Utiliser votre API URL depuis config.js
+        const response = await fetch(`${apiUrl}/api/direction`);
+        const data = await response.json();
+        
+        // Mettre à jour les données et recharger le select
+        directionsData.length = 0; // Vider le tableau
+        directionsData.push(...data); // Ajouter les nouvelles données
+        loadDirections();
+        
+    } catch (error) {
+        console.error('Erreur lors du chargement des directions:', error);
+        
+        // En cas d'erreur, utiliser des données par défaut ou afficher une erreur
+        UIUtils.showError('Erreur lors du chargement des directions');
+    }
+}
+
 
 /**
  * Classe pour gérer l'authentification
@@ -235,6 +277,13 @@ class FormValidator {
             errors.push('Les mots de passe ne correspondent pas');
         }
 
+        // Vérifier si une direction a été sélectionnée
+const directionSelect = document.getElementById('direction');
+if (!directionSelect || !directionSelect.value) {
+    errors.push('La direction est obligatoire');
+}
+
+
         return {
             isValid: errors.length === 0,
             errors: errors
@@ -251,7 +300,11 @@ document.addEventListener('DOMContentLoaded', function() {
     if (form) {
         form.addEventListener('submit', handleRegisterSubmit);
     }
+
+    fetchDirections();
 });
+
+
 
 /**
  * Gestionnaire de soumission du formulaire
@@ -281,13 +334,28 @@ async function handleRegisterSubmit(event) {
     }
     
     // Préparer les données pour l'API (sans confirmPassword)
-    const apiData = {
-        firstname: formData.firstname,
-        lastname: formData.lastname,
-        username: formData.username,
-        email: formData.email,
-        password: formData.password
-    };
+   const directionSelect = document.getElementById('direction');
+const selectedDirection = directionSelect.value;
+
+if (!selectedDirection) {
+    UIUtils.showError('Veuillez sélectionner une direction');
+    return;
+}
+
+// Trouver l'objet direction complet
+const selectedDirectionData = directionsData.find(dir => dir.numero == selectedDirection);
+
+const apiData = {
+    firstname: formData.firstname,
+    lastname: formData.lastname,
+    username: formData.username,
+    email: formData.email,
+    password: formData.password,
+    directionDto: {
+        numero: selectedDirectionData.numero,
+        nom: selectedDirectionData.nom
+    }
+};
     
     // Désactiver le bouton pendant la requête
     UIUtils.toggleSubmitButton(true);

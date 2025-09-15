@@ -1,7 +1,9 @@
 package com.ravex.backend.dto;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -26,4 +28,8 @@ public class RegisterRequest {
     @Size(min = 8, message = "Le mot de passe doit contenir au moins 8 caractères")
     @NotBlank(message = "Le mot de passe est obligatoire")
     private String password;
+
+    @NotNull(message = "La direction est obligatoire")
+    @Valid
+    private DirectionDto directionDto;
 }
