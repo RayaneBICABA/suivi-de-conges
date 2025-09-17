@@ -20,16 +20,15 @@ import java.util.Optional;
 public class DashboardController {
     private final DashboardService dashboardService;
     private final AgentService agentService;
+    private final JwtUtil jwtUtil; 
 
-    // Total agents, Total Conges en cours, Total conges termines
     @GetMapping
     public ResponseEntity<DashboardDTO> getDashBoardStat(@RequestHeader("Authorization") String authHeader){
         try{
-            String token = JwtUtil.extractTokenFromHeader(authHeader);
+            String token = jwtUtil.extractTokenFromHeader(authHeader);
             if (token == null) return ResponseEntity.status(401).build();
-            DirectionDto direction = JwtUtil.getDirectionFromToken(token);
+            DirectionDto direction = jwtUtil.getDirectionFromToken(token);
             Long directionNumero = direction.numero();
-
 
             DashboardDTO data = dashboardService.getDashboardStats(directionNumero);
             return ResponseEntity.ok(data);
@@ -38,14 +37,12 @@ public class DashboardController {
         }
     }
 
-
-    // Liste des Agents
     @GetMapping("/agents")
     public ResponseEntity<List<AgentSummaryDTO>> getListeAgents(@RequestHeader("Authorization") String authHeader){
         try{
-            String token = JwtUtil.extractTokenFromHeader(authHeader);
+            String token = jwtUtil.extractTokenFromHeader(authHeader);
             if (token == null) return ResponseEntity.status(401).build();
-            DirectionDto direction = JwtUtil.getDirectionFromToken(token);
+            DirectionDto direction = jwtUtil.getDirectionFromToken(token);
             Long directionNumero = direction.numero();
 
             List<AgentSummaryDTO> data = dashboardService.getListeAgents(directionNumero);
@@ -55,15 +52,15 @@ public class DashboardController {
             return ResponseEntity.internalServerError().build();
         }
     }
-    // Rechercher des agents par nom ou prénom
+
     @GetMapping("/agents/search")
     public ResponseEntity<List<AgentSummaryDTO>> searchAgents(
             @RequestHeader("Authorization") String authHeader,
             @RequestParam("keyword") String keyword) {
         try {
-            String token = JwtUtil.extractTokenFromHeader(authHeader);
+            String token = jwtUtil.extractTokenFromHeader(authHeader);
             if (token == null) return ResponseEntity.status(401).build();
-            DirectionDto direction = JwtUtil.getDirectionFromToken(token);
+            DirectionDto direction = jwtUtil.getDirectionFromToken(token);
             Long directionNumero = direction.numero();
 
             List<AgentSummaryDTO> results = dashboardService.searchAgents(keyword, directionNumero);
@@ -79,12 +76,11 @@ public class DashboardController {
             @RequestHeader("Authorization") String authHeader,
             @PathVariable String matricule) {
         try {
-            String token = JwtUtil.extractTokenFromHeader(authHeader);
+            String token = jwtUtil.extractTokenFromHeader(authHeader);
             if (token == null) return ResponseEntity.status(401).build();
-            DirectionDto direction = JwtUtil.getDirectionFromToken(token);
+            DirectionDto direction = jwtUtil.getDirectionFromToken(token);
             Long directionNumero = direction.numero();
 
-            // Optionnel : s'assurer que l'agent appartient à la même direction avant d'afficher
             Optional<AgentDetailsDTO> agentDetails = agentService.getAgentDetails(matricule, directionNumero);
 
             if (agentDetails.isPresent()) {
