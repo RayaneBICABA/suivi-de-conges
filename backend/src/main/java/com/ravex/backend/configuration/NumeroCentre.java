@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 @Component
 public class NumeroCentre {
-    // Le numéro de centre est injecté depuis application.properties
     @Value("${app.centre}")
     private int numCentre;
 }
