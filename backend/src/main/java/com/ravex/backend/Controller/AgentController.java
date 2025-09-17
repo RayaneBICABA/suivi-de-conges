@@ -7,6 +7,9 @@ import com.ravex.backend.dto.DirectionDto;
 import com.ravex.backend.dto.centre.SaveAgentDto;
 import com.ravex.backend.service.AgentService;
 import com.ravex.backend.util.JwtUtil;
+
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,27 +19,22 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/agent")
+@RequiredArgsConstructor
 public class AgentController {
 
     private final AgentService agentService;
+    private final JwtUtil jwtUtil; 
 
-    public AgentController(AgentService agentService) {
-        this.agentService = agentService;
-    }
-
-    // ✅ CORRECTION : Ajouter extraction de la direction depuis le token JWT
     @GetMapping("/byConge")
     public ResponseEntity<?> getAgentByConge(
             @RequestParam String ref,
             @RequestHeader("Authorization") String authHeader) {
         try {
-            // Extraire le token et la direction
-            String token = JwtUtil.extractTokenFromHeader(authHeader);
+            String token = jwtUtil.extractTokenFromHeader(authHeader);;
             if (token == null) return ResponseEntity.status(401).build();
-            DirectionDto direction = JwtUtil.getDirectionFromToken(token);
+            DirectionDto direction = jwtUtil.getDirectionFromToken(token);
             Long directionNumero = direction.numero();
 
-            // Appeler la méthode avec directionNumero
             Optional<AgentCongeDTO> agentCongeDTO = agentService.getAgentAndJoursByCongeReference(ref, directionNumero);
 
             if (agentCongeDTO.isPresent()) {
@@ -49,19 +47,16 @@ public class AgentController {
         }
     }
 
-    // ✅ CORRECTION : Ajouter extraction de la direction depuis le token JWT
     @GetMapping("/nomPrenom")
     public ResponseEntity<?> getNomPrenomAgent(
             @RequestParam String matricule,
             @RequestHeader("Authorization") String authHeader) {
         try {
-            // Extraire le token et la direction
-            String token = JwtUtil.extractTokenFromHeader(authHeader);
+            String token = jwtUtil.extractTokenFromHeader(authHeader);
             if (token == null) return ResponseEntity.status(401).build();
-            DirectionDto direction = JwtUtil.getDirectionFromToken(token);
+            DirectionDto direction = jwtUtil.getDirectionFromToken(token);
             Long directionNumero = direction.numero();
 
-            // Appeler la méthode avec directionNumero
             Optional<AgentNomPrenomDTO> agentNomPrenomDTO = agentService.getNomPrenomViaMatricule(matricule, directionNumero);
 
             if (agentNomPrenomDTO.isPresent()) {
@@ -74,11 +69,9 @@ public class AgentController {
         }
     }
 
-    // ✅ PAS DE CHANGEMENT : addAgent n'a plus besoin de directionNumero (le centre suffit)
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addAgent(@RequestBody SaveAgentDto centreDto) {
         try {
-            // Sauvegarde (pas besoin de directionNumero, le centre contient sa direction)
             Agent savedAgent = agentService.addAgent(centreDto);
 
             return ResponseEntity.ok(Map.of(
@@ -90,7 +83,6 @@ public class AgentController {
             ));
 
         } catch (Exception e) {
-            // Gérer les exceptions métier (ex: matricule déjà existant)
             return ResponseEntity.status(409).body(Map.of(
                     "message", e.getMessage()
             ));
