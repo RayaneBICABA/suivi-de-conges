@@ -48,20 +48,28 @@ public class AgentService {
         return agentRepository.findByMatriculeTrimmed(matricule, directionNumero).isPresent();
     }
 
-    public Agent addAgent(SaveAgentDto dto) {
-        Centre centre = centreRepository.findById(dto.code())
-                .orElseThrow(() -> new RuntimeException("Centre non trouvé"));
-
-        Agent agent = new Agent();
-        agent.setMatricule(dto.matricule());
-        agent.setNom(dto.nom());
-        agent.setPrenom(dto.prenom());
-        agent.setFonction(dto.fonction());
-        agent.setCentre(centre);
-
-        return agentRepository.save(agent);
+public Agent addAgent(SaveAgentDto dto) {
+    // Récupérer le centre avec sa direction
+    Centre centre = centreRepository.findById(dto.code())
+            .orElseThrow(() -> new RuntimeException("Centre non trouvé"));
+    
+    // Vérifier que le matricule n'existe pas déjà
+    if (agentRepository.existsById(dto.matricule())) {
+        throw new RuntimeException("Un agent avec ce matricule existe déjà");
     }
-
+    
+    Agent agent = new Agent();
+    agent.setMatricule(dto.matricule());
+    agent.setNom(dto.nom());
+    agent.setPrenom(dto.prenom());
+    agent.setFonction(dto.fonction());
+    agent.setCentre(centre);
+    
+    // Récupérer automatiquement la direction depuis le centre
+    agent.setDirection(centre.getDirection());
+    
+    return agentRepository.save(agent);
+}
     @Transactional(readOnly = true)
     public Optional<AgentDetailsDTO> getAgentDetails(String matricule, Long directionNumero) {
         Optional<Agent> agentOpt = agentRepository.findByMatriculeTrimmed(matricule, directionNumero);
