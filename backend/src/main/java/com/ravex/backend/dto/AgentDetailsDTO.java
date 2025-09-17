@@ -24,7 +24,7 @@ public class AgentDetailsDTO {
         private String reference;
         private Integer joursAttribues;
         private Integer joursRestants;
-        private String annee; // Extraite de la référence
+        private String annee;
         private List<SuiviDetailDTO> suivis;
     }
 
