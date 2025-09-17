@@ -26,7 +26,6 @@ public class SuiviConge {
     @Column(name = "SC_PERIODE2", nullable = false)
     private LocalDate dateFin;
 
-    // Nombre de jours de congés consommés pour cette période
     @Column(name = "SC_JOUR")
     private Integer jours;
 
