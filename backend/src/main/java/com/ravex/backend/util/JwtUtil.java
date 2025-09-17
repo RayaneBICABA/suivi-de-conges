@@ -6,25 +6,34 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import java.security.Key;
 import java.util.Date;
 
+@Component
 public class JwtUtil {
-    private static final String SECRET_KEY = "MonSecretSuperSecurise123!MonSecretSuperSecurise123!";
-    private static final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
-    private static final long EXPIRATION = 1000 * 60 * 60 * 24; // 24h
+    private final Key key;
+    private final long expiration;
+
+    public JwtUtil(@Value("${jwt.secret}") String secret, 
+                   @Value("${jwt.expiration}") long expiration) {
+        this.key = Keys.hmacShaKeyFor(java.util.Base64.getDecoder().decode(secret));
+        this.expiration = expiration;
+    }
 
     // Méthode surchargée pour maintenir la compatibilité
-    public static String generateToken(String email) {
+    public String generateToken(String email) {
         return generateToken(email, null, null);
     }
 
     // Nouvelle méthode avec direction
-    public static String generateToken(String email, Long directionNumero, String directionNom) {
+    public String generateToken(String email, Long directionNumero, String directionNom) {
         var builder = Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION));
+                .setExpiration(new Date(System.currentTimeMillis() + expiration));
 
         // Ajouter les informations de direction si disponibles
         if (directionNumero != null) {
@@ -37,11 +46,11 @@ public class JwtUtil {
         return builder.signWith(key).compact();
     }
 
-    public static String getEmailFromToken(String token) throws JwtException {
+    public String getEmailFromToken(String token) throws JwtException {
         return getClaims(token).getSubject();
     }
 
-    public static DirectionDto getDirectionFromToken(String token) throws JwtException {
+    public DirectionDto getDirectionFromToken(String token) throws JwtException {
         Claims claims = getClaims(token);
         Long directionNumero = null;
         String directionNom = null;
@@ -65,7 +74,7 @@ public class JwtUtil {
         return new DirectionDto(directionNumero, directionNom);
     }
 
-    public static Long getDirectionNumeroFromToken(String token) throws JwtException {
+    public Long getDirectionNumeroFromToken(String token) throws JwtException {
         Claims claims = getClaims(token);
         Object numeroObj = claims.get("directionNumero");
 
@@ -79,13 +88,13 @@ public class JwtUtil {
         return null;
     }
 
-    public static String getDirectionNomFromToken(String token) throws JwtException {
+    public String getDirectionNomFromToken(String token) throws JwtException {
         Claims claims = getClaims(token);
         Object nomObj = claims.get("directionNom");
         return nomObj instanceof String ? (String) nomObj : null;
     }
 
-    public static boolean isTokenValid(String token) {
+    public boolean isTokenValid(String token) {
         try {
             Claims claims = getClaims(token);
             return !claims.getExpiration().before(new Date());
@@ -94,11 +103,11 @@ public class JwtUtil {
         }
     }
 
-    public static boolean isTokenExpired(String token) throws JwtException {
+    public boolean isTokenExpired(String token) throws JwtException {
         return getClaims(token).getExpiration().before(new Date());
     }
 
-    private static Claims getClaims(String token) throws JwtException {
+    private Claims getClaims(String token) throws JwtException {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
@@ -106,7 +115,7 @@ public class JwtUtil {
                 .getBody();
     }
 
-    public static String extractTokenFromHeader(String authHeader) {
+    public String extractTokenFromHeader(String authHeader) {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             return authHeader.substring(7);
         }
@@ -114,7 +123,7 @@ public class JwtUtil {
     }
 
     // Méthode utilitaire pour récupérer toutes les informations utilisateur du token
-    public static UserTokenInfo getUserInfoFromToken(String token) throws JwtException {
+    public UserTokenInfo getUserInfoFromToken(String token) throws JwtException {
         Claims claims = getClaims(token);
         String email = claims.getSubject();
         DirectionDto direction = getDirectionFromToken(token);
