@@ -26,7 +26,6 @@ public class Centre {
     @JsonIgnore
     private List<Agent> agents;
 
-    // ========= RELATION ENTRE DIRECTION ET CENTRE  =========
     @ManyToOne
     @JsonBackReference
     @JoinColumn(name = "NUM_DR")
