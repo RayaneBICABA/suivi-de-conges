@@ -271,7 +271,7 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => showPriseConge(currentCongeRef), 500);
       } else {
         const message = data.message || "Erreur lors de la création du congé";
-        showMessage("${message}", "error");
+        showMessage(`${message}`, "error");
       }
     } catch (error) {
       showMessage(`Erreur de connexion : ${error.message}`, "error");
