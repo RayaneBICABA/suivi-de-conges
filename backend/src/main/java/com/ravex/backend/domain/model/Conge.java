@@ -19,14 +19,13 @@ public class Conge {
     @Column(name = "CO_REF", length = 50, nullable = false)
     private String reference;
 
-    // Nombre total de jours auxquels l'agent a droit suivant sa ref de conge
     @Column(name = "CO_JOUR", nullable = false)
     private Integer jours;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "A_MATRICULE", nullable = false) // FK vers Agent
+    @JoinColumn(name = "A_MATRICULE", nullable = false)
     @JsonBackReference
-    private Agent agent; // <-- Agent unique
+    private Agent agent;
 
     @OneToMany(mappedBy = "conge",fetch = FetchType.LAZY)
     @JsonManagedReference
