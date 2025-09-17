@@ -16,11 +16,14 @@
 <body>
     <div id="responsive-menu-container"></div>
 
+    <!-- Responsive Menu -->
     <script src="/ResponsiveMenu.js"></script>
+    <!-- Script métier -->
 
     <script>
         const menu = new ResponsiveMenu({
     onNavigate: function (item, index) {
+        // Obtenir l'URL de base pour éviter les chemins relatifs problématiques
         const baseUrl = window.location.origin;
         
          switch (index) {
@@ -37,12 +40,12 @@
     }
 });
 
-
+        // Active le lien "Gérer Congés"
         menu.setActiveLink(2);
 
-
+        // Injecter le contenu
         menu.updateContent(`
-
+      <!-- ================= GERER LES CONGES ================= -->
       <div id="manageLeaves" class="bg-[#f3f4f6] flex flex-col flex-1 overflow-y-auto min-h-screen">
         <div class="p-4">
           
