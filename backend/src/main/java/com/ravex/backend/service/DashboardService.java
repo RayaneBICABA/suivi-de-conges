@@ -17,7 +17,6 @@ public class DashboardService {
     private final AgentRepository agentRepository;
     private final CongeRepository congeRepository;
 
-    // Total de tous les agents | Total des conges en cours | Total des conges termines
     public DashboardDTO getDashboardStats(Long directionNumero){
         long totalAgents = agentRepository.countByDirection(directionNumero);
         long congesEnCours = congeRepository.countCongesEnCours(directionNumero);
@@ -25,12 +24,10 @@ public class DashboardService {
         return new DashboardDTO(totalAgents, congesEnCours, congesTermines);
     }
 
-    // Liste des Agent
     public List<AgentSummaryDTO> getListeAgents(Long directionNumero){
         return agentRepository.agentSummaryByDirection(directionNumero);
     }
 
-    // Rechercher agents par nom ou prénom
     public List<AgentSummaryDTO> searchAgents(String keyword, Long directionNumero) {
         return agentRepository.searchAgentByNomOrPrenom(keyword, directionNumero);
     }
