@@ -83,7 +83,7 @@ function validateForm() {
 }
 
 // ==========================
-// Ajout d'un agent
+// Ajout d'un agent (utilise automatiquement le token via AuthGuard)
 // ==========================
 async function ajouterAgent() {
   // Empêcher les soumissions multiples
@@ -96,14 +96,13 @@ async function ajouterAgent() {
     return;
   }
 
- const agentData = {
-  matricule: agentMatriculeInput.value.trim().toUpperCase(),
-  nom: agentNomInput.value.trim(),
-  prenom: agentPrenomInput.value.trim(),
-  fonction: agentFonctionInput.value.trim(),
-  code:  parseInt(agentCentreSelect.value.trim(), 10)
-};
-
+  const agentData = {
+    matricule: agentMatriculeInput.value.trim().toUpperCase(),
+    nom: agentNomInput.value.trim(),
+    prenom: agentPrenomInput.value.trim(),
+    fonction: agentFonctionInput.value.trim(),
+    code: parseInt(agentCentreSelect.value.trim(), 10)
+  };
 
   try {
     // Marquer comme en cours de soumission
@@ -118,6 +117,7 @@ async function ajouterAgent() {
       headers: {
         "Accept": "application/json",
         "Content-Type": "application/json"
+        // Le token sera automatiquement ajouté par AuthGuard.setupAPIInterceptor()
       },
       body: JSON.stringify(agentData),
     });
@@ -125,6 +125,8 @@ async function ajouterAgent() {
     // Gérer les erreurs HTTP
     if (!response.ok) {
       let errorMessage = "Erreur lors de l'ajout de l'agent";
+      
+      // L'erreur 401 est déjà gérée par AuthGuard.setupAPIInterceptor()
       
       try {
         const errorData = await response.json();
@@ -167,7 +169,6 @@ async function ajouterAgent() {
     addAgentBtn.textContent = "Ajouter";
   }
 }
-
 
 // Charger la liste des centres
 async function chargerCentres() {
