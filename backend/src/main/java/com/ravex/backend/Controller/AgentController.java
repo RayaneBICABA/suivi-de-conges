@@ -69,23 +69,23 @@ public class AgentController {
         }
     }
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addAgent(@RequestBody SaveAgentDto centreDto) {
-        try {
-            Agent savedAgent = agentService.addAgent(centreDto);
-
-            return ResponseEntity.ok(Map.of(
-                    "message", "Agent enregistré avec succès",
-                    "matricule", savedAgent.getMatricule(),
-                    "nom", savedAgent.getNom(),
-                    "prenom", savedAgent.getPrenom(),
-                    "fonction", savedAgent.getFonction()
-            ));
-
-        } catch (Exception e) {
-            return ResponseEntity.status(409).body(Map.of(
-                    "message", e.getMessage()
-            ));
-        }
+@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+public ResponseEntity<?> addAgent(@RequestBody SaveAgentDto agentDto) {
+    try {
+        Agent savedAgent = agentService.addAgent(agentDto);
+        return ResponseEntity.ok(Map.of(
+                "message", "Agent enregistré avec succès",
+                "matricule", savedAgent.getMatricule(),
+                "nom", savedAgent.getNom(),
+                "prenom", savedAgent.getPrenom(),
+                "fonction", savedAgent.getFonction()
+        ));
+    } catch (Exception e) {
+        return ResponseEntity.status(409).body(Map.of(
+                "message", e.getMessage()
+        ));
     }
+}
+
+
 }
