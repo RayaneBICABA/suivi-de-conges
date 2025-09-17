@@ -118,26 +118,9 @@ class AuthGuard {
      * Rediriger vers la page de connexion
      */
     static redirectToLogin() {
-    // Sauvegarder l'URL actuelle pour redirection après connexion
-    const currentPath = window.location.pathname + window.location.search;
-    if (currentPath !== '/login.html' && !currentPath.includes('login.html')) {
-        localStorage.setItem('redirectAfterLogin', currentPath);
-    }
+   // Redirection immédiate vers login.html depuis la racine du serveur
+    window.location.replace('/login.html');
 
-    // Déterminer le bon chemin vers login selon la page actuelle
-    const currentPage = window.location.pathname;
-    let loginPath;
-    
-    if (currentPage.includes('/src/html/') || currentPage.endsWith('ajouterAgent.html') || currentPath.endsWith('gererConges.html')) {
-        // Depuis les pages dans src/html/, remonter vers la racine
-        loginPath = './login.html';
-    } else {
-        // Depuis index.html (racine), aller vers src/html/
-        loginPath = './src/html/login.html';
-    }
-
-    // Redirection immédiate
-    window.location.replace(loginPath);
 }
 
     /**
