@@ -7,12 +7,17 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+
 @Service
 @RequiredArgsConstructor
 public class CentreService {
     private final CentreRepository centreRepository;
-
+    
     public List<CentreDto> getAllCentres(){
         return centreRepository.findAllCodeAndLibelle();
+    }
+    
+    public List<CentreDto> getCentresByDirection(Long directionNumero){
+        return centreRepository.findByDirectionNumero(directionNumero);
     }
 }
