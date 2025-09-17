@@ -6,14 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ajouter Agent</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/tailwind-cdn.js"></script>
     <link rel="icon" type="image/png" href="/favicoConge.png" />
 </head>
 
 <body>
     <div id="responsive-menu-container"></div>
 
-    <script src="../js/components/ResponsiveMenu.js"></script>
+    <script src="/ResponsiveMenu.js"></script>
     <script type="module" src="../js/ajouterAgent.js"></script>
     <script type="module" src="../js/authGuard.js"></script>
 
@@ -28,10 +28,10 @@
                 window.location.href = baseUrl + "/index.html";
                 break;
             case 1:
-                window.location.href = baseUrl + "/src/html/ajouterAgent.html";
+                window.location.href = baseUrl + "/ajouterAgent.html";
                 break;
             case 2:
-                window.location.href = baseUrl + "/src/html/gererConges.html";
+                window.location.href = baseUrl + "/gererConges.html";
                 break;
         }
     }
