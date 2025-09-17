@@ -12,16 +12,13 @@ import java.util.Optional;
 
 public interface AgentRepository extends JpaRepository<Agent, String> {
 
-    // ✅ CORRECTION : Filtrage par centres de la direction
     @Query("SELECT new com.ravex.backend.dto.AgentNomPrenomDTO(a.nom, a.prenom) " +
-            "FROM Agent a WHERE UPPER(TRIM(a.matricule)) = UPPER(TRIM(:matricule)) AND a.centre.direction.numero = :direction")
+            "FROM Agent a WHERE UPPER(TRIM(a.matricule)) = UPPER(TRIM(:matricule)) AND a.direction.numero = :direction")
     Optional<AgentNomPrenomDTO> obtenirNomEtPrenomAgentViaMatricule(@Param("matricule") String matricule, @Param("direction") Long direction);
 
-    // ✅ CORRECTION : Filtrage par centres de la direction
-    @Query("SELECT a FROM Agent a WHERE UPPER(TRIM(a.matricule)) = UPPER(TRIM(:matricule)) AND a.centre.direction.numero = :direction")
+    @Query("SELECT a FROM Agent a WHERE UPPER(TRIM(a.matricule)) = UPPER(TRIM(:matricule)) AND a.direction.numero = :direction")
     Optional<Agent> findByMatriculeTrimmed(@Param("matricule") String matricule, @Param("direction") Long direction);
 
-    // ✅ CORRECTION : Agent (Matricule, Fullname, Fonction) par centres de la direction
     @Query("""
     SELECT new com.ravex.backend.dto.dashboard.AgentSummaryDTO(
         a.matricule,
@@ -29,11 +26,11 @@ public interface AgentRepository extends JpaRepository<Agent, String> {
         a.fonction
     )
     FROM Agent a
-    WHERE a.centre.direction.numero = :direction
+    WHERE a.direction.numero = :direction
     """)
     List<AgentSummaryDTO> agentSummaryByDirection(@Param("direction") Long direction);
 
-    // ✅ CORRECTION : Rechercher Agent par centres de la direction
+   
     @Query("""
     SELECT new com.ravex.backend.dto.dashboard.AgentSummaryDTO(
         a.matricule,
@@ -45,11 +42,11 @@ public interface AgentRepository extends JpaRepository<Agent, String> {
        OR UPPER(a.prenom) LIKE CONCAT('%', UPPER(:keyword), '%')
        OR UPPER(CONCAT(a.prenom, ' ', a.nom)) LIKE CONCAT('%', UPPER(:keyword), '%')
        OR UPPER(a.matricule) LIKE CONCAT('%', UPPER(:keyword), '%'))
-       AND a.centre.direction.numero = :direction
+       AND a.direction.numero = :direction
 """)
     List<AgentSummaryDTO> searchAgentByNomOrPrenom(@Param("keyword") String keyword, @Param("direction") Long direction);
 
-    // ✅ CORRECTION : Nombre total des agents par centres de la direction
-    @Query("SELECT COUNT(a) FROM Agent a WHERE a.centre.direction.numero = :direction")
+    
+    @Query("SELECT COUNT(a) FROM Agent a WHERE a.direction.numero = :direction")
     long countByDirection(@Param("direction") Long direction);
 }
