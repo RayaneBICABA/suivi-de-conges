@@ -30,11 +30,9 @@ public class AgentService {
     private final CentreRepository centreRepository;
     private final DirectionRepository directionRepository;
 
-    // Retourner à la fois l'agent et le nombre de jours - AVEC FILTRAGE DIRECTION
     public Optional<AgentCongeDTO> getAgentAndJoursByCongeReference(String refConge, Long directionNumero) {
         Optional<Conge> conge = congeRepository.findByReferenceAndDirection(refConge, directionNumero);
 
-        // Si le congé est trouvé, on retourne l'agent et les jours
         return conge.map(c -> {
             Agent agent = c.getAgent();
             Integer jours = c.getJours();
@@ -42,7 +40,6 @@ public class AgentService {
         });
     }
 
-    // Obtenir le nom et le prénom de l'agent
     public Optional<AgentNomPrenomDTO> getNomPrenomViaMatricule(String matricule, Long directionNumero) {
         return agentRepository.obtenirNomEtPrenomAgentViaMatricule(matricule, directionNumero);
     }
@@ -51,9 +48,7 @@ public class AgentService {
         return agentRepository.findByMatriculeTrimmed(matricule, directionNumero).isPresent();
     }
 
-    // Ajouter un agent - SEULEMENT LE CENTRE (la direction est héritée du centre)
     public Agent addAgent(SaveAgentDto dto) {
-        // Récupérer le centre (qui contient déjà sa direction)
         Centre centre = centreRepository.findById(dto.code())
                 .orElseThrow(() -> new RuntimeException("Centre non trouvé"));
 
@@ -62,12 +57,11 @@ public class AgentService {
         agent.setNom(dto.nom());
         agent.setPrenom(dto.prenom());
         agent.setFonction(dto.fonction());
-        agent.setCentre(centre); // ✅ Le centre contient déjà sa direction
+        agent.setCentre(centre);
 
         return agentRepository.save(agent);
     }
 
-    // Méthode principale pour récupérer les détails d'un agent - AVEC DIRECTION
     @Transactional(readOnly = true)
     public Optional<AgentDetailsDTO> getAgentDetails(String matricule, Long directionNumero) {
         Optional<Agent> agentOpt = agentRepository.findByMatriculeTrimmed(matricule, directionNumero);
@@ -79,17 +73,12 @@ public class AgentService {
         Agent agent = agentOpt.get();
         List<AgentDetailsDTO.CongeDetailDTO> congeDetails = new ArrayList<>();
 
-        // Récupérer tous les congés de l'agent
         if (agent.getConges() != null && !agent.getConges().isEmpty()) {
             for (Conge conge : agent.getConges()) {
-                // Extraire l'année de la référence (format: xxxx/DRH/yyyy)
                 String annee = extractAnneeFromReference(conge.getReference());
-
-                // Calculer les jours restants
                 Integer joursConsommes = suiviCongeRepository.totaljoursEpuise(conge.getReference());
                 Integer joursRestants = conge.getJours() - (joursConsommes != null ? joursConsommes : 0);
 
-                // Récupérer les suivis pour ce congé
                 List<AgentDetailsDTO.SuiviDetailDTO> suivis = new ArrayList<>();
                 if (conge.getSuiviConge() != null) {
                     conge.getSuiviConge().forEach(suivi -> {
@@ -122,18 +111,16 @@ public class AgentService {
         return Optional.of(result);
     }
 
-    // Méthode utilitaire pour extraire l'année de la référence
     private String extractAnneeFromReference(String reference) {
         if (reference == null || reference.isEmpty()) {
             return "";
         }
 
-        // Format attendu: xxxx/DRH/yyyy
         String[] parts = reference.split("/");
         if (parts.length >= 3) {
-            return parts[2]; // Retourne l'année
+            return parts[2];
         }
 
-        return ""; // Si le format n'est pas respecté
+        return "";
     }
 }
