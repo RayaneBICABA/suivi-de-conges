@@ -26,23 +26,21 @@ public class Agent {
     @Column(name = "A_FONCTION", length = 50)
     private String fonction;
 
-
-    // SOLUTION : Ignorer complètement la sérialisation des congés
-    // pour éviter les références circulaires
     @OneToMany(mappedBy = "agent", fetch = FetchType.LAZY)
-    @JsonIgnore  // <-- Remplace @JsonManagedReference
-    private List<Conge> conges;  // Un agent peut avoir plusieurs congés
+    @JsonIgnore
+    private List<Conge> conges;
 
     @ManyToOne
     @JsonBackReference
     @JoinColumn(name = "C_CODE", nullable = false, referencedColumnName = "C_CODE")
     private Centre centre;
 
-    // ============ Methode Utilitaire ============
-    // Nom et Prenom de l'agent
     public String getFullName(){
         return this.prenom+" "+this.nom;
     }
 
-
+    @ManyToOne
+    @JsonBackReference
+    @JoinColumn(name = "NUM_DR", referencedColumnName = "NUM_DR")
+    private Direction direction;
 }
