@@ -108,6 +108,18 @@
             <version>0.11.5</version>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.10.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.sourceforge.plantuml</groupId>
+            <artifactId>plantuml</artifactId>
+            <version>1.2023.12</version>
+        </dependency>
+
 
     </dependencies>
 
@@ -116,7 +128,14 @@
 			suivi-conges
 		</finalName>
 		<plugins>
-			<plugin>
+
+
+
+
+
+
+
+            <plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
