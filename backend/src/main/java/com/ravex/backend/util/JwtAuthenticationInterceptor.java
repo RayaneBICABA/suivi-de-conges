@@ -3,7 +3,6 @@ package com.ravex.backend.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ravex.backend.dto.ApiResponse;
 import com.ravex.backend.dto.DirectionDto;
-import com.ravex.backend.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
@@ -13,6 +12,12 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class JwtAuthenticationInterceptor implements HandlerInterceptor {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final JwtUtil jwtUtil;
+
+    // Injection du bean JwtUtil
+    public JwtAuthenticationInterceptor(JwtUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
+    }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -33,7 +38,7 @@ public class JwtAuthenticationInterceptor implements HandlerInterceptor {
 
         try {
             // Récupérer toutes les informations utilisateur du token
-            JwtUtil.UserTokenInfo userInfo = JwtUtil.getUserInfoFromToken(token);
+            JwtUtil.UserTokenInfo userInfo = jwtUtil.getUserInfoFromToken(token);
 
             if (userInfo.getEmail() == null || userInfo.getEmail().isEmpty()) {
                 sendUnauthorizedResponse(response, "Token invalide");
