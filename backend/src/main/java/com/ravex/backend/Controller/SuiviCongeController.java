@@ -18,19 +18,17 @@ import java.util.Map;
 public class SuiviCongeController {
 
     private final SuiviCongeService suiviCongeService;
+     private final JwtUtil jwtUtil; 
 
-    // Enregistrer un nouveau suivi de congé
     @PostMapping
     public ResponseEntity<?> createSuivi(
             @RequestBody SuiviCongeCreateRequest request,
             @RequestHeader("Authorization") String authHeader
     ) {
         try {
-            // Récupérer la direction depuis le JWT
-            String token = JwtUtil.extractTokenFromHeader(authHeader);
-            DirectionDto direction = JwtUtil.getDirectionFromToken(token);
+            String token = jwtUtil.extractTokenFromHeader(authHeader);
+            DirectionDto direction = jwtUtil.getDirectionFromToken(token);
 
-            // Passer directionNumero au service
             SuiviConge suivi = suiviCongeService.create(request, direction.numero());
             return ResponseEntity.ok(suivi);
         } catch (Exception e) {
@@ -42,16 +40,14 @@ public class SuiviCongeController {
         }
     }
 
-    // Retourner le nombre de jours restants pour un congé donné
     @GetMapping("/jours-restants")
     public ResponseEntity<?> getJoursRestants(
             @RequestParam String reference,
             @RequestHeader("Authorization") String authHeader
     ) {
         try {
-            // Récupérer la direction depuis le JWT
-            String token = JwtUtil.extractTokenFromHeader(authHeader);
-            DirectionDto direction = JwtUtil.getDirectionFromToken(token);
+            String token = jwtUtil.extractTokenFromHeader(authHeader);
+            DirectionDto direction = jwtUtil.getDirectionFromToken(token);
 
             int joursRestants = suiviCongeService.calculerJoursRestants(reference, direction.numero());
             return ResponseEntity.ok(Map.of("joursRestants", joursRestants));
