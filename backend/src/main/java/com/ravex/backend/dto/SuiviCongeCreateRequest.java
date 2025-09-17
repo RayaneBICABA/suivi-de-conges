@@ -9,5 +9,5 @@ public class SuiviCongeCreateRequest {
     private String congeRef;
     private LocalDate dateDebut;
     private LocalDate dateFin;
-    private Integer jours; // ignoré si incohérent
+    private Integer jours;
 }
