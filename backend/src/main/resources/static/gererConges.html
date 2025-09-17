@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Congés</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <script src="/tailwind-cdn.js"></script>
+    <link rel="icon" type="image/png" href="/favicoConge.png" />
+  <script type="module" crossorigin src="/assets/gererConge-BKxtwudR.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/config-CkEC2-gR.js">
+  <link rel="modulepreload" crossorigin href="/assets/authGuard-IHeZeQgb.js">
+</head>
+
+<body>
+    <div id="responsive-menu-container"></div>
+
+    <script src="/ResponsiveMenu.js"></script>
+
+    <script>
+        const menu = new ResponsiveMenu({
+    onNavigate: function (item, index) {
+        const baseUrl = window.location.origin;
+        
+         switch (index) {
+            case 0:
+                window.location.href = baseUrl + "/index.html";
+                break;
+            case 1:
+                window.location.href = baseUrl + "/ajouterAgent.html";
+                break;
+            case 2:
+                window.location.href = baseUrl + "/gererConges.html";
+                break;
+        }
+    }
+});
+
+
+        menu.setActiveLink(2);
+
+
+        menu.updateContent(`
+
+      <div id="manageLeaves" class="bg-[#f3f4f6] flex flex-col flex-1 overflow-y-auto min-h-screen">
+        <div class="p-4">
+          
+          <div class="flex items-center justify-center min-h-[calc(100vh-120px)] px-2 py-2">
+            <div class="bg-white p-4 sm:p-6 md:p-8 rounded-2xl shadow-xl w-full max-w-lg mx-auto">
+              <h1 class="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold mb-6 text-center text-gray-800">
+                Vérifier une Référence Congé
+              </h1>
+
+              <div class="mb-4">
+                <label for="refNumber" class="block text-sm font-medium text-gray-700 mb-2">
+                  Numéro de référence
+                </label>
+                <input id="refNumber" type="number" placeholder="2006B"
+                  class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-300" />
+              </div>
+
+              <div class="mb-6">
+                <label for="year" class="block text-sm font-medium text-gray-700 mb-2">Année</label>
+                <input id="year" type="number" placeholder="2025" value="2025"
+                  class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-300" />
+              </div>
+
+              <button id="checkBtn"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg font-semibold transition">
+                Vérifier
+              </button>
+
+              <div id="result" class="mt-6 text-center font-medium"></div>
+
+              <button id="retourBtn"
+                class="hidden w-full mt-4 bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg">
+                Retour à la vérification
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= PRISE DE CONGE ================= -->
+      <div id="priseCongeSection" class="hidden flex flex-col flex-1 overflow-y-auto bg-gray-100">
+        <div class="p-4">
+
+          <div class="container mx-auto px-2 sm:px-4 py-2 max-w-4xl">
+            <div class="bg-white rounded-xl shadow-xl overflow-hidden">
+              <div class="bg-white border-b border-gray-200 p-4">
+                <button id="retourPriseCongeBtn"
+                  class="mb-4 text-blue-500 hover:text-blue-700 flex items-center text-sm">
+                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M15 19l-7-7 7-7" />
+                  </svg>
+                  Retour
+                </button>
+                <h1 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-800">
+                  Informations de l'Agent
+                </h1>
+              </div>
+
+              <div class="p-4 sm:p-6 space-y-4">
+                <div><strong>Réf. congé:</strong> <span id="pcRefConge">--</span></div>
+                <div><strong>Matricule:</strong> <span id="pcMatricule">--</span></div>
+                <div><strong>Nom:</strong> <span id="pcNom">--</span></div>
+                <div><strong>Prénom:</strong> <span id="pcPrenom">--</span></div>
+                <div><strong>Profession:</strong> <span id="pcFonction">--</span></div>
+                <div><strong>Jours attribués:</strong> <span id="pcJoursAttribues">--</span></div>
+                <div><strong>Reste à valoir:</strong> <span id="pcJoursRestants">--</span></div>
+
+                <div class="border-t border-gray-200 pt-6 space-y-4">
+                  <h2 class="font-semibold text-gray-800">Ajouter un congé</h2>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label class="block font-medium text-gray-700 mb-1">Date de début</label>
+                      <input type="date" id="pcStartDate" class="w-full border p-2 rounded-lg" />
+                    </div>
+                    <div>
+                      <label class="block font-medium text-gray-700 mb-1">Date de fin</label>
+                      <input type="date" id="pcEndDate" class="w-full border p-2 rounded-lg" />
+                    </div>
+                  </div>
+                  <div><strong>Nombre de jours :</strong> <span id="pcNumDays"
+                      class="text-blue-600 font-bold">0</span></div>
+                  <button id="pcAddCongeBtn"
+                    class="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+                    Ajouter un congé
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= POPUP CREATION CONGE ================= -->
+      <div id="popupCongeOverlay"
+        class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg mx-auto max-h-[90vh] overflow-y-auto">
+          <div class="sticky top-0 bg-white border-b px-4 py-4 flex justify-between items-center">
+            <h2 class="text-lg md:text-2xl font-bold text-red-600">Numéro de décision introuvable</h2>
+            <button id="popupCloseBtn" class="text-gray-400 hover:text-gray-600">
+              <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+          </div>
+          <div class="p-4 space-y-4">
+            <div>
+              <label class="block font-medium text-gray-700 mb-1">Décision de congé No:</label>
+              <input id="popupDecisionNumber" type="text" readonly
+                class="w-full border p-2 rounded-lg bg-gray-50" />
+            </div>
+            <div>
+              <label class="block font-medium text-gray-700 mb-1">Nom:</label>
+              <input id="popupNom" type="text" readonly class="w-full border p-2 rounded-lg bg-gray-50" />
+            </div>
+            <div>
+              <label class="block font-medium text-gray-700 mb-1">Prénom:</label>
+              <input id="popupPrenom" type="text" readonly class="w-full border p-2 rounded-lg bg-gray-50" />
+            </div>
+            <div>
+              <label class="block font-medium text-gray-700 mb-1">Matricule <span class="text-red-500">*</span></label>
+              <input id="popupMatricule" type="text" placeholder="Saisir le matricule"
+                class="w-full border p-2 rounded-lg" />
+            </div>
+            <div>
+              <label class="block font-medium text-gray-700 mb-1">Nombre de jours <span class="text-red-500">*</span></label>
+              <input id="popupJoursConges" type="number" value="0" min="0" class="w-full border p-2 rounded-lg" />
+            </div>
+          </div>
+          <div class="sticky bottom-0 bg-gray-50 border-t p-4 flex gap-4">
+            <button id="popupConfirmerBtn"
+              class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg">Confirmer</button>
+            <button id="popupAnnulerBtn"
+              class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 rounded-lg">Annuler</button>
+          </div>
+        </div>
+      </div>
+    `);
+    </script>
+</body>
+
+</html>
