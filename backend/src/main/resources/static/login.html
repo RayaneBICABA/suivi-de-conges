@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Page de connection</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/tailwind-cdn.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -15,7 +15,7 @@
             background-color: #f3f4f6;
         }
     </style>
-  <script type="module" crossorigin src="/assets/login-C2k6PIc6.js"></script>
+  <script type="module" crossorigin src="/assets/login-DCqcMNWR.js"></script>
   <link rel="modulepreload" crossorigin href="/assets/config-CkEC2-gR.js">
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
@@ -65,20 +65,20 @@
             const passwordInput = document.getElementById(inputId);
             const toggleButton = passwordInput.nextElementSibling;
             
-            // Toggle the type attribute
+
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
 
-            // Toggle the eye icon to represent visibility state
+
             const iconSvg = toggleButton.querySelector('svg');
             if (type === 'text') {
-                // Change icon to 'eye-slash' or a similar closed eye icon
+
                 iconSvg.innerHTML = `
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.25a10.05 10.05 0 01-3.613-1.677 10.05 10.05 0 01-3.613-1.677M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                 `;
             } else {
-                // Change icon back to 'eye' or open eye icon
+
                 iconSvg.innerHTML = `
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
