@@ -79,12 +79,20 @@ Ajoutez ici vos captures d’écran pour illustrer l’interface et les fonction
 
   <img width="1366" height="768" alt="Login" src="https://github.com/user-attachments/assets/756778c5-d1f7-4dae-8196-4b18ad39a2a3" />
 
-- - ![Register](./screens/Register.png)
-- ![Dashboard](./screens/Dashboard.png)
-- ![AjouterAgent](./screens/AjouterAgent.png)
-- ![Demande de congé0](./screens/demandeConge0.png)
-- ![Demande de congé1](./screens/demandeConge1.png)
-- ![Demande de congé2](./screens/demandeConge2.png)
+  <img width="1366" height="768" alt="Register" src="https://github.com/user-attachments/assets/215a0588-d02e-49e4-bb1d-963e672feaf8" />
+
+  <img width="1366" height="768" alt="Dashboard" src="https://github.com/user-attachments/assets/40668ca1-525d-44a2-959e-e0395e49abe3" />
+
+  <img width="1366" height="768" alt="AjouterAgent" src="https://github.com/user-attachments/assets/79bee7e1-2360-41e8-a7e2-687aaa3a6e0d" />
+
+  <img width="1366" height="768" alt="demandeConge0" src="https://github.com/user-attachments/assets/1a4ceafc-a65e-412a-b73a-97d56e709de0" />
+
+  <img width="1366" height="768" alt="demandeConge1" src="https://github.com/user-attachments/assets/314781b9-5dca-47cf-b4d1-1f872f2f53c0" />
+
+  <img width="1366" height="768" alt="demandeConge2" src="https://github.com/user-attachments/assets/3291a5a7-386f-42ac-8baf-4fbfb1ee9199" />
+
+
+
 
 ## Technologies
 
