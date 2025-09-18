@@ -105,12 +105,9 @@ Ajoutez ici vos captures d’écran pour illustrer l’interface et les fonction
 ## Tests
 
 - Backend : JUnit, Spring Test
-- Frontend : (à compléter si tu as des tests)
+
 
 ## Contribuer
 
 Les contributions sont les bienvenues ! Merci de suivre les conventions de code et d’ajouter des tests pour toute nouvelle fonctionnalité.
 
-## Licence
-
-Ce projet est sous licence MIT.
